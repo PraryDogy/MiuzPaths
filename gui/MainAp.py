@@ -10,7 +10,7 @@ from .OpenBtn import OpenButton
 
 
 class MainApp():
-    def __init__(self) -> None:
+    def __init__(self):
         '''
         methods: Run
         '''

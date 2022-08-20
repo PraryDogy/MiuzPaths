@@ -3,7 +3,7 @@ from cfg import version, BGButton, FontColor, BGColor
 
 
 class MenuGui:
-    def __init__(self, root) -> None:
+    def __init__(self, root):
         self.root = root
 
         menubar = Menu(self.root)

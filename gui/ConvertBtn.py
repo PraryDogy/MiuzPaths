@@ -5,7 +5,7 @@ from utils import Converter, ShowText, ClipBrd
 
 
 class ConvertButton:
-    def __init__(self, BotFrame, root) -> None:
+    def __init__(self, BotFrame, root):
         self.root = root
 
         convertButton = tkinter.Label(

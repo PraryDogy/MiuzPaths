@@ -7,13 +7,13 @@ Usage:
 """
 
 from setuptools import setup
-from MiuzPaths.cfg import version
+from cfg import version
 
 
-APP = ['Project/start.py']
+APP = ['start.py']
 DATA_FILES = []
 OPTIONS = {
-    'iconfile':'Project/icon.icns',
+    'iconfile':'icon.icns',
     'plist': {
         'CFBundleName': 'MiuzPaths',
         'CFBundleShortVersionString':version, 

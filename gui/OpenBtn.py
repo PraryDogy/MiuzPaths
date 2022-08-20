@@ -5,7 +5,7 @@ from utils import Converter, Opener, ShowText, ClipBrd
 
 
 class OpenButton():
-    def __init__(self, frameForButtons, root) -> None:
+    def __init__(self, frameForButtons, root):
         self.root = root
 
         CloseButton = Label(frameForButtons, height=3, width=16, text = 'Открыть', bg=cfg.BGButton, fg=cfg.FontColor,)
