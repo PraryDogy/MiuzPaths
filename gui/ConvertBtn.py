@@ -22,7 +22,7 @@ class ConvertButton:
 
     def Run(self, button):
         button.configure(bg=cfg.bgPressed)
-        self.root.after(300, lambda: button.configure(bg=cfg.BGButton))
+        self.root.after(100, lambda: button.configure(bg=cfg.BGButton))
         self.ConvertPath()
         
         
