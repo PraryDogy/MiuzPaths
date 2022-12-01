@@ -19,7 +19,7 @@ class MainApp():
         # improve when deiconify not working by click to icon in Mac Os dock
         self.root.createcommand('tk::mac::ReopenApplication', self.root.deiconify)
         self.root.protocol("WM_DELETE_WINDOW", lambda: self.root.withdraw())
-        
+        self.root.bind('<Command-w>', lambda e: self.root.withdraw())
         self.root.title('MiuzPaths')
         self.root.config(pady=10, padx=10, bg=BGCOLOR,)
 
