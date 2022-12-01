@@ -1,5 +1,5 @@
 from tkinter import Label, Menu, Toplevel
-from cfg import version, BGButton, FontColor, BGColor
+from cfg import version, BGBUTTON, FONTCOLOR, BGCOLOR
 
 
 class MenuGui:
@@ -18,7 +18,7 @@ class MenuGui:
         self.root.config(menu=menubar)
 
     def AboutApp(self):
-        newWin = Toplevel(self.root, pady=10, padx=10, bg=BGColor, )
+        newWin = Toplevel(self.root, pady=10, padx=10, bg=BGCOLOR, )
         newWin.title('О программе')
 
         name = (
@@ -33,7 +33,7 @@ class MenuGui:
             '\n'
             )
         
-        l1 = Label(newWin, text=name+made,fg='white', bg=BGColor,)
+        l1 = Label(newWin, text=name+made,fg='white', bg=BGCOLOR,)
         l1.pack()
 
         CloseButton = Label(
@@ -41,8 +41,8 @@ class MenuGui:
             height=3, 
             width=16,
             text = 'Закрыть', 
-            bg=BGButton,
-            fg=FontColor,
+            bg=BGBUTTON,
+            fg=FONTCOLOR,
             )
         CloseButton.bind('<Button-1>', lambda event: newWin.destroy())
         CloseButton.pack()
@@ -51,7 +51,7 @@ class MenuGui:
 
     
     def Descr(self):
-        newWin = Toplevel(self.root, pady=10, padx=10, bg=BGColor, )
+        newWin = Toplevel(self.root, pady=10, padx=10, bg=BGCOLOR, )
         newWin.title('Инструкция')
 
 
@@ -69,13 +69,13 @@ class MenuGui:
             '\n'
         )
 
-        l1 = Label(newWin, text=descrip1,fg='white', bg=BGColor, justify='left')
+        l1 = Label(newWin, text=descrip1,fg='white', bg=BGCOLOR, justify='left')
         l1.pack()
 
-        l2 = Label(newWin, text=warning,fg='white', bg=BGColor,)
+        l2 = Label(newWin, text=warning,fg='white', bg=BGCOLOR,)
         l2.pack()
 
-        l3 = Label(newWin, text=descrip2,fg='white', bg=BGColor, justify='left')
+        l3 = Label(newWin, text=descrip2,fg='white', bg=BGCOLOR, justify='left')
         l3.pack()
 
         CloseButton = Label(
@@ -83,8 +83,8 @@ class MenuGui:
             height=3, 
             width=16,
             text = 'Закрыть', 
-            bg=BGButton,
-            fg=FontColor,
+            bg=BGBUTTON,
+            fg=FONTCOLOR,
             )
         CloseButton.bind('<Button-1>', lambda event: newWin.destroy())
         CloseButton.pack()

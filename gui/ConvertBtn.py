@@ -1,7 +1,7 @@
 import tkinter
 
 import cfg
-from utils import Converter, ShowText, ClipBrd
+from utils import copy, detectPath, display, paste, toMac, toWin
 
 
 class ConvertButton:
@@ -13,25 +13,32 @@ class ConvertButton:
             height=3, 
             width=16,
             text = 'Преобразовать', 
-            bg=cfg.BGButton,
-            fg=cfg.FontColor,
+            bg=cfg.BGBUTTON,
+            fg=cfg.FONTCOLOR,
             )
         convertButton.bind('<Button-1>', lambda event, button=convertButton: self.Run(button))
         convertButton.pack(side='right')
+        convertButton.bind('<Enter>', lambda e: self.enter(convertButton))
+        convertButton.bind('<Leave>', lambda e: self.leave(convertButton))
 
+    def enter(self, btn: tkinter.Label):
+        btn['bg'] = cfg.BGSELECTED
 
-    def Run(self, button):
-        button.configure(bg=cfg.bgPressed)
-        self.root.after(100, lambda: button.configure(bg=cfg.BGButton))
+    def leave(self, btn: tkinter.Label):
+        btn['bg'] = cfg.BGBUTTON
+
+    def Run(self, button: tkinter.Label):
+        button.configure(bg=cfg.BGPRESSED)
+        self.root.after(100, lambda: button.configure(bg=cfg.BGBUTTON))
         self.ConvertPath()
         
         
     def ConvertPath(self):
-        clipbrd = ClipBrd.paste()
-        detected = Converter.detectPath(clipbrd)
+        clipbrd = paste()
+        detected = detectPath(clipbrd)
         
         if detected == 'isWin':
-            converted = Converter.toMac(clipbrd)
+            converted = toMac(clipbrd)
             self.root.winfo_children()[-1].configure(text=converted)
             
             t1 = (
@@ -42,13 +49,13 @@ class ConvertButton:
                 '\n\nСкопировано в буфер обмена'
                 )
 
-            ShowText.display(self.root, t1)
-            ClipBrd.copy(converted)
+            display(self.root, t1)
+            copy(converted)
 
             return
 
         if detected == 'isMac':
-            converted = Converter.toWin(clipbrd)
+            converted = toWin(clipbrd)
             self.root.winfo_children()[-1].configure(text=converted)
             t2 = (
             'Обнаружен путь для Mac:'
@@ -58,8 +65,8 @@ class ConvertButton:
             '\n\nСкопировано в буфер обмена'
             )
 
-            ShowText.display(self.root, t2)
-            ClipBrd.copy(converted)
+            display(self.root, t2)
+            copy(converted)
             return
 
         if detected == 'isLocal':
@@ -69,7 +76,7 @@ class ConvertButton:
             f'\n{clipbrd}'
             '\nНажмите "Открыть"'
             )
-            ShowText.display(self.root, t3)
+            display(self.root, t3)
 
         if not detected:
-            ShowText.display(self.root, 'Скопируйте путь в буфер обмена')
+            display(self.root, 'Скопируйте путь в буфер обмена')

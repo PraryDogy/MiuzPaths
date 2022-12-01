@@ -1,6 +1,6 @@
 from tkinter import Frame, Tk
 
-from cfg import BGColor
+from cfg import BGCOLOR
 
 from .ConvertBtn import ConvertButton
 from .Displ import Display
@@ -18,9 +18,10 @@ class MainApp():
 
         # improve when deiconify not working by click to icon in Mac Os dock
         self.root.createcommand('tk::mac::ReopenApplication', self.root.deiconify)
-
+        self.root.protocol("WM_DELETE_WINDOW", lambda: self.root.withdraw())
+        
         self.root.title('MiuzPaths')
-        self.root.config(pady=10, padx=10, bg=BGColor,)
+        self.root.config(pady=10, padx=10, bg=BGCOLOR,)
 
         self.root.resizable(0,0)
 
@@ -29,7 +30,7 @@ class MainApp():
         # Structure: root > frame1(top): TextWidget for showing text & padding frame, frame2(bottom): Open path button, Convert Button
         f1 = Frame(
             self.root,
-            bg = BGColor,
+            bg = BGCOLOR,
             )
         f1.pack()
 
@@ -38,12 +39,12 @@ class MainApp():
         Frame(
             f1,
             height=10,
-            bg =BGColor,
+            bg =BGCOLOR,
             ).pack()
 
         f2 = Frame(
             self.root,
-            bg=BGColor,
+            bg=BGCOLOR,
             )
         f2.pack()
         
@@ -51,7 +52,7 @@ class MainApp():
         # this frame created for one side padding only (between buttons)
         Frame(
             f2,
-            bg=BGColor,
+            bg=BGCOLOR,
             width=20,
             ).pack(side='left')
         ConvertButton(f2, self.root)

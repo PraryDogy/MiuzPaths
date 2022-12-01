@@ -1,32 +1,39 @@
 from tkinter import Label
 
 import cfg
-from utils import Converter, Opener, ShowText, ClipBrd
-
+from utils import detectPath, display, paste, toMac, toWin, existsPath, open_path
+import tkinter
 
 class OpenButton():
     def __init__(self, frameForButtons, root):
         self.root = root
 
-        CloseButton = Label(frameForButtons, height=3, width=16, text = 'Открыть', bg=cfg.BGButton, fg=cfg.FontColor,)
+        CloseButton = Label(frameForButtons, height=3, width=16, text = 'Открыть', bg=cfg.BGBUTTON, fg=cfg.FONTCOLOR,)
         CloseButton.bind('<Button-1>', lambda event, button=CloseButton: self.Run(button))
         CloseButton.pack(side='left')
+        CloseButton.bind('<Enter>', lambda e: self.enter(CloseButton))
+        CloseButton.bind('<Leave>', lambda e: self.leave(CloseButton))
 
+    def enter(self, btn: tkinter.Label):
+        btn['bg'] = cfg.BGSELECTED
+
+    def leave(self, btn: tkinter.Label):
+        btn['bg'] = cfg.BGBUTTON
 
     def Run(self, button):
-        button.configure(bg=cfg.bgPressed)
-        self.root.after(100, lambda: button.configure(bg=cfg.BGButton))
+        button.configure(bg=cfg.BGPRESSED)
+        self.root.after(100, lambda: button.configure(bg=cfg.BGBUTTON))
         self.DetectPath()
         
         
     def DetectPath(self):
-        pasted = ClipBrd.paste()
-        detectedPath = Converter.detectPath(pasted)
+        pasted = paste()
+        detectedPath = detectPath(pasted)
 
         if detectedPath == 'isMac':
-            converted = Converter.toMac(Converter.toWin(pasted))
+            converted = toMac(toWin(pasted))
             if not converted:
-                ShowText.display(self.root, 'Скопируйте путь в буфер обмена')
+                display(self.root, 'Скопируйте путь в буфер обмена')
                 return
             
             lastPath = self.root.winfo_children()[-1].configure(text=converted)
@@ -34,9 +41,9 @@ class OpenButton():
             return
         
         if detectedPath == 'isWin':
-            converted = Converter.toMac(pasted)
+            converted = toMac(pasted)
             if not converted:
-                ShowText.display(self.root, 'Скопируйте путь в буфер обмена')
+                display(self.root, 'Скопируйте путь в буфер обмена')
                 return
             
             lastPath = self.root.winfo_children()[-1].configure(text=converted)
@@ -56,28 +63,28 @@ class OpenButton():
                 return
             
             else:
-                ShowText.display(self.root, f'Скопируйте путь в буфер обмена')
+                display(self.root, f'Скопируйте путь в буфер обмена')
                 return
 
     
     def OpenConverted(self, converted):
-        openPath = Opener.existsPath(converted)
+        openPath = existsPath(converted)
 
         if not openPath:
-            ShowText.display(self.root, 'Скопируйте путь в буфер обмена')
+            display(self.root, 'Скопируйте путь в буфер обмена')
             return
         
         if openPath['fullPath'] == openPath['shortPath']:
-            Opener.openPath(openPath['fullPath'])
+            open_path(openPath['fullPath'])
 
-            ShowText.display(self.root, (f'Открываю путь:\n\n{openPath["fullPath"]}'))
+            display(self.root, (f'Открываю путь:\n\n{openPath["fullPath"]}'))
             return
 
         if openPath['fullPath'] != openPath['shortPath']:
             error = openPath['fullPath'].replace(openPath['shortPath'], '')
-            Opener.openPath(openPath['shortPath'])
+            open_path(openPath['shortPath'])
 
-            ShowText.display(
+            display(
                 self.root, 
                 f'Возможно где-то здесь в пути есть ошибка:\n{error}\n\nОткрываю ближайший путь:\n{openPath["shortPath"]}'
                 )

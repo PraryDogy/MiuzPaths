@@ -1,5 +1,5 @@
 from tkinter import Text
-from cfg import FontColor, BGColor
+from cfg import FONTCOLOR, BGCOLOR
 
 
 class Display:
@@ -16,7 +16,7 @@ class Display:
             )
         lbl.insert('end',txt)
         lbl.configure(
-            fg=FontColor,
+            fg=FONTCOLOR,
             state='disabled',
             wrap='word',
             padx=15,
@@ -25,7 +25,7 @@ class Display:
             width=42,
             height=10,
             bg="#1A1A1A",
-            highlightbackground=BGColor,
+            highlightbackground=BGCOLOR,
             )
         
-        lbl.pack()        
+        lbl.pack()
