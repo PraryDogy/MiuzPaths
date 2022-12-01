@@ -1,6 +1,7 @@
 # for gui > menu > about
 # for setup.py
-version = '1.6.1'
+APP_NAME = 'MiuzPaths'
+APP_VER = '1.6.1'
 
 FONTCOLOR = "#E2E2E2"
 BGCOLOR = "#222222"

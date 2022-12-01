@@ -1,5 +1,5 @@
 from tkinter import Label, Menu, Toplevel
-from cfg import version, BGBUTTON, FONTCOLOR, BGCOLOR
+from cfg import APP_VER, BGBUTTON, FONTCOLOR, BGCOLOR
 
 
 class MenuGui:
@@ -24,7 +24,7 @@ class MenuGui:
         name = (
             'MiuzPaths {}'
             '\n\n'
-            ).format(version)
+            ).format(APP_VER)
         
         made = (
             'Created by Evgeny Loshkarev'
