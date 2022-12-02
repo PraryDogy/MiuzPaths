@@ -8,18 +8,15 @@ from .widgets import OpenButton, ConvertButton, Display
 
 class MainApp():
     def __init__(self):
-        '''
-        methods: Run
-        '''
         cfg.ROOT.createcommand(
             'tk::mac::ReopenApplication', cfg.ROOT.deiconify)
         cfg.ROOT.protocol("WM_DELETE_WINDOW", lambda: cfg.ROOT.withdraw())
         cfg.ROOT.bind('<Command-w>', lambda e: cfg.ROOT.withdraw())
         cfg.ROOT.title('MiuzPaths')
-        cfg.ROOT.config(pady=10, padx=10, bg=BGCOLOR,)
+        cfg.ROOT.config(pady=10, padx=10, bg=BGCOLOR)
         cfg.ROOT.resizable(0,0)
 
-        Display().pack(fill=tkinter.X)
+        Display().pack(fill=tkinter.BOTH, expand=1)
 
         buttons_frame = tkinter.Frame(cfg.ROOT, bg=BGCOLOR)
         buttons_frame.pack(pady=(15, 0))

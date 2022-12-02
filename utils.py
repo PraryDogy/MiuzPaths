@@ -125,3 +125,21 @@ def open_path(path_mac: str):
 
             except subprocess.CalledProcessError:
                 pass
+
+
+class CustomButton(tkinter.Label):
+    def __init__(self, master, **kw):
+        tkinter.Label.__init__(self, master, **kw)
+        self['bg'] = cfg.BGBUTTON
+        self.bind('<Enter>', lambda e: self.enter())
+        self.bind('<Leave>', lambda e: self.leave())
+
+    def enter(self):
+        self['bg'] = cfg.BGSELECTED
+
+    def leave(self):
+        self['bg'] = cfg.BGBUTTON
+
+    def press(self):
+        self['bg'] = cfg.BGPRESSED
+        cfg.ROOT.after(100, lambda: self.configure(bg=cfg.BGBUTTON))
