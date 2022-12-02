@@ -96,13 +96,6 @@ def existsPath(path_mac: str):
     return False
 
 
-# def openPath(path_mac: str):
-#     try:
-#         subprocess.check_output(["/usr/bin/open", path_mac])
-#     except Exception:
-#         print(traceback.format_exc())
-
-
 def open_path(path_mac: str):
     # OpenPath return dict ([dir], [is_full], [error]) and open path (mac os subprocess command)
     # if path is right, dict[is_full] = True
@@ -132,24 +125,3 @@ def open_path(path_mac: str):
 
             except subprocess.CalledProcessError:
                 pass
-
-
-def display(root: tkinter.Tk, text: str):
-    '''
-    Insert text in text widget
-    '''
-    # root > frame with text widget for showing text(top pack), frame with buttons: open, convert(bottom pack)
-    # get label with text from root
-    f1 = root.winfo_children()[0]
-    textbox = f1.winfo_children()[0]
-
-    # unlock textwidget
-    textbox.configure(state='normal')
-    
-    # remove prev and paste new text
-    textbox.delete('1.0', 'end')
-    textbox.insert('1.0', text)
-
-    # lock textwidget
-    textbox.configure(state='disabled')
-    
