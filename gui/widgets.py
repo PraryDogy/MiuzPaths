@@ -162,7 +162,7 @@ class OpenButton(tkinter.Label):
         if not openPath:
             old = widgets['display']['text']
             widgets['display']['text'] = 'Скопируйте путь в буфер обмена'
-            cfg.ROOT.after(2000, lambda: widgets['display'].configure(text=old))
+            cfg.ROOT.after(1000, lambda: widgets['display'].configure(text=old))
             return
         
         elif openPath['fullPath'] == openPath['shortPath']:
