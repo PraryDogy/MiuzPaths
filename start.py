@@ -1,5 +1,5 @@
-from gui import MainApp
+from gui import Main
 
-MainApp()
+Main()
 
 

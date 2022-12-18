@@ -1,1 +1,1 @@
-from .MainAp import MainApp
+from .main import Main
