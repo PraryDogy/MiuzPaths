@@ -17,26 +17,20 @@ def paste():
         'pbpaste', env={'LANG': 'en_US.UTF-8'}).decode('utf-8')
 
 
-def detectPath(from_clipboard: str):
-    '''
-    return 'isMac' if mac path to Miuz network (with 'Shares' or 'Marketing') folders\n
-    return 'isLocal' if local mac path\n
-    retutn 'isWin' if windows path\n
-    '''
+def is_win(clipboard: str):
     winRegex = r'\\(?:.+\\).{,10}'
-    if re.findall(winRegex, from_clipboard):
-        return 'isWin'
-    
-    macRegex = r'/(?:.+/).{,10}'
-    if re.findall(macRegex, from_clipboard):
-    
-        for word in ['shares', 'Shares', 'marketing', 'Marketing']:
-            if word in from_clipboard:
-                return 'isMac'
-        return 'isLocal'
-
+    if re.findall(winRegex, clipboard):
+        return True
     return False
 
+
+def is_mac(clipboard: str):
+    macRegex = r'/(?:.+/).{,10}'
+    if re.findall(macRegex, clipboard):
+        for word in ['shares', 'Shares', 'marketing', 'Marketing']:
+            if word in clipboard:
+                return True
+    return False
 
 def toWin(from_clipboard: str):
     tmp = from_clipboard.casefold().split('/')

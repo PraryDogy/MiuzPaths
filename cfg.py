@@ -14,6 +14,7 @@ BGDISPLAY = '#151515'
 
 
 IP = '192.168.10.105'
+NETWORK = '/Volumes/Shares/Marketing/'
 
 ROOT = tkinter.Tk()
 ROOT.withdraw()

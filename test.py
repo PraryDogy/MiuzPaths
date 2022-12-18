@@ -1,9 +1,15 @@
-a = 1
+import os
 
-if a == 1:
-    print('1')
 
-elif a > 0:
-    print('>0')
+import xattr
 
-print('3')
+
+direct = '/Volumes/Shares/Marketing/Photo/2022/12 - декабрь'
+
+
+from osxmetadata import OSXMetaData
+
+meta = OSXMetaData(direct)
+
+
+print(meta.)
