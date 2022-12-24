@@ -1,5 +1,5 @@
-from gui import Main
+from gui import InitGui
 
-Main()
+InitGui()
 
 
