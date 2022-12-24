@@ -18,3 +18,5 @@ NETWORK = '/Volumes/Shares/Marketing/'
 
 ROOT = tkinter.Tk()
 ROOT.withdraw()
+
+'test'
