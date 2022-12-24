@@ -1,7 +1,9 @@
 import tkinter
 
 import cfg
-from utils import paste, is_mac, is_win, exists_path, file_path
+from utils import (exists_path, is_mac, is_win, open_path, paste, remove_file,
+                   to_mac)
+
 display = tkinter.Label
 
 
@@ -36,36 +38,47 @@ class OpenBtn(CBtn):
     def open_path(self):
         self.press()
         input = paste()
-        print(input)
 
         if is_mac(input):
-            without_file = file_path(input)
-            exist_path = exists_path(without_file)
-
-            if exist_path == input:
-                print('open')
-
-            else:
-                print(input.replace(exist_path, ''))
+            input = remove_file(input)
+            exist_path = exists_path(input)
+            self.path_operations(exist_path, input)
 
         elif is_win(input):
-            print('is win')
-        
+            input = to_mac(input)
+            input = remove_file(input)
+            exist_path = exists_path(input)
+            self.path_operations(exist_path, input)
+
         else:
             old = display['text']
             display['text'] = 'Скопируйте путь в буфер обмена'
             cfg.ROOT.after(1500, lambda: display.configure(text=old))
 
+    def path_operations(self, exist_path: str, input: str):
+        if exist_path == input:
+            display['text'] = f'Открываю:\n{input}'
+            [display.configure(text='Неизвестная ошибка') if not open_path(input) else False]
+
+        else:
+            bad_path = input.replace(exist_path, '')
+            good_path = exist_path.replace(bad_path, '')
+            display['text'] = (
+                f'Где-то здесь есть ошибка:\n{bad_path}'
+                f'\n\nОткрываю:\n{good_path}')
+            [display.configure(text='Неизвестная ошибка') if not open_path(good_path) else False]
+            
 
 class ConvertBtn(CBtn):
     def __init__(self, master: tkinter):
         CBtn.__init__(self, master, text='Преобразовать')
         self['text'] = 'Преобр.'
+        self['state'] = tkinter.DISABLED
 
 
 class Display(tkinter.Label):
     def __init__(self, master: tkinter):
-        tkinter.Label.__init__(self, master, bg='black', fg=cfg.BGFONT)
+        tkinter.Label.__init__(self, master, bg='black', fg=cfg.BGFONT, padx=5)
         self['text'] = 'Miuz paths'
         global display
         display = self
