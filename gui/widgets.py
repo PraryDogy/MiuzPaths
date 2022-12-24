@@ -1,14 +1,14 @@
 import tkinter
 
 import cfg
-
+from utils import paste, is_mac, is_win, exists_path, file_path
 display = tkinter.Label
 
 
 class CBtn(tkinter.Label):
     def __init__(self, master: tkinter, **kwargs):
         tkinter.Label.__init__(
-            self, master, bg=cfg.BGBUTTON, fg=cfg.BGFONT, height=2)
+            self, master, bg=cfg.BGBUTTON, fg=cfg.BGFONT, height=3)
 
         self.bind('<Enter>', lambda e: self.enter())
         self.bind('<Leave>', lambda e: self.out())
@@ -35,7 +35,26 @@ class OpenBtn(CBtn):
 
     def open_path(self):
         self.press()
-        display['text'] = 'Открытие'
+        input = paste()
+        print(input)
+
+        if is_mac(input):
+            without_file = file_path(input)
+            exist_path = exists_path(without_file)
+
+            if exist_path == input:
+                print('open')
+
+            else:
+                print(input.replace(exist_path, ''))
+
+        elif is_win(input):
+            print('is win')
+        
+        else:
+            old = display['text']
+            display['text'] = 'Скопируйте путь в буфер обмена'
+            cfg.ROOT.after(1500, lambda: display.configure(text=old))
 
 
 class ConvertBtn(CBtn):
@@ -47,6 +66,6 @@ class ConvertBtn(CBtn):
 class Display(tkinter.Label):
     def __init__(self, master: tkinter):
         tkinter.Label.__init__(self, master, bg='black', fg=cfg.BGFONT)
-        self['text'] = 'hello'
+        self['text'] = 'Miuz paths'
         global display
         display = self

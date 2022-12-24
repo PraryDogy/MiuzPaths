@@ -27,12 +27,13 @@ def is_win(clipboard: str):
 def is_mac(clipboard: str):
     macRegex = r'/(?:.+/).{,10}'
     if re.findall(macRegex, clipboard):
-        for word in ['shares', 'Shares', 'marketing', 'Marketing']:
-            if word in clipboard:
-                return True
+        # for word in ['shares', 'Shares', 'marketing', 'Marketing']:
+            # if word in clipboard:
+        return True
     return False
 
-def toWin(from_clipboard: str):
+
+def to_win(from_clipboard: str):
     tmp = from_clipboard.casefold().split('/')
 
     if 'shares' in tmp:
@@ -48,7 +49,7 @@ def toWin(from_clipboard: str):
     return False
 
 
-def toMac(from_clipboard: str):
+def to_mac(from_clipboard: str):
     tmp = from_clipboard.casefold().split('\\')
 
     if 'shares' in tmp:
@@ -64,30 +65,18 @@ def toMac(from_clipboard: str):
     return False
 
 
-def existsPath(path_mac: str):
-    '''
-    {fullPath}, {shortPath}
-    '''
-    isFile = os.path.isfile(path_mac)
-    
-    if isFile:
-        listPath = path_mac.split('/')[:-1]
-    else:
-        listPath = path_mac.split('/')
-        
-    allPaths = list()
-    for i in reversed(range(1, len(listPath)+1)):
+def file_path(input):
+    if os.path.isfile(input):
+        return os.path.split(input)[0]
+    return input
 
-        shortPath = listPath[:i]
-        strPath = os.path.join('/', *shortPath)
-        allPaths.append(strPath)
-        
 
-    for i in allPaths:
-        if os.path.exists(i):
-            return {'fullPath': allPaths[0], 'shortPath': i}
-        
-    return False
+def exists_path(input):
+    while not os.path.exists(input):
+        input = os.path.split(input)[0]
+    return input
+
+
 
 
 def open_path(path_mac: str):

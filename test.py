@@ -1,15 +1,17 @@
 import os
 
-
-import xattr
-
-
-direct = '/Volumes/Shares/Marketing/Photo/2022/12 - декабрь'
+user_path = '/Users/Morkowik/Downloads/Файлы (1).zip'
 
 
-from osxmetadata import OSXMetaData
+def file_path(input):
+    if os.path.isfile(input):
+        return os.path.split(input)[0]
+    return False
 
-meta = OSXMetaData(direct)
+def exists_path(input):
+    while not os.path.exists(input):
+        input = os.path.split(input)[0]
+    return input
 
 
-print(meta.)
+print(file_path(user_path))

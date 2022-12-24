@@ -16,16 +16,16 @@ class InitGui():
         cfg.ROOT.title('MiuzPaths')
         cfg.ROOT.configure(bg=cfg.BGCOLOR)
         cfg.ROOT.geometry(f'{300}x{300}')
-        cfg.ROOT.resizable(0,0)
+        cfg.ROOT.resizable(1,1)
 
         Display(cfg.ROOT).pack(fill=tkinter.BOTH, expand=1)
 
         btns_frame = tkinter.Frame(cfg.ROOT, bg=cfg.BGCOLOR)
-        btns_frame.pack(fill=tkinter.X, pady=15, padx=15)
+        btns_frame.pack(fill=tkinter.X, pady=5, padx=5)
 
         OpenBtn(btns_frame).pack(side=tkinter.LEFT, fill=tkinter.X, expand=1)
         ConvertBtn(btns_frame).pack(
-            side=tkinter.RIGHT, fill=tkinter.X, expand=1, padx=(15, 0))
+            side=tkinter.RIGHT, fill=tkinter.X, expand=1, padx=(5, 0))
         
         Menu()
 
