@@ -50,6 +50,11 @@ class OpenBtn(CBtn):
             exist_path = exists_path(input)
             self.path_operations(exist_path, input)
 
+        elif cfg.config['LAST_PATH'] != '':
+            input = remove_file(cfg.config['LAST_PATH'])
+            exist_path = exists_path(input)
+            self.path_operations(exist_path, input)
+
         else:
             old = display['text']
             display['text'] = 'Скопируйте путь в буфер обмена'
@@ -57,12 +62,14 @@ class OpenBtn(CBtn):
 
     def path_operations(self, exist_path: str, input: str):
         if exist_path == input:
+            cfg.config['LAST_PATH'] = input
             display['text'] = f'Открываю:\n{input}'
             [display.configure(text='Неизвестная ошибка') if not open_path(input) else False]
 
         else:
             bad_path = input.replace(exist_path, '')
             good_path = exist_path.replace(bad_path, '')
+            cfg.config['LAST_PATH'] = good_path
             display['text'] = (
                 f'Где-то здесь есть ошибка:\n{bad_path}'
                 f'\n\nОткрываю:\n{good_path}')

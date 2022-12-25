@@ -36,7 +36,6 @@ class InitGui():
         cfg.ROOT.deiconify()
 
     def on_exit(self):
-        print('q')
         w, h = cfg.ROOT.winfo_width(), cfg.ROOT.winfo_height()
         x, y = cfg.ROOT.winfo_x(), cfg.ROOT.winfo_y()
         cfg.config['GEOMETRY'] = [w, h, x, y]

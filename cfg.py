@@ -31,6 +31,7 @@ def defaults():
     return {
         'APP_VER': APP_VER,
         'GEOMETRY': [700, 500, 0, 0],
+        'LAST_PATH': '',
         }
 
 def read_cfg(what_read: str):
