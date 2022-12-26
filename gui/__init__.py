@@ -21,7 +21,8 @@ class InitGui():
         w, h, x, y = cfg.config['GEOMETRY']
         cfg.ROOT.resizable(1,1)
 
-        Display(cfg.ROOT).pack(fill=tkinter.BOTH, expand=1, padx=5)
+        display_widget = Display(cfg.ROOT)
+        display_widget.pack(fill=tkinter.BOTH, expand=1, padx=5)
 
         btns_frame = tkinter.Frame(cfg.ROOT, bg=cfg.BGCOLOR)
         btns_frame.pack(fill=tkinter.X, pady=5, padx=5)

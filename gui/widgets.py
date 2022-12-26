@@ -2,7 +2,10 @@ import tkinter
 
 import cfg
 from utils import (exists_path, is_mac, is_win, open_path, paste, remove_file,
-                   to_mac)
+                   to_mac, to_win)
+import threading
+import textwrap
+
 
 display = tkinter.Label
 
@@ -36,40 +39,51 @@ class OpenBtn(CBtn):
         self.cmd(lambda e: self.open_path())
 
     def open_path(self):
+        t1 = threading.Thread(target=self.task)
+        t1.start()
+        while t1.is_alive():
+            cfg.ROOT.update()
+
+    def task(self):
+        try:
+            self.command()
+        except Exception:
+            display['text'] = 'Скопируйте путь в буфер обмена'
+            cfg.ROOT.after(1500, lambda: display.configure(text='MiuzPaths'))
+
+    def command(self):
         self.press()
         orig_path = remove_file(paste())
 
         if is_mac(orig_path):
-            print('ismac')
+            orig_path = to_win(orig_path)
+            orig_path = to_mac(orig_path)
+
             self.path_operations(orig_path)
             return
 
         elif is_win(orig_path):
-            print('iswin')
             orig_path = to_mac(orig_path)
             self.path_operations(orig_path)
             return
 
         elif cfg.config['LAST_PATH'] != '':
-            print('last path')
             self.path_operations(cfg.config['LAST_PATH'])
             return
 
         else:
-            print('no path')
             old = display['text']
             display['text'] = 'Скопируйте путь в буфер обмена'
             cfg.ROOT.after(1500, lambda: display.configure(text=old))
 
 
     def path_operations(self, orig_path: str):
+        orig_path = remove_file(orig_path)
         exist_path = exists_path(orig_path)
-
-        # print(exist_path)
-        # print(cfg.config['LAST_PATH'])
 
         if exist_path == cfg.config['LAST_PATH']:
             display['text'] = f'Открываю последний путь:\n{exist_path}'
+
             [display.configure(text='Неизвестная ошибка') if not open_path(exist_path) else False]
             return
 

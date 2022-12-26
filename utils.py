@@ -2,7 +2,7 @@ import os
 import re
 import subprocess
 import cfg
-
+import threading
 
 def copy(output: str):
     process = subprocess.Popen(
@@ -73,8 +73,12 @@ def remove_file(input):
 
 
 def exists_path(input):
+    if input[0] is not os.sep:
+        input = os.sep + input
+
     while not os.path.exists(input):
         input = os.path.split(input)[0]
+
     return input
 
 
