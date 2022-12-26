@@ -37,43 +37,55 @@ class OpenBtn(CBtn):
 
     def open_path(self):
         self.press()
-        input = paste()
+        orig_path = remove_file(paste())
 
-        if is_mac(input):
-            input = remove_file(input)
-            exist_path = exists_path(input)
-            self.path_operations(exist_path, input)
+        if is_mac(orig_path):
+            print('ismac')
+            self.path_operations(orig_path)
+            return
 
-        elif is_win(input):
-            input = to_mac(input)
-            input = remove_file(input)
-            exist_path = exists_path(input)
-            self.path_operations(exist_path, input)
+        elif is_win(orig_path):
+            print('iswin')
+            orig_path = to_mac(orig_path)
+            self.path_operations(orig_path)
+            return
 
         elif cfg.config['LAST_PATH'] != '':
-            input = remove_file(cfg.config['LAST_PATH'])
-            exist_path = exists_path(input)
-            self.path_operations(exist_path, input)
+            print('last path')
+            self.path_operations(cfg.config['LAST_PATH'])
+            return
 
         else:
+            print('no path')
             old = display['text']
             display['text'] = 'Скопируйте путь в буфер обмена'
             cfg.ROOT.after(1500, lambda: display.configure(text=old))
 
-    def path_operations(self, exist_path: str, input: str):
-        if exist_path == input:
-            cfg.config['LAST_PATH'] = input
-            display['text'] = f'Открываю:\n{input}'
-            [display.configure(text='Неизвестная ошибка') if not open_path(input) else False]
+
+    def path_operations(self, orig_path: str):
+        exist_path = exists_path(orig_path)
+
+        # print(exist_path)
+        # print(cfg.config['LAST_PATH'])
+
+        if exist_path == cfg.config['LAST_PATH']:
+            display['text'] = f'Открываю последний путь:\n{exist_path}'
+            [display.configure(text='Неизвестная ошибка') if not open_path(exist_path) else False]
+            return
+
+        elif exist_path == orig_path:
+            cfg.config['LAST_PATH'] = exist_path
+            display['text'] = f'Открываю:\n{orig_path}'
+            [display.configure(text='Неизвестная ошибка') if not open_path(exist_path) else False]
+            return
 
         else:
-            bad_path = input.replace(exist_path, '')
-            good_path = exist_path.replace(bad_path, '')
-            cfg.config['LAST_PATH'] = good_path
+            bad_path = orig_path.replace(exist_path, '')
+            cfg.config['LAST_PATH'] = exist_path
             display['text'] = (
                 f'Где-то здесь есть ошибка:\n{bad_path}'
-                f'\n\nОткрываю:\n{good_path}')
-            [display.configure(text='Неизвестная ошибка') if not open_path(good_path) else False]
+                f'\n\nОткрываю:\n{exist_path}')
+            [display.configure(text='Неизвестная ошибка') if not open_path(exist_path) else False]
             
 
 class ConvertBtn(CBtn):

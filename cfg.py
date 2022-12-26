@@ -6,7 +6,7 @@ from utils import encrypt_cfg
 import shutil
 
 APP_NAME = 'MiuzPaths'
-APP_VER = '1.6.2'
+APP_VER = '1.7.0'
 
 KEY = 'bNv711lJcHurusZBkBNhfZIX0yNFNFJ-HzpE3g_ifUM='
 

@@ -39,8 +39,11 @@ def is_win(clipboard: str):
 def is_mac(clipboard: str):
     macRegex = r'/(?:.+/).{,10}'
     if re.findall(macRegex, clipboard):
-        # for word in ['shares', 'Shares', 'marketing', 'Marketing']:
-            # if word in clipboard:
+
+        link_regex = r'http://|https://'
+        if re.findall(link_regex, clipboard):
+            return False
+
         return True
     return False
 
