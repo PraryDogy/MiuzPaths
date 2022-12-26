@@ -2,20 +2,6 @@ import os
 import re
 import subprocess
 import cfg
-from cryptography.fernet import Fernet
-import json
-
-
-def encrypt_cfg(data: dict):
-    """
-    Converts dict with json dumps and enctypt converted with fernet module.
-    Writes enctypted data to `cfg.json` in `cfg.CFG_DIR`
-    *param `data`: python dict
-    """
-    key = Fernet(cfg.KEY)
-    encrypted = key.encrypt(json.dumps(data).encode("utf-8"))
-    with open(os.path.join(cfg.CFG_DIR, 'cfg'), 'wb') as file:
-        file.write(encrypted)
 
 
 def copy(output: str):

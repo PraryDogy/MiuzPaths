@@ -1,7 +1,6 @@
 import tkinter
 
 import cfg
-from utils import encrypt_cfg
 
 from .macosx_menu import Menu
 from .widgets import ConvertBtn, Display, OpenBtn
@@ -40,5 +39,5 @@ class InitGui():
         x, y = cfg.ROOT.winfo_x(), cfg.ROOT.winfo_y()
         cfg.config['GEOMETRY'] = [w, h, x, y]
 
-        encrypt_cfg(cfg.config)
+        cfg.encrypt_cfg(cfg.config)
         quit()

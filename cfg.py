@@ -1,9 +1,9 @@
 import tkinter
 import os
-from cryptography.fernet import Fernet, InvalidToken
+import cffi
+from cryptography.fernet import Fernet
 import json
-from utils import encrypt_cfg
-import shutil
+
 
 APP_NAME = 'MiuzPaths'
 APP_VER = '1.7.0'
@@ -11,7 +11,7 @@ APP_VER = '1.7.0'
 KEY = 'bNv711lJcHurusZBkBNhfZIX0yNFNFJ-HzpE3g_ifUM='
 
 CFG_DIR = os.path.join(
-    os.path.expanduser('~'), 'Library/Application Support/MiuzPaths')
+    os.path.expanduser('~'), f'Library/Application Support/{APP_NAME}')
 
 IP = '192.168.10.105'
 NETWORK = '/Volumes/Shares/Marketing/'
@@ -34,6 +34,19 @@ def defaults():
         'LAST_PATH': '',
         }
 
+
+def encrypt_cfg(data: dict):
+    """
+    Converts dict with json dumps and enctypt converted with fernet module.
+    Writes enctypted data to `cfg.json` in `cfg.CFG_DIR`
+    *param `data`: python dict
+    """
+    key = Fernet(KEY)
+    encrypted = key.encrypt(json.dumps(data).encode("utf-8"))
+    with open(os.path.join(CFG_DIR, 'cfg'), 'wb') as file:
+        file.write(encrypted)
+
+
 def read_cfg(what_read: str):
     """
     Decrypts `cfg.json` from `cfg.CFG_DIR` and returns dict.
@@ -41,13 +54,7 @@ def read_cfg(what_read: str):
     key = Fernet(KEY)
     with open(what_read, 'rb') as file:
         data = file.read()
-    try:
         return json.loads(key.decrypt(data).decode("utf-8"))
-    except InvalidToken:
-        config = defaults()
-        encrypt_cfg(config)
-        return config
-
 
 if not os.path.exists(CFG_DIR):
     os.mkdir(CFG_DIR)
