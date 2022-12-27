@@ -48,6 +48,7 @@ class OpenBtn(CBtn):
         try:
             self.command()
         except Exception:
+            display['anchor'] = tkinter.CENTER
             display['text'] = 'Скопируйте путь в буфер обмена'
             cfg.ROOT.after(1500, lambda: display.configure(text='MiuzPaths'))
 
@@ -72,6 +73,7 @@ class OpenBtn(CBtn):
             return
 
         else:
+            display['anchor'] = tkinter.CENTER
             old = display['text']
             display['text'] = 'Скопируйте путь в буфер обмена'
             cfg.ROOT.after(1500, lambda: display.configure(text=old))
@@ -82,12 +84,14 @@ class OpenBtn(CBtn):
         exist_path = exists_path(orig_path)
 
         if exist_path == cfg.config['LAST_PATH']:
+            display['anchor'] = tkinter.W
             display['text'] = f'Открываю последний путь:\n{exist_path}'
 
             [display.configure(text='Неизвестная ошибка') if not open_path(exist_path) else False]
             return
 
         elif exist_path == orig_path:
+            display['anchor'] = tkinter.W
             cfg.config['LAST_PATH'] = exist_path
             display['text'] = f'Открываю:\n{orig_path}'
             [display.configure(text='Неизвестная ошибка') if not open_path(exist_path) else False]
@@ -95,6 +99,7 @@ class OpenBtn(CBtn):
 
         else:
             bad_path = orig_path.replace(exist_path, '')
+            display['anchor'] = tkinter.W
             cfg.config['LAST_PATH'] = exist_path
             display['text'] = (
                 f'Где-то здесь есть ошибка:\n{bad_path}'
@@ -111,7 +116,7 @@ class ConvertBtn(CBtn):
 
 class Display(tkinter.Label):
     def __init__(self, master: tkinter):
-        tkinter.Label.__init__(self, master, bg='black', fg=cfg.BGFONT, padx=5, justify=tkinter.LEFT)
+        tkinter.Label.__init__(self, master, bg='black', fg=cfg.BGFONT, padx=10, justify=tkinter.LEFT)
         self['text'] = 'Miuz paths'
         global display
         display = self
