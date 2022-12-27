@@ -111,7 +111,21 @@ class ConvertBtn(CBtn):
 
 class Display(tkinter.Label):
     def __init__(self, master: tkinter):
-        tkinter.Label.__init__(self, master, bg='black', fg=cfg.BGFONT, padx=5)
+        tkinter.Label.__init__(self, master, bg='black', fg=cfg.BGFONT, padx=5, justify=tkinter.LEFT)
         self['text'] = 'Miuz paths'
         global display
         display = self
+
+        cfg.ROOT.bind('<ButtonRelease-1>', self.resize)
+
+    def set_wraplength(self):
+        cfg.ROOT.update_idletasks()
+        w = cfg.config['GEOMETRY'][0]
+        self['wraplength'] = w-20
+    
+    def resize(self, e: tkinter.Event):
+        w = cfg.ROOT.winfo_width()
+        
+        if w != cfg.config['GEOMETRY'][0]:
+            cfg.config['GEOMETRY'][0] = w
+            self.set_wraplength()
