@@ -29,8 +29,8 @@ class InitGui():
         btns_frame.pack(fill=tkinter.X, pady=5, padx=5)
 
         OpenBtn(btns_frame).pack(side=tkinter.LEFT, fill=tkinter.X, expand=1)
-        ConvertBtn(btns_frame).pack(
-            side=tkinter.RIGHT, fill=tkinter.X, expand=1, padx=(5, 0))
+        # ConvertBtn(btns_frame).pack(
+            # side=tkinter.RIGHT, fill=tkinter.X, expand=1, padx=(5, 0))
         
         Menu()
         cfg.ROOT.geometry(f'{w}x{h}+{x}+{y}')

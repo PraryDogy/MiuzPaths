@@ -35,6 +35,7 @@ class CBtn(tkinter.Label):
 class OpenBtn(CBtn):
     def __init__(self, master: tkinter):
         CBtn.__init__(self, master)
+        self['width'] = 10
         self['text'] = 'Открыть'
         self.cmd(lambda e: self.open_path())
 
