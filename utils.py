@@ -4,11 +4,6 @@ import subprocess
 import cfg
 import threading
 
-def copy(output: str):
-    process = subprocess.Popen(
-        'pbcopy', env={'LANG': 'en_US.UTF-8'}, stdin=subprocess.PIPE)
-    process.communicate(output.encode('utf-8'))
-
 
 def paste():
     return subprocess.check_output(
@@ -47,7 +42,8 @@ def to_win(from_clipboard: str):
         splited = from_clipboard.split('/')[marketingIndex:]
         return '\\'.join(['smb:']+[cfg.IP]+['Shares']+splited)
 
-    return False
+    else:
+        return from_clipboard
 
 
 def to_mac(from_clipboard: str):
@@ -63,13 +59,8 @@ def to_mac(from_clipboard: str):
         pathList = from_clipboard.split('\\')[marketingIndex:]
         return os.path.join(os.path.sep, 'Volumes', 'Shares', *pathList)
     
-    return False
-
-
-def remove_file(input):
-    if os.path.isfile(input):
-        return os.path.split(input)[0]
-    return input
+    else:
+        return from_clipboard
 
 
 def exists_path(input):
@@ -81,10 +72,28 @@ def exists_path(input):
 
     return input
 
-
-def open_path(path_mac: str):
+def open_dir(path_mac: str):
     try:
         subprocess.check_output(["/usr/bin/open", path_mac])
         return True
     except subprocess.CalledProcessError:
         return False
+
+
+def open_file(path: str):
+    path = f"\"{path}\" as POSIX file"
+
+    args = (
+        "-e", "tell application \"Finder\"",
+        "-e", f"reveal {{{path}}}",
+        "-e", "activate",
+        "-e", "end tell",
+        )
+
+    subprocess.call(["osascript", *args])
+
+def reveal(path):
+    if os.path.isfile(path):
+        open_file(path)
+    else:
+        open_dir(path)

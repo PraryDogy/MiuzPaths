@@ -25,3 +25,5 @@ except Exception as ee:
 
     with open(os.path.join(CFG_DIR, 'err.txt'), 'w') as err_file:
         print(data, file=err_file)
+
+    print(data)
