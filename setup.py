@@ -12,13 +12,13 @@ import cfg
 import icnsutil
 
 
-src = './icon.png'
+src = 'icon.png'
 img = icnsutil.IcnsFile()
 img.add_media(file=src)
-img.write(f'./icon.icns')
-
+img.write(f'icon.icns')
 
 APP = ['start.py']
+
 DATA_FILES = []
 
 OPTIONS = {
@@ -30,32 +30,29 @@ OPTIONS = {
     'CFBundleIdentifier':f'com.evlosh.{cfg.APP_NAME}',
     'NSHumanReadableCopyright': (
         'Created by Evgeny Loshkarev'
-        '\nCopyright © 2022 MIUZ Diamonds. All rights reserved.')
+        '\nCopyright © 2023 MIUZ Diamonds. All rights reserved.')
     }
     }
 
 setup(
-    app=APP,
-    name=cfg.APP_NAME,
-    data_files=DATA_FILES,
-    options={'py2app': OPTIONS},
-    setup_requires=['py2app'],
-    install_requires=['cryptography']
+    app = APP,
+    name = cfg.APP_NAME,
+    data_files = DATA_FILES,
+    options = {'py2app': OPTIONS},
+    setup_requires = ['py2app'],
+    install_requires = ['cryptography']
     )
 
+shutil.copytree(
+    "lib",
+    f"dist/{cfg.APP_NAME}.app/Contents/lib"
+    )
 
-parent = os.path.dirname(__file__)
-LIB = '/Users/Loshkarev/Documents/Разное/Projects/files/lib'
-pasteHere = os.path.join(os.path.dirname(__file__), 'dist',
-                        f'{cfg.APP_NAME}.app', 'Contents', 'lib')
+shutil.move(
+    f"dist/{cfg.APP_NAME}.app",
+    os.path.expanduser(f"~/Desktop/{cfg.APP_NAME}.app")
+    )
 
-shutil.copytree(LIB, pasteHere)
-
-file = os.path.join(parent, 'dist', f'{cfg.APP_NAME}.app')
-desktop = os.path.join(
-    os.path.join(os.path.expanduser('~')), 'Desktop', f'{cfg.APP_NAME}.app')
-shutil.move(file, desktop)
-
-shutil.rmtree(os.path.join(parent, 'build'))
-shutil.rmtree(os.path.join(parent, '.eggs'))
-shutil.rmtree(os.path.join(parent, 'dist'))
+shutil.rmtree('build')
+shutil.rmtree('.eggs')
+shutil.rmtree('dist')
