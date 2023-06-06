@@ -34,7 +34,7 @@ class OpenBtn(CBtn):
             
     def task(self):
         self.press()
-        path = paste()
+        path = paste().lstrip().strip("\n")
 
         if is_win(path):
             path = to_mac(path)
@@ -42,6 +42,7 @@ class OpenBtn(CBtn):
         elif is_mac(path):
             path = to_win(path)
             path = to_mac(path)
-            
+        print(path)
         exist = exists_path(path)
+        print(exist)
         reveal(exist)
