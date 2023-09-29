@@ -8,15 +8,12 @@ import subprocess
 
 class InitGui():
     def __init__(self):
-        # cfg.ROOT.createcommand(
-            # 'tk::mac::ReopenApplication', cfg.ROOT.deiconify)
-
-        cfg.ROOT.createcommand("tk::mac::Quit" , self.on_exit)
-
-        cfg.ROOT.protocol("WM_DELETE_WINDOW", self.minim)
         cfg.ROOT.bind('<Command-w>', lambda e: self.minim)
 
-        cfg.ROOT.title('MiuzPaths')
+        cfg.ROOT.createcommand("tk::mac::Quit" , quit)
+        cfg.ROOT.protocol("WM_DELETE_WINDOW", self.minim)
+
+        cfg.ROOT.title(cfg.APP_NAME)
         cfg.ROOT.configure(bg=cfg.BGCOLOR)
         cfg.ROOT.geometry("300x200")
 
@@ -31,18 +28,23 @@ class InitGui():
         OpenBtn(cfg.ROOT).pack(padx=15, pady=15, fill="x")
         
         cfg.ROOT.eval('tk::PlaceWindow . center')
-        cfg.ROOT.deiconify()
-
-    def on_exit(self, e=None):
-        quit()
+        cfg.ROOT.wm_deiconify()
 
     def minim(self, e=None):
+        applescript = f"""
+            set appName to "{cfg.APP_NAME}"
+            tell application "System Events"
+                if visible of application process appName is true then
+                    set visible of application process appName to false
+                else
+                    set visible of application process appName to true
+                end if
+            end tell
+            """
 
-        args = (
-            "-e", f"set tApp to \"{cfg.APP_NAME}\"",
-            "-e", "tell application tApp to activate",
-            "-e", "tell application \"System Events\" to "
-            "tell process tApp to keystroke \"h\" using command down"
-            )
-            # "set visible of process tApp to false",
-        subprocess.call(["osascript", *args])
+        args = [
+            item
+            for x in [("-e",l.strip())
+            for l in applescript.split('\n')
+            if l.strip() != ''] for item in x]
+        subprocess.call(["osascript"] + args)
