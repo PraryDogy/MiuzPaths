@@ -42,7 +42,6 @@ class OpenBtn(CBtn):
         elif is_mac(path):
             path = to_win(path)
             path = to_mac(path)
-        print(path)
+
         exist = exists_path(path)
-        print(exist)
         reveal(exist)
