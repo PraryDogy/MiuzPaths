@@ -51,25 +51,27 @@ class OpenBtn:
 
         self.btn = CBtn(master)
         self.btn.configure(height=4, text="Открыть")
-        self.btn.cmd(lambda e: self.open_path())
+        self.btn.cmd(lambda e: self.btn_cmd())
         self.btn.pack(fill=tkinter.X, pady=(10, 0))
 
         self.first_load = True
 
-    def open_path(self):
+    def btn_cmd(self):
         self.btn.press()
-        path = paste().lstrip().strip("\n")
+        self.run_task(paste().lstrip().strip("\n"))
 
-        t1 = threading.Thread(target=lambda: self.task(path))
+    def history_cmd(self, e: tkinter.Event):
+        e.widget.configure(bg=cfg.BGPRESSED)
+        cfg.ROOT.after(100, lambda: e.widget.configure(bg=cfg.BGDISP))
+        self.run_task(e.widget["text"])
+
+    def run_task(self, path):
+        t1 = threading.Thread(target=lambda: self.open_path(path))
         t1.start()
         while t1.is_alive():
             cfg.ROOT.update()
-            
-    def task(self, path, e=None):
-        if e:
-            path = e.widget["text"]
-            e.widget.configure(bg=cfg.BGDISP)
 
+    def open_path(self, path):
         if is_win(path):
             path = to_mac(path)
 
@@ -83,13 +85,6 @@ class OpenBtn:
         if exist not in paths:
             paths.append(exist)
             self.add_label(exist)
-
-    def ent(self, e=tkinter.Event):
-        e.widget.configure(bg=cfg.BGSELECTED)
-
-    def out(self, e=tkinter.Event):
-        e.widget.configure(bg=cfg.BGDISP)
-
 
     def add_label(self, path):
         if self.first_load:
@@ -112,6 +107,6 @@ class OpenBtn:
             padx=5
             )
         lbl.pack(anchor=tkinter.W, fill=tkinter.X, side="top")
-        lbl.bind('<ButtonRelease-1>', lambda e: self.task(None, e))
-        lbl.bind("<Enter>", self.ent)
-        lbl.bind("<Leave>", self.out)
+        lbl.bind('<ButtonRelease-1>', self.history_cmd)
+
+        lbl.lift()
