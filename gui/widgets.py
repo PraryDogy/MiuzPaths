@@ -83,7 +83,7 @@ class OpenBtn:
         reveal(exist)
 
         if exist not in paths:
-            paths.append(exist)
+            paths.insert(0, exist)
             self.add_label(exist)
 
     def add_label(self, path):
@@ -92,7 +92,7 @@ class OpenBtn:
             self.first_load = False
 
         if len(paths) > 20:
-            paths.pop(0)
+            paths.pop(-1)
             self.disp.winfo_children()[0].destroy()
 
         lbl = tkinter.Label(
@@ -106,7 +106,10 @@ class OpenBtn:
             pady=10,
             padx=5
             )
-        lbl.pack(anchor=tkinter.W, fill=tkinter.X, side="top")
         lbl.bind('<ButtonRelease-1>', self.history_cmd)
 
-        lbl.lift()
+        widgets = self.disp.winfo_children()[::-1]
+
+        for i in widgets:
+            i.pack_forget()
+            i.pack(anchor=tkinter.W, fill=tkinter.X)
