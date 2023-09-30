@@ -35,7 +35,7 @@ class OpenBtn:
         self.disp = tkmacosx.SFrame(
             master,
             background=cfg.BGDISP,
-            scrollbarwidth=1,
+            scrollbarwidth=3,
             )
         self.disp.pack(pady=(10, 0), fill=tkinter.BOTH, expand=True)
 
