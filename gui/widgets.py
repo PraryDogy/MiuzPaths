@@ -36,18 +36,20 @@ class OpenBtn:
             master,
             background=cfg.BGDISP,
             scrollbarwidth=1,
-            
             )
         self.disp.pack(pady=(10, 0), fill=tkinter.BOTH, expand=True)
 
         lbl = tkinter.Label(
             self.disp,
             text="Скопируйте путь в буфер обмена",
-            anchor=tkinter.W,
             bg=cfg.BGDISP,
             fg=cfg.BGFONT,
+            anchor=tkinter.W,
+            justify=tkinter.LEFT,
+            pady=10,
+            padx=5
             )
-        lbl.pack(pady=5, padx=5)
+        lbl.pack(anchor=tkinter.W)
 
         self.btn = CBtn(master)
         self.btn.configure(height=4, text="Открыть")
@@ -63,7 +65,7 @@ class OpenBtn:
     def history_cmd(self, e: tkinter.Event):
         e.widget.configure(bg=cfg.BGPRESSED)
         cfg.ROOT.after(100, lambda: e.widget.configure(bg=cfg.BGDISP))
-        self.run_task(e.widget["text"])
+        self.run_task(e.widget.path)
 
     def run_task(self, path):
         t1 = threading.Thread(target=lambda: self.open_path(path))
@@ -98,18 +100,24 @@ class OpenBtn:
         lbl = tkinter.Label(
             self.disp,
             text=path,
-            anchor=tkinter.W,
-            justify=tkinter.LEFT,
             bg=cfg.BGDISP,
             fg=cfg.BGFONT,
-            wraplength=500,
+            anchor=tkinter.W,
+            justify=tkinter.LEFT,
             pady=10,
             padx=5
             )
+
+        lbl.path = path
         lbl.bind('<ButtonRelease-1>', self.history_cmd)
+
+        lbl.bind(
+            '<Configure>',
+            lambda e: lbl.config(wraplength=self.disp.winfo_width())
+            )
 
         widgets = self.disp.winfo_children()[::-1]
 
         for i in widgets:
             i.pack_forget()
-            i.pack(anchor=tkinter.W, fill=tkinter.X)
+            i.pack(anchor=tkinter.W, fill=tkinter.X, padx=(0, 5))
