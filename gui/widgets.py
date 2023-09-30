@@ -28,7 +28,7 @@ class OpenBtn:
             master,
             bg=cfg.BGCOLOR,
             fg=cfg.BGFONT,
-            text="Последние 20",
+            text="Последние 20:",
             )
         hist.pack(anchor=tkinter.W)
 
