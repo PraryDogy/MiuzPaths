@@ -64,13 +64,17 @@ def to_mac(from_clipboard: str):
 
 
 def exists_path(input):
-    if input[0] is not os.sep:
-        input = os.sep + input
+    try:
+        if input[0] is not os.sep:
+            input = os.sep + input
+    except IndexError:
+        input = "/"
 
     while not os.path.exists(input):
         input = os.path.split(input)[0]
 
     return input
+
 
 def open_dir(path_mac: str):
     try:
@@ -91,6 +95,7 @@ def open_file(path: str):
         )
 
     subprocess.call(["osascript", *args])
+
 
 def reveal(path):
     if os.path.isfile(path):

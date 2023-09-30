@@ -14,18 +14,10 @@ class InitGui():
         cfg.ROOT.protocol("WM_DELETE_WINDOW", self.minim)
 
         cfg.ROOT.title(cfg.APP_NAME)
-        cfg.ROOT.configure(bg=cfg.BGCOLOR)
-        cfg.ROOT.geometry("300x200")
+        cfg.ROOT.configure(bg=cfg.BGCOLOR, padx=10, pady=10)
+        cfg.ROOT.minsize(360, 400)
 
-        cfg.ROOT.resizable(0, 0)
-
-        t = (
-            "Скопируйте путь в буфер обмена."
-            )
-        l = tkinter.Label(cfg.ROOT, bg=cfg.BGCOLOR, text=t, fg=cfg.BGFONT)
-        l.pack(fill="x", expand=True)
-
-        OpenBtn(cfg.ROOT).pack(padx=15, pady=15, fill="x")
+        OpenBtn(cfg.ROOT)
         
         cfg.ROOT.eval('tk::PlaceWindow . center')
         cfg.ROOT.wm_deiconify()
