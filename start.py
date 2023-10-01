@@ -8,11 +8,15 @@ try:
     cfg.ROOT.after(1, InitGui)
     cfg.ROOT.mainloop()
 
+
 except Exception as ee:
 
     APP_NAME = 'MiuzPaths'
     CFG_DIR = os.path.join(
         os.path.expanduser('~'), f'Library/Application Support/{APP_NAME}')
+
+    if not os.path.exists(CFG_DIR):
+        os.mkdir(CFG_DIR)
 
     if not os.path.exists(os.path.join(CFG_DIR, 'err.txt')):
         with open(os.path.join(CFG_DIR, 'err.txt'), 'w') as err_file:

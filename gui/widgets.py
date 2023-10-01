@@ -4,7 +4,7 @@ import tkinter
 import tkmacosx
 
 import cfg
-from utils import exists_path, is_mac, is_win, paste, reveal, to_mac, to_win
+from utils import exists_path, paste, reveal, detect_path
 
 paths = []
 
@@ -68,25 +68,24 @@ class OpenBtn:
         self.run_task(e.widget.path)
 
     def run_task(self, path):
-        t1 = threading.Thread(target=lambda: self.open_path(path))
+        t1 = threading.Thread(target=lambda: self.open_path(path), daemon=True)
         t1.start()
         while t1.is_alive():
             cfg.ROOT.update()
 
-    def open_path(self, path):
-        if is_win(path):
-            path = to_mac(path)
+    def open_path(self, path: str):
+        path = "/" + path.strip().strip("/")
+        path = detect_path(path)
 
-        elif is_mac(path):
-            path = to_win(path)
-            path = to_mac(path)
+        if path:
+            path = exists_path(path)
+       
+            if path == "/":
+                return
 
-        exist = exists_path(path)
-        reveal(exist)
-
-        if exist not in paths:
-            paths.insert(0, exist)
-            self.add_label(exist)
+            if reveal(path) and path not in paths:
+                paths.insert(0, path)
+                self.add_label(path)
 
     def add_label(self, path):
         if self.first_load:

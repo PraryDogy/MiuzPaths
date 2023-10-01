@@ -40,13 +40,18 @@ setup(
     data_files = DATA_FILES,
     options = {'py2app': OPTIONS},
     setup_requires = ['py2app'],
-    install_requires = ['cryptography']
+    install_requires = ['tkmacosx']
     )
 
-shutil.copytree(
-    "lib",
-    f"dist/{cfg.APP_NAME}.app/Contents/lib"
-    )
+ver = "3.11"
+lib_src = f"/Library/Frameworks/Python.framework/Versions/{ver}/lib"
+folders = "tcl8", "tcl8.6", "tk8.6"
+
+for i in folders:
+    shutil.copytree(
+        os.path.join(lib_src, i),
+        os.path.join(f"dist/{cfg.APP_NAME}.app/Contents/lib", i)
+        )
 
 shutil.move(
     f"dist/{cfg.APP_NAME}.app",

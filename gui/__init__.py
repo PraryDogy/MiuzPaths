@@ -9,9 +9,10 @@ import subprocess
 class InitGui():
     def __init__(self):
         cfg.ROOT.bind('<Command-w>', lambda e: self.minim)
-
-        cfg.ROOT.createcommand("tk::mac::Quit" , quit)
         cfg.ROOT.protocol("WM_DELETE_WINDOW", self.minim)
+        cfg.ROOT.createcommand('tk::mac::ReopenApplication', cfg.ROOT.deiconify)
+        cfg.ROOT.createcommand("tk::mac::Quit" , exit)
+
 
         cfg.ROOT.title(cfg.APP_NAME)
         cfg.ROOT.configure(bg=cfg.BGCOLOR, padx=10, pady=10)
