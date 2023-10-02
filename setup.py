@@ -50,6 +50,9 @@ for i in folders:
         os.path.join(f"dist/{cfg.APP_NAME}.app/Contents/lib", i)
         )
 
+# shutil.copytree("lib", f"dist/{cfg.APP_NAME}.app/Contents/lib")
+
+
 shutil.move(
     f"dist/{cfg.APP_NAME}.app",
     os.path.expanduser(f"~/Desktop/{cfg.APP_NAME}.app")
