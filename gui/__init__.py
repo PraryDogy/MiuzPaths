@@ -10,7 +10,7 @@ class InitGui():
     def __init__(self):
         cfg.ROOT.bind('<Command-w>', lambda e: self.minim)
         cfg.ROOT.protocol("WM_DELETE_WINDOW", self.minim)
-        cfg.ROOT.createcommand('tk::mac::ReopenApplication', cfg.ROOT.deiconify)
+        # cfg.ROOT.createcommand('tk::mac::ReopenApplication', cfg.ROOT.deiconify)
         cfg.ROOT.createcommand("tk::mac::Quit" , exit)
 
 
