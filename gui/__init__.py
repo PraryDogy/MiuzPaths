@@ -1,9 +1,7 @@
-import tkinter
-
 import cfg
+from utils import run_applescript
 
 from .widgets import OpenBtn
-import subprocess
 
 
 class InitGui():
@@ -35,9 +33,4 @@ class InitGui():
             end tell
             """
 
-        args = [
-            item
-            for x in [("-e",l.strip())
-            for l in applescript.split('\n')
-            if l.strip() != ''] for item in x]
-        subprocess.call(["osascript"] + args)
+        run_applescript(applescript)

@@ -1,12 +1,13 @@
-import shutil
-import os
+smb = "smb://192.168.10.105/Shares/Marketing/Photo/2023/MUIZ paper bg.psd"
+path = "/Users/Loshkarev/Downloads/2022_MIUZ_Premium11576_1 1x1.jpg"
 
-ver = "3.11"
-lib_src = f"/Library/Frameworks/Python.framework/Versions/{ver}/lib"
-folders = "tcl8", "tcl8.6", "tk8.6"
+script = f"""
+        set thePath to POSIX file "{path}"
+        tell application "Finder" to reveal thePath
+        tell application "Finder" to activate
+        """
 
-for i in folders:
-    shutil.copytree(
-        os.path.join(lib_src, i),
-        os.path.join("/Users/evlosh/Desktop", i)
-        )
+
+from utils import run_applescript
+
+run_applescript(script)
