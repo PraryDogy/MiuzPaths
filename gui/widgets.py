@@ -4,7 +4,8 @@ import tkinter
 import tkmacosx
 
 import cfg
-from utils import exists_path, paste, reveal, detect_path
+from utils import (create_applescript, exists_path, normalize_path, paste,
+                   run_applescript)
 
 paths = []
 
@@ -22,7 +23,7 @@ class CBtn(tkinter.Label):
         self.bind('<ButtonRelease-1>', cmd)
 
 
-class OpenBtn:
+class Widgets:
     def __init__(self, master: tkinter):
         hist = tkinter.Label(
             master,
@@ -68,22 +69,23 @@ class OpenBtn:
         self.run_task(e.widget.path)
 
     def run_task(self, path):
-        t1 = threading.Thread(target=lambda: self.open_path(path), daemon=True)
+        t1 = threading.Thread(target=lambda: self.actions_task(path), daemon=True)
         t1.start()
         while t1.is_alive():
             cfg.ROOT.update()
 
-    def open_path(self, path: str):
-        path = "/" + path.strip().strip("/")
-        path = detect_path(path)
+    def actions_task(self, path: str):
+        path = normalize_path(paste())
 
         if path:
             path = exists_path(path)
-       
-            if path == "/":
+
+            if path == "/" or path == "/Volumes":
                 return
 
-            if reveal(path) and path not in paths:
+            run_applescript(create_applescript(path))
+
+            if path not in paths:
                 paths.insert(0, path)
                 self.add_label(path)
 

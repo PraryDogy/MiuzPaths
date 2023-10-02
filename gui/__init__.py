@@ -1,7 +1,7 @@
 import cfg
 from utils import run_applescript
 
-from .widgets import OpenBtn
+from .widgets import Widgets
 
 
 class InitGui():
@@ -16,7 +16,7 @@ class InitGui():
         cfg.ROOT.configure(bg=cfg.BGCOLOR, padx=10, pady=10)
         cfg.ROOT.minsize(360, 400)
 
-        OpenBtn(cfg.ROOT)
+        Widgets(cfg.ROOT)
         
         cfg.ROOT.eval('tk::PlaceWindow . center')
         cfg.ROOT.wm_deiconify()

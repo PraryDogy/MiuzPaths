@@ -1,8 +1,6 @@
 import os
 import re
 import subprocess
-import cfg
-import threading
 
 
 def paste():
@@ -10,17 +8,39 @@ def paste():
         'pbpaste', env={'LANG': 'en_US.UTF-8'}).decode('utf-8')
 
 
-def detect_path(input):
-    macRegex = r'/(?:.+/).{,10}'
-    if re.findall(macRegex, input):
+def run_applescript(applescript: str):
+    args = [
+        item
+        for x in [("-e",l.strip())
+        for l in applescript.split('\n')
+        if l.strip() != ''] for item in x]
+    subprocess.call(["osascript"] + args)
 
-        link_regex = r'http://|https://'
-        if re.findall(link_regex, input):
-            return False
 
-        return input
+def normalize_path(input):
+    striped = input.strip()
 
-    return False
+    link_reg = r'http://|https://'
+    if re.findall(link_reg, input):
+        return False
+
+    striped = striped.replace("\\", "/")
+
+    mac_reg = r'/?.{,100}/.{,100}/.{,100}'
+    if not re.findall(mac_reg, striped):
+        return False
+
+    smb_reg = r"[sS]?[mM]?[bB]?:?/?/?\d{,10}\.\d{,10}\.\d{,10}\.\d{,10}/"
+    res = re.findall(smb_reg, striped)
+    if res:
+        striped = striped.replace(res[0], "Volumes/")
+
+    sbc_reg = r"[sS][bB][cC][^/]{,10}/"
+    res = re.findall(sbc_reg, striped)
+    if res:
+        striped = striped.replace(res[0], "Volumes/")
+
+    return "/" + striped.strip("/")
 
 
 def exists_path(input):
@@ -29,43 +49,9 @@ def exists_path(input):
     return input
 
 
-def reveal_dir(input):
-    try:
-        subprocess.check_output(["/usr/bin/open", input])
-        return True
-    except subprocess.CalledProcessError:
-        return False
-
-
-def reveal_file(input):
-    path = f"\"{input}\" as POSIX file"
-
-    args = (
-        "-e", "tell application \"Finder\"",
-        "-e", f"reveal {{{path}}}",
-        "-e", "activate",
-        "-e", "end tell",
-        )
-
-    subprocess.call(["osascript", *args])
-
-
-def reveal(input):
-    if os.path.isfile(input):
-        reveal_file(input)
-        return True
-
-    elif os.path.isdir(input):
-        reveal_dir(input)
-        return True
-
-    return False
-
-
-def run_applescript(applescript: str):
-        args = [
-            item
-            for x in [("-e",l.strip())
-            for l in applescript.split('\n')
-            if l.strip() != ''] for item in x]
-        subprocess.call(["osascript"] + args)
+def create_applescript(input):
+    return f"""
+            set thePath to POSIX file "{input}"
+            tell application "Finder" to reveal thePath
+            tell application "Finder" to activate
+            """
