@@ -14,9 +14,12 @@ path = "smb://192.168.10.105/Shares/Marketing/Photo/2023/MUIZ paper bg.psd"
 
 # run_applescript(script)
 
-import re
+# import re
 
-reg = r"smb://.{,100}/.{,100}"
-a = re.findall(reg, path)
+# reg = r"smb://.{,100}/.{,100}"
+# a = re.findall(reg, path)
 
-print(a)
+# print(a)
+
+def normalize_path(input):
+    path = 
