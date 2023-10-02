@@ -8,7 +8,7 @@ class InitGui():
     def __init__(self):
         cfg.ROOT.bind('<Command-w>', lambda e: self.minim)
         cfg.ROOT.protocol("WM_DELETE_WINDOW", self.minim)
-        cfg.ROOT.createcommand('tk::mac::ReopenApplication', self.minim)
+        cfg.ROOT.createcommand('tk::mac::ReopenApplication', self.maxim)
         cfg.ROOT.createcommand("tk::mac::Quit" , exit)
 
 
@@ -25,11 +25,16 @@ class InitGui():
         applescript = f"""
             set appName to "{cfg.APP_NAME}"
             tell application "System Events"
-                if visible of application process appName is true then
-                    set visible of application process appName to false
-                else
-                    set visible of application process appName to true
-                end if
+                set visible of application process appName to false
+            end tell
+            """
+
+        run_applescript(applescript)
+
+    def maxim(self, e=None):
+        applescript = f"""
+            set appName to "{cfg.APP_NAME}"
+            tell application appName to activate 
             end tell
             """
 
