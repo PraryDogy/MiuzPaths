@@ -75,7 +75,7 @@ class Widgets:
             cfg.ROOT.update()
 
     def actions_task(self, path: str):
-        path = normalize_path(paste())
+        path = normalize_path(path)
 
         if path:
             path = exists_path(path)
