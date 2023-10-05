@@ -4,7 +4,7 @@ import json
 
 
 APP_NAME = 'MiuzPaths'
-APP_VER = '1.8.0'
+APP_VER = '1.8.5'
 
 ROOT = tkinter.Tk()
 ROOT.withdraw()

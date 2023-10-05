@@ -6,6 +6,7 @@
 
 import os
 import shutil
+import subprocess
 
 import icnsutil
 from setuptools import setup
@@ -50,14 +51,12 @@ for i in folders:
         os.path.join(f"dist/{cfg.APP_NAME}.app/Contents/lib", i)
         )
 
-# shutil.copytree("lib", f"dist/{cfg.APP_NAME}.app/Contents/lib")
-
-
-shutil.move(
-    f"dist/{cfg.APP_NAME}.app",
-    os.path.expanduser(f"~/Desktop/{cfg.APP_NAME}.app")
-    )
+dest = os.path.expanduser(f"~/Desktop/{cfg.APP_NAME}.app")
+shutil.move(f"dist/{cfg.APP_NAME}.app",)
 
 shutil.rmtree('build')
 shutil.rmtree('.eggs')
 shutil.rmtree('dist')
+
+
+subprocess.Popen(["open", "-R", dest])

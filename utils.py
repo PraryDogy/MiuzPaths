@@ -60,3 +60,9 @@ def create_applescript(input):
             tell application "Finder" to reveal thePath
             tell application "Finder" to activate
             """
+
+def reveal(input):
+    if os.path.isfile(input):
+        subprocess.Popen(["open", "-R", input])
+    else:
+        subprocess.Popen(["open", input])

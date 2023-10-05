@@ -4,8 +4,7 @@ import tkinter
 import tkmacosx
 
 import cfg
-from utils import (create_applescript, exists_path, normalize_path, paste,
-                   run_applescript)
+from utils import (exists_path, normalize_path, paste, reveal)
 
 paths = []
 
@@ -83,7 +82,8 @@ class Widgets:
             if path == "/" or path == "/Volumes":
                 return
 
-            run_applescript(create_applescript(path))
+            # run_applescript(create_applescript(path))
+            reveal(path)
 
             if path not in paths:
                 paths.insert(0, path)
