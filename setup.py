@@ -52,7 +52,7 @@ for i in folders:
         )
 
 dest = os.path.expanduser(f"~/Desktop/{cfg.APP_NAME}.app")
-shutil.move(f"dist/{cfg.APP_NAME}.app",)
+shutil.move(f"dist/{cfg.APP_NAME}.app", dest)
 
 shutil.rmtree('build')
 shutil.rmtree('.eggs')
