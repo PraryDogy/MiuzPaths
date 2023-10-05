@@ -40,6 +40,11 @@ def normalize_path(input):
     if res:
         striped = striped.replace(res[0], "Volumes/")
 
+    win_reg = r"\w:/[mM][aA][rR][kK][eE][tT][iI][nN][gG]/"
+    res = re.findall(win_reg, striped)
+    if res:
+        striped = striped.replace(res[0], "/Volumes/Shares/Marketing/")
+
     return "/" + striped.strip("/")
 
 

@@ -7,3 +7,4 @@ path = "/Users/evlosh/Downloads/AutopanoGiga3.5.dmg"
 path = "Some text"
 
 
+path = "Z:\Marketing\External\Фото_и_видео_Магазинов\Фото_магазинов_2023\Retouch"
