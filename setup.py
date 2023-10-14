@@ -58,5 +58,6 @@ shutil.rmtree('build')
 shutil.rmtree('.eggs')
 shutil.rmtree('dist')
 
-
+zip_cmd = f"cd ~/Desktop && zip -r -X {cfg.APP_NAME}.zip {cfg.APP_NAME}.app"
+subprocess.call(zip_cmd, shell=True)
 subprocess.Popen(["open", "-R", dest])
