@@ -30,20 +30,30 @@ def normalize_path(input):
     if not re.findall(mac_reg, striped):
         return False
 
-    smb_reg = r"[sS]?[mM]?[bB]?:?/?/?\d{,10}\.\d{,10}\.\d{,10}\.\d{,10}/"
-    res = re.findall(smb_reg, striped)
-    if res:
-        striped = striped.replace(res[0], "Volumes/")
+    win_reg = r"[a-zA-Z]://?marketing/"
+    striped = re.sub(win_reg, "Shares/Marketing/", striped, flags=re.IGNORECASE)
 
-    sbc_reg = r"[sS][bB][cC][^/]{,10}/"
-    res = re.findall(sbc_reg, striped)
-    if res:
-        striped = striped.replace(res[0], "Volumes/")
+    smb_reg = r"smb://?"
+    striped = re.sub(smb_reg, "", striped, count=1, flags=re.IGNORECASE)
 
-    win_reg = r"\w:/[mM][aA][rR][kK][eE][tT][iI][nN][gG]/"
-    res = re.findall(win_reg, striped)
-    if res:
-        striped = striped.replace(res[0], "/Volumes/Shares/Marketing/")
+    sbc_reg = r"(sbc\d\d/)(.+/)"
+    if re.match(sbc_reg, striped, flags=re.IGNORECASE):
+        sbc_reg = r"(sbc\d\d/)"
+        striped = re.sub(sbc_reg, "", striped, count=1, flags=re.IGNORECASE)
+
+    ip_reg = r"/?\d{,4}\.\d{,4}\.\d{,4}\.\d{,4}/(.+)/"
+    if re.match(ip_reg, striped, flags=re.IGNORECASE):
+        ip_reg = r"\d{,4}\.\d{,4}\.\d{,4}\.\d{,4}/"
+        striped = re.sub(ip_reg, "", striped, count=1, flags=re.IGNORECASE)
+
+    sh_reg = r"/?Shares/(.+/)"
+    if re.match(sh_reg, striped, flags=re.IGNORECASE):
+        sh_reg = r"/?Shares/"
+        striped = re.sub(sh_reg, "Volumes/Shares/", striped, count=1, flags=re.IGNORECASE)
+
+    sh_reg = r"/?Marketing/(.+/)"
+    if re.match(sh_reg, striped, flags=re.IGNORECASE):
+        striped = "Volumes/Shares/" + striped
 
     return "/" + striped.strip("/")
 
