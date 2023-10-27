@@ -1,2 +1,4 @@
 icnsutil
 tkmacosx
+pyproject-toml
+wheel
