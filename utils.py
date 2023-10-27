@@ -30,28 +30,28 @@ def normalize_path(input):
     if not re.findall(mac_reg, striped):
         return False
 
-    win_reg = r"[a-zA-Z]://?marketing/"
+    win_reg = r"/?/?[a-zA-Z]://?marketing/"
     striped = re.sub(win_reg, "Shares/Marketing/", striped, flags=re.IGNORECASE)
 
-    smb_reg = r"smb://?"
+    smb_reg = r"/?/?smb://?"
     striped = re.sub(smb_reg, "", striped, count=1, flags=re.IGNORECASE)
 
-    sbc_reg = r"(sbc\d\d/)(.+/)"
+    sbc_reg = r"/?/?sbc\d\d/(.+/)"
     if re.match(sbc_reg, striped, flags=re.IGNORECASE):
         sbc_reg = r"(sbc\d\d/)"
         striped = re.sub(sbc_reg, "", striped, count=1, flags=re.IGNORECASE)
 
-    ip_reg = r"/?\d{,4}\.\d{,4}\.\d{,4}\.\d{,4}/(.+)/"
+    ip_reg = r"/?/?\d{,4}\.\d{,4}\.\d{,4}\.\d{,4}/(.+)/"
     if re.match(ip_reg, striped, flags=re.IGNORECASE):
         ip_reg = r"\d{,4}\.\d{,4}\.\d{,4}\.\d{,4}/"
         striped = re.sub(ip_reg, "", striped, count=1, flags=re.IGNORECASE)
 
-    sh_reg = r"/?Shares/(.+/)"
+    sh_reg = r"/?/?Shares/(.+/)"
     if re.match(sh_reg, striped, flags=re.IGNORECASE):
         sh_reg = r"/?Shares/"
         striped = re.sub(sh_reg, "Volumes/Shares/", striped, count=1, flags=re.IGNORECASE)
 
-    sh_reg = r"/?Marketing/(.+/)"
+    sh_reg = r"/?/?Marketing/(.+/)"
     if re.match(sh_reg, striped, flags=re.IGNORECASE):
         striped = "Volumes/Shares/" + striped
 
