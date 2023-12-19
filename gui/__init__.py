@@ -6,11 +6,15 @@ from .widgets import Widgets
 
 class InitGui():
     def __init__(self):
-        cfg.ROOT.bind('<Command-w>', lambda e: self.minim)
-        cfg.ROOT.protocol("WM_DELETE_WINDOW", self.minim)
-        cfg.ROOT.createcommand('tk::mac::ReopenApplication', self.maxim)
+        # cfg.ROOT.bind('<Command-w>', lambda e: self.minim)
+        # cfg.ROOT.protocol("WM_DELETE_WINDOW", self.minim)
+        # cfg.ROOT.createcommand('tk::mac::ReopenApplication', self.maxim)
         cfg.ROOT.createcommand("tk::mac::Quit" , exit)
 
+        cfg.ROOT.bind_all(sequence="<Command-w>",
+                            func=lambda e: cfg.ROOT.withdraw())
+        cfg.ROOT.protocol(name="WM_DELETE_WINDOW", func=cfg.ROOT.withdraw)
+        cfg.ROOT.createcommand("tk::mac::ReopenApplication", cfg.ROOT.deiconify)
 
         cfg.ROOT.title(cfg.APP_NAME)
         cfg.ROOT.configure(bg=cfg.BGCOLOR, padx=10, pady=10)
