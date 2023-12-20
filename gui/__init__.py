@@ -1,3 +1,5 @@
+import tkinter
+
 import cfg
 from utils import run_applescript
 
@@ -11,8 +13,7 @@ class InitGui():
         # cfg.ROOT.createcommand('tk::mac::ReopenApplication', self.maxim)
         cfg.ROOT.createcommand("tk::mac::Quit" , exit)
 
-        cfg.ROOT.bind_all(sequence="<Command-w>",
-                            func=lambda e: cfg.ROOT.withdraw())
+        self.root.bind(sequence="<Command-Key>", func=self.minimize)
         cfg.ROOT.protocol(name="WM_DELETE_WINDOW", func=cfg.ROOT.withdraw)
         cfg.ROOT.createcommand("tk::mac::ReopenApplication", cfg.ROOT.deiconify)
 
@@ -24,6 +25,10 @@ class InitGui():
         
         cfg.ROOT.eval('tk::PlaceWindow . center')
         cfg.ROOT.wm_deiconify()
+
+    def minimize(self, e: tkinter.Event):
+        if e.char == "w":
+            cfg.ROOT.wm_withdraw()
 
     def minim(self, e=None):
         applescript = f"""

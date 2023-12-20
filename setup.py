@@ -4,14 +4,13 @@
     python setup.py py2app
 """
 
-import os
-import shutil
-import subprocess
+import sys
 
 import icnsutil
 from setuptools import setup
 
 import cfg
+from setup_ext import SetupExt
 
 src = 'icon.png'
 img = icnsutil.IcnsFile()
@@ -32,32 +31,16 @@ OPTIONS = {
     }
     }
 
-setup(
-    app = ['start.py'],
-    name = cfg.APP_NAME,
-    data_files = [],
-    options = {'py2app': OPTIONS},
-    setup_requires = ['py2app'],
-    install_requires = []
-    )
 
-ver = "3.11"
-lib_src = f"/Library/Frameworks/Python.framework/Versions/{ver}/lib"
-folders = "tcl8", "tcl8.6", "tk8.6"
+if __name__ == "__main__":
+    sys.argv.append("py2app")
 
-for i in folders:
-    shutil.copytree(
-        os.path.join(lib_src, i),
-        os.path.join(f"dist/{cfg.APP_NAME}.app/Contents/lib", i)
+    setup(
+        app = ['start.py'],
+        name = cfg.APP_NAME,
+        data_files = [],
+        options = {'py2app': OPTIONS},
+        setup_requires = ['py2app'],
         )
 
-dest = os.path.expanduser(f"~/Desktop/{cfg.APP_NAME}.app")
-shutil.move(f"dist/{cfg.APP_NAME}.app", dest)
-
-shutil.rmtree('build')
-shutil.rmtree('.eggs')
-shutil.rmtree('dist')
-
-zip_cmd = f"cd ~/Desktop && zip -r -X {cfg.APP_NAME}.zip {cfg.APP_NAME}.app"
-subprocess.call(zip_cmd, shell=True)
-subprocess.Popen(["open", "-R", dest])
+    SetupExt(py_ver="3.11", appname=cfg.APP_NAME)
