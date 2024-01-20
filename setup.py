@@ -9,8 +9,8 @@ import sys
 import icnsutil
 from setuptools import setup
 
-import cfg
 from setup_ext import SetupExt
+from cfg import cnf
 
 src = 'icon.png'
 img = icnsutil.IcnsFile()
@@ -21,10 +21,10 @@ img.write(f'icon.icns')
 OPTIONS = {
     'iconfile': 'icon.icns',
     'plist': {
-    'CFBundleName': cfg.APP_NAME,
-    'CFBundleShortVersionString':cfg.APP_VER,
-    'CFBundleVersion': cfg.APP_VER,
-    'CFBundleIdentifier':f'com.evlosh.{cfg.APP_NAME}',
+    'CFBundleName': cnf.app_name,
+    'CFBundleShortVersionString':cnf.app_ver,
+    'CFBundleVersion': cnf.app_ver,
+    'CFBundleIdentifier':f'com.evlosh.{cnf.app_name}',
     'NSHumanReadableCopyright': (
         'Created by Evgeny Loshkarev'
         '\nCopyright © 2023 MIUZ Diamonds. All rights reserved.')
@@ -37,10 +37,10 @@ if __name__ == "__main__":
 
     setup(
         app = ['start.py'],
-        name = cfg.APP_NAME,
+        name = cnf.app_name,
         data_files = [],
         options = {'py2app': OPTIONS},
         setup_requires = ['py2app'],
         )
 
-    SetupExt(py_ver="3.11", appname=cfg.APP_NAME)
+    SetupExt(py_ver="3.11", appname=cnf.app_name)
