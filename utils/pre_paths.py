@@ -2,8 +2,10 @@ import json
 import os
 
 from cfg import cnf
-from utils.system import SysUtils
+from .system import SysUtils
 
+
+__all__ = ("PrePaths", )
 
 class Storage:
     def __init__(self):
@@ -25,13 +27,12 @@ class PrePaths(Storage, PrePathsBase, SysUtils):
 
         try:
             with open(file=self.json_dir, encoding="utf8", mode="r") as file:
-                self.prepaths: dict = json.loads(s=file.read())
+                self.prepaths = json.loads(s=file.read())
+
         except FileNotFoundError:
             with open(file=self.json_dir, encoding="utf8", mode="w") as file:
+
                 json.dump(obj=self.default_prepaths, fp=file,
                           indent=4, ensure_ascii=False)
+
             self.prepaths = self.default_prepaths
-
-
-a = PrePaths()
-print(type(a.prepaths))
