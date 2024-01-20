@@ -51,7 +51,7 @@ class CScroll(customtkinter.CTkScrollableFrame, BaseCWid, SysUtils):
 
 
 class CButton(customtkinter.CTkButton, BaseCWid):
-    def __init__(self, master: tkinter, text_color: str = cnf.fg_color,
+    def __init__(self, master: tkinter, text_color: str = cnf.text_color,
                  fg_color: str = cnf.btn_color, corner_radius: int = cnf.corner,
                  width: int = 75, hover: bool = 0, border_spacing: int = 2,
                  anchor="center",

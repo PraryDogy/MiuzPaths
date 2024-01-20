@@ -5,7 +5,8 @@ import tkinter
 
 class Colors:
     def __init__(self) -> None:
-        self.fg_color = "#E2E2E2"
+        self.text_color = "#E2E2E2"
+        self.text_color_dark = "#D3D3D3"
         self.bg_color = "#1e1e1e"
         self.btn_color = "#303030"
         self.blue_color = "#3d6a97"

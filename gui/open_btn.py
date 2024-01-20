@@ -64,5 +64,5 @@ class OpenBtn(CButton, OpenUtils):
         else:
             self.configure(text="Скопируйте путь\nв буфер обмена",
                           fg_color=cnf.blue_color)
-            self.after(ms=1500, func=lambda: self.configure(
+            self.after(ms=1000, func=lambda: self.configure(
                 text="Открыть", fg_color=cnf.btn_color))

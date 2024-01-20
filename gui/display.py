@@ -25,16 +25,16 @@ class Rows(tkinter.Frame):
     def __init__(self, master=tkinter):
         tkinter.Frame.__init__(self, master=master, bg=cnf.dgray_color)
         max_len = -80
-        max_chunks = -3
 
         RowsDict.d.clear()
         for x, input_path in enumerate(RowsPath.p):
-            short_path = input_path.split(os.sep)[max_chunks:]
-            short_txt = f"...{os.path.join(*short_path)[max_len:]}"
+            short_txt = f"...{input_path[max_len:]}"
             RowsDict.d[short_txt] = input_path
 
             btn = CTkLabel(master=self, text=short_txt, corner_radius=cnf.corner,
-                           anchor="w", justify="left", height=40)
+                           anchor="w", justify="left", height=40,
+                           font=("San Francisco Pro", 14, "normal")
+                           )
             btn.pack(fill="x")
 
             btn.bind(sequence="<ButtonRelease-1>",
@@ -48,7 +48,8 @@ class Rows(tkinter.Frame):
             if x % 2 == 0:
                 btn.configure(fg_color=cnf.bg_color)
             else:
-                btn.configure(fg_color=cnf.dgray_color)
+                btn.configure(fg_color=cnf.dgray_color,
+                              text_color=cnf.text_color_dark)
 
     def row_cmd_wrap(self, e: tkinter.Event, btn: CTkLabel):
         btn.configure(wraplength=self.winfo_width())
@@ -63,17 +64,6 @@ class Rows(tkinter.Frame):
             subprocess.Popen(["open", "-R", new_path])
         else:
             subprocess.Popen(["open", new_path])
-
-        # if new_path in RowsPath.p:
-        #     RowsPath.p.remove(new_path)
-        # RowsPath.p.insert(0, new_path)
-
-        # if len(RowsPath.p) > 20:
-        #     RowsPath.p.pop(-1)
-
-        # RowsVar.v.set(value=RowsVar.v.get() + 1)
-
-
 
 
 class Display(CScroll):
