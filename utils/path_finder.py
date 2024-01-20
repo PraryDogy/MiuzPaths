@@ -9,7 +9,7 @@ from .pre_paths import PrePaths
 class PathFinderBase(object):
     def __init__(self, src_path: str) -> Literal["converted path for mac"]:
         pre_paths = [self.normalize_path(path=i)
-                    for i in PrePaths().prepaths]
+                    for i in PrePaths().pre_paths]
 
         src_path = self.normalize_path(path=src_path)
         src_path_split = src_path.split(os.sep)
