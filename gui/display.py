@@ -5,32 +5,49 @@ from customtkinter import CTkFrame, CTkLabel
 import os
 
 class RowsPath:
-    paths = ["aaaaa" for i in range(20)]
+    # paths = ["aaaaa" for i in range(20)]
+    paths = []
 
 
-class RowsText:
+class RowsDict:
     d = {}
 
 
-class DisplayRows(tkinter.Frame):
+class RowsVar:
+    v = tkinter.Variable(value=0)
+
+
+class Rows(tkinter.Frame):
     def __init__(self, master=tkinter):
         tkinter.Frame.__init__(self, master=master, bg=cnf.dgray_color)
-        count = 3
+        max_len = 100
+        max_chunks = -3
 
         for x, txt in enumerate(RowsPath.paths):
-            short_txt = f".../{os.sep.join(txt.split(os.sep)[-count:])}"
-            RowsText.d[short_txt] = txt
+            short_path = txt.split(os.sep)[max_chunks:]
+            short_txt = f"...{os.path.join(*short_path)[:max_len]}"
+
+            RowsDict.d[short_txt] = txt
 
             btn = CTkLabel(master=self, text=short_txt, corner_radius=cnf.corner,
                            anchor="w", justify="left", height=40)
             btn.pack(fill="x")
+
             btn.bind(sequence="<ButtonRelease-1>",
-                     command=lambda e, btn=btn: self.row_cmd(e=e, btn=btn))
+                     command=lambda e, btn=btn: self.row_cmd(e=e, btn=btn)
+                     )
+
+            btn.bind(sequence='<Configure>',
+                     command=lambda e, btn=btn: self.row_cmd_wrap(e=e, btn=btn)
+                     )
 
             if x % 2 == 0:
                 btn.configure(fg_color=cnf.dgray_color)
             else:
                 btn.configure(fg_color=cnf.bg_color)
+
+    def row_cmd_wrap(self, e: tkinter.Event, btn: CTkLabel):
+        btn.configure(wraplength=self.winfo_width())
 
     def row_cmd(self, e: tkinter.Event, btn: CTkLabel):
         oldbg = btn.cget("fg_color")
@@ -47,13 +64,18 @@ class Display(CScroll):
         self.load_scroll()
         self.load_rows()
 
+        RowsVar.v.trace_add(mode="read", callback=self.rows_var_callback)
+
+    def rows_var_callback(self, *args):
+        self.reload_display()
+
     def load_scroll(self):
         self.scrollable = CTkFrame(master=self, fg_color=cnf.dgray_color, 
                                    corner_radius=cnf.corner)
         self.scrollable.pack(expand=1, fill="both")
 
     def load_rows(self):
-        self.rows = DisplayRows(master=self.scrollable)
+        self.rows = Rows(master=self.scrollable)
         self.rows.pack(fill="both", expand=1)
 
     def reload_display(self):
