@@ -41,17 +41,16 @@ class Rows(tkinter.Frame):
                      )
 
             if x % 2 == 0:
-                btn.configure(fg_color=cnf.dgray_color)
-            else:
                 btn.configure(fg_color=cnf.bg_color)
+            else:
+                btn.configure(fg_color=cnf.dgray_color)
 
     def row_cmd_wrap(self, e: tkinter.Event, btn: CTkLabel):
         btn.configure(wraplength=self.winfo_width())
 
     def row_cmd(self, e: tkinter.Event, btn: CTkLabel):
-        oldbg = btn.cget("fg_color")
         btn.configure(fg_color=cnf.blue_color)
-        btn.after(100, lambda: btn.configure(fg_color=oldbg))
+        btn.after(100, lambda: btn.configure(fg_color=cnf.btn_color))
 
 
 class Display(CScroll):
