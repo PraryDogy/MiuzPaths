@@ -1,8 +1,13 @@
-import tkinter
-from cfg import cnf
-from .widgets_new import CScroll, CButton
-from customtkinter import CTkFrame, CTkLabel
 import os
+import subprocess
+import tkinter
+
+from customtkinter import CTkFrame, CTkLabel
+
+from cfg import cnf
+
+from .widgets_new import CScroll
+
 
 class RowsPath:
     p = []
@@ -49,8 +54,26 @@ class Rows(tkinter.Frame):
         btn.configure(wraplength=self.winfo_width())
 
     def row_cmd(self, e: tkinter.Event, btn: CTkLabel):
+        old_bg = btn.cget("fg_color")
         btn.configure(fg_color=cnf.blue_color)
-        btn.after(100, lambda: btn.configure(fg_color=cnf.btn_color))
+        btn.after(100, lambda: btn.configure(fg_color=old_bg))
+
+        new_path = RowsDict.d[btn.cget("text")]
+        if os.path.isfile(new_path) or new_path.endswith((".APP", ".app")):
+            subprocess.Popen(["open", "-R", new_path])
+        else:
+            subprocess.Popen(["open", new_path])
+
+        # if new_path in RowsPath.p:
+        #     RowsPath.p.remove(new_path)
+        # RowsPath.p.insert(0, new_path)
+
+        # if len(RowsPath.p) > 20:
+        #     RowsPath.p.pop(-1)
+
+        # RowsVar.v.set(value=RowsVar.v.get() + 1)
+
+
 
 
 class Display(CScroll):
