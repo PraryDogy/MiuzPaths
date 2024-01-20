@@ -5,8 +5,7 @@ from customtkinter import CTkFrame, CTkLabel
 import os
 
 class RowsPath:
-    # paths = ["aaaaa" for i in range(20)]
-    paths = []
+    p = []
 
 
 class RowsDict:
@@ -20,14 +19,14 @@ class RowsVar:
 class Rows(tkinter.Frame):
     def __init__(self, master=tkinter):
         tkinter.Frame.__init__(self, master=master, bg=cnf.dgray_color)
-        max_len = 100
+        max_len = -80
         max_chunks = -3
 
-        for x, txt in enumerate(RowsPath.paths):
-            short_path = txt.split(os.sep)[max_chunks:]
-            short_txt = f"...{os.path.join(*short_path)[:max_len]}"
-
-            RowsDict.d[short_txt] = txt
+        RowsDict.d.clear()
+        for x, input_path in enumerate(RowsPath.p):
+            short_path = input_path.split(os.sep)[max_chunks:]
+            short_txt = f"...{os.path.join(*short_path)[max_len:]}"
+            RowsDict.d[short_txt] = input_path
 
             btn = CTkLabel(master=self, text=short_txt, corner_radius=cnf.corner,
                            anchor="w", justify="left", height=40)

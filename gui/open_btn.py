@@ -54,6 +54,9 @@ class OpenBtn(CButton, OpenUtils):
             else:
                 subprocess.Popen(["open", new_path])
 
-            if new_path not in RowsPath.paths:
-                RowsPath.paths.append(new_path)
+            if new_path not in RowsPath.p:
+                RowsPath.p.insert(0, new_path)
+            if len(RowsPath.p) > 20:
+                RowsPath.p.pop(-1)
+
             RowsVar.v.set(value=RowsVar.v.get() + 1)
