@@ -6,7 +6,7 @@ import tkinter
 from cfg import cnf
 from utils import PathFinder
 
-from .widgets_new import CButton
+from .widgets import CButton
 from .display import RowsPath, RowsVar
 
 __all__ = ("OpenBtn", )

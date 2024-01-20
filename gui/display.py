@@ -6,7 +6,7 @@ from customtkinter import CTkFrame, CTkLabel
 
 from cfg import cnf
 
-from .widgets_new import CScroll
+from .widgets import CScroll
 
 
 class RowsPath:

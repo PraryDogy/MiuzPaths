@@ -4,7 +4,7 @@ from cfg import cnf
 
 from .display import Display
 from .open_btn import OpenBtn
-from .widgets_new import MacMenu
+from .widgets import MacMenu
 
 
 class Application:

@@ -1,124 +1,94 @@
-import threading
+import abc
+import sys
 import tkinter
 
-import tkmacosx
+try:
+    from typing_extensions import Callable, Literal
+except ImportError:
+    from typing import Literal, Callable
 
-import cfg
-from utils import (exists_path, normalize_path, paste, reveal)
+import customtkinter
 
-paths = []
+from cfg import cnf
+from utils import SysUtils
+
+__all__ = (
+    "CScroll",
+    "CButton",
+    "MacMenu",
+    )
 
 
-class CBtn(tkinter.Label):
-    def __init__(self, master: tkinter, **kwargs):
-        tkinter.Label.__init__(
-            self, master, bg=cfg.BGBUTTON, fg=cfg.BGFONT, height=3)
+class BaseCWid(abc.ABC):
+    @abc.abstractmethod
+    def get_parrent(self):
+        pass
+
+
+class CScroll(customtkinter.CTkScrollableFrame, BaseCWid, SysUtils):
+    def __init__(self, master: tkinter, width: int = 200,
+                 corner_radius: int = 0, fg_color: str = cnf.bg_color,
+                 scroll_width: int = cnf.scroll_width,
+                 scroll_color: str = None,
+                 **kw):
+
+        customtkinter.CTkScrollableFrame.__init__(
+            self, master=master, width=width, corner_radius=corner_radius,
+            fg_color=fg_color, **kw)
+
+        self._scrollbar.configure(width=scroll_width)
+        if scroll_color:
+            self._scrollbar.configure(button_color=scroll_color)
+
+    def get_parrent(self):
+        return self._parent_canvas
+
+    def moveup(self, e=None):
+        try:
+            self.get_parrent().yview_moveto("0.0")
+        except Exception:
+            self.print_err()
+
+
+class CButton(customtkinter.CTkButton, BaseCWid):
+    def __init__(self, master: tkinter, text_color: str = cnf.fg_color,
+                 fg_color: str = cnf.btn_color, corner_radius: int = cnf.corner,
+                 width: int = 75, hover: bool = 0, border_spacing: int = 2,
+                 anchor="center",
+                 font: tuple[str, int, str] = ("San Francisco Pro", 13, "normal"),
+                 **kw):
+
+        customtkinter.CTkButton.__init__(
+            self, master=master, text_color=text_color, fg_color=fg_color,
+            corner_radius=corner_radius, width=width, hover=hover,
+            border_spacing=border_spacing, font=font, anchor=anchor, **kw)
+
+    def get_parrent(self):
+        return self._canvas
+
+    def cmd(self, cmd: Callable):
+        self.bind(sequence="<ButtonRelease-1>", command=cmd)
+
+    def uncmd(self):
+        self.unbind(sequence="<ButtonRelease-1>")
 
     def press(self):
-        self['bg'] = cfg.BGPRESSED
-        cfg.ROOT.after(100, lambda: self.configure(bg=cfg.BGBUTTON))
-
-    def cmd(self, cmd):
-        self.bind('<ButtonRelease-1>', cmd)
+        self.configure(fg_color=cnf.blue_color)
+        cnf.root.after(100, lambda: self.configure(fg_color=cnf.btn_color))
 
 
-class Widgets:
-    def __init__(self, master: tkinter):
-        hist = tkinter.Label(
-            master,
-            bg=cfg.BGCOLOR,
-            fg=cfg.BGFONT,
-            text="Последние 20:",
-            )
-        hist.pack(anchor=tkinter.W)
+class MacMenu(tkinter.Menu, SysUtils):
+    def __init__(self):
+        menubar = tkinter.Menu(cnf.root)
+        tkinter.Menu.__init__(self, master=menubar)
 
-        self.disp = tkmacosx.SFrame(
-            master,
-            background=cfg.BGDISP,
-            scrollbarwidth=3,
-            )
-        self.disp.pack(pady=(10, 0), fill=tkinter.BOTH, expand=True)
+        if sys.version_info.minor < 10:
+            cnf.root.createcommand("tkAboutDialog", self.about_dialog)
 
-        lbl = tkinter.Label(
-            self.disp,
-            text="Скопируйте путь в буфер обмена",
-            bg=cfg.BGDISP,
-            fg=cfg.BGFONT,
-            anchor=tkinter.W,
-            justify=tkinter.LEFT,
-            pady=10,
-            padx=5
-            )
-        lbl.pack(anchor=tkinter.W)
+        cnf.root.configure(menu=menubar)
 
-        self.btn = CBtn(master)
-        self.btn.configure(height=4, text="Открыть")
-        self.btn.cmd(lambda e: self.btn_cmd())
-        self.btn.pack(fill=tkinter.X, pady=(10, 0))
-
-        self.first_load = True
-
-    def btn_cmd(self):
-        self.btn.press()
-        self.run_task(paste().lstrip().strip("\n"))
-
-    def history_cmd(self, e: tkinter.Event):
-        e.widget.configure(bg=cfg.BGPRESSED)
-        cfg.ROOT.after(100, lambda: e.widget.configure(bg=cfg.BGDISP))
-        self.run_task(e.widget.path)
-
-    def run_task(self, path):
-        t1 = threading.Thread(target=lambda: self.actions_task(path), daemon=True)
-        t1.start()
-        while t1.is_alive():
-            cfg.ROOT.update()
-
-    def actions_task(self, path: str):
-        path = normalize_path(path)
-
-        if path:
-            path = exists_path(path)
-
-            if path == "/" or path == "/Volumes":
-                return
-
-            # run_applescript(create_applescript(path))
-            reveal(path)
-
-            if path not in paths:
-                paths.insert(0, path)
-                self.add_label(path)
-
-    def add_label(self, path):
-        if self.first_load:
-            self.disp.winfo_children()[0].destroy()
-            self.first_load = False
-
-        if len(paths) > 20:
-            paths.pop(-1)
-            self.disp.winfo_children()[0].destroy()
-
-        lbl = tkinter.Label(
-            self.disp,
-            text=path,
-            bg=cfg.BGDISP,
-            fg=cfg.BGFONT,
-            anchor=tkinter.W,
-            justify=tkinter.LEFT,
-            pady=10,
-            padx=5
-            )
-
-        lbl.path = path
-        lbl.bind('<ButtonRelease-1>', self.history_cmd)
-
-        lbl.bind(
-            '<Configure>',
-            lambda e: lbl.config(wraplength=self.disp.winfo_width())
-            )
-
-        widgets = self.disp.winfo_children()[::-1]
-
-        for i in widgets:
-            i.pack_forget()
-            i.pack(anchor=tkinter.W, fill=tkinter.X, padx=(0, 5))
+    def about_dialog(self):
+        try:
+            cnf.root.tk.call("tk::mac::standardAboutPanel")
+        except Exception:
+            self.print_err()
