@@ -24,7 +24,7 @@ class RowsVar:
 class Rows(tkinter.Frame):
     def __init__(self, master=tkinter):
         tkinter.Frame.__init__(self, master=master, bg=cnf.dgray_color)
-        max_len = -80
+        max_len = -150
 
         RowsDict.d.clear()
         for x, input_path in enumerate(RowsPath.p):
@@ -32,7 +32,8 @@ class Rows(tkinter.Frame):
             RowsDict.d[short_txt] = input_path
 
             btn = CTkLabel(master=self, text=short_txt, corner_radius=cnf.corner,
-                           anchor="w", justify="left", height=40,
+                           anchor="w", justify="left", pady=5,
+                           height=40,
                            font=("San Francisco Pro", 14, "normal")
                            )
             btn.pack(fill="x")
@@ -46,7 +47,8 @@ class Rows(tkinter.Frame):
                      )
 
             if x % 2 == 0:
-                btn.configure(fg_color=cnf.bg_color)
+                btn.configure(fg_color=cnf.bg_color,
+                              text_color=cnf.text_color_dark)
             else:
                 btn.configure(fg_color=cnf.dgray_color,
                               text_color=cnf.text_color_dark)
