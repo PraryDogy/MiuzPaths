@@ -13,8 +13,8 @@ class Storage:
 
 class PrePathsDefault:
     default_prepaths = [
+        "/",
         "/Volumes/Shares/Marketing",
-        "",
         ]
 
 

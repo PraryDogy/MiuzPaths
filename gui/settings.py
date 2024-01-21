@@ -17,8 +17,8 @@ class Storage:
 class SettingsTitle(tkinter.Label):
     def __init__(self, master: tkinter):
         text = [
-            "Не меняйте настройки без необходимости",
-            "Не забудьте оставить последнюю строчку пустой",
+            "Не меняйте настройки без необходимости.",
+            "Новый путь с новой строки.",
             "Поддержка: tg @evlosh, email evlosh@gmail.com"
             ]
 
