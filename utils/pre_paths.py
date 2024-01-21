@@ -31,3 +31,12 @@ class PrePaths(Storage, SysUtils):
                           indent=4, ensure_ascii=False)
 
             self.pre_paths: list = PrePathsDefault.default_prepaths
+
+    def save(self, pre_paths: list):
+        if not isinstance(pre_paths, list):
+            raise Exception("pre_paths must be list of paths")
+
+        with open(file=Storage.json_dir, encoding="utf8", mode="w") as file:
+
+            json.dump(obj=pre_paths, fp=file,
+                        indent=4, ensure_ascii=False)
