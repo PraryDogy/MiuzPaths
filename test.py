@@ -1,37 +1,11 @@
-import json
-import os
-
-from cfg import cnf
-from utils.system import SysUtils
-
-
-class Storage:
-    def __init__(self):
-        self.json_dir = os.path.join(cnf.cfg_dir, "prepaths.json")
-
-
-class PrePathsBase:
-    def __init__(self):
-        self.default_prepaths = [
-            "/Volumes/Shares/Marketing",
-            "",
-            ]
-
-
-class PrePaths(Storage, PrePathsBase, SysUtils):
-    def __init__(self):
-        Storage.__init__(self)
-        PrePathsBase.__init__(self)
-
-        try:
-            with open(file=self.json_dir, encoding="utf8", mode="r") as file:
-                self.prepaths: dict = json.loads(s=file.read())
-        except FileNotFoundError:
-            with open(file=self.json_dir, encoding="utf8", mode="w") as file:
-                json.dump(obj=self.default_prepaths, fp=file,
-                          indent=4, ensure_ascii=False)
-            self.prepaths = self.default_prepaths
-
-
-a = PrePaths()
-print(type(a.prepaths))
+"\192.168.10.105\Shares\Marketing\External\Фото_и_видео_Магазинов"
+"\sbc01\Shares\Marketing\General\4. MONTHLY TO START\МАРТ\ADV& PR\ФОТО"
+"\Marketing\Photo\2022\05 - май\Миллениум_предметка\R01-MLN119-070-_-2022-05-17 22-09-08"
+"\192.168.10.105\Shares\Google Drive\Loshkarev\Book"
+"Z:\Marketing\Photo\2022\05 - май\Миллениум_предметка\R01-MLN119-070-_-2022-05-17 22-09-08"
+"smb:/192.168.10.105/Shares/Marketing/Photo/2022/05 - май/Срочные браслеты Шмаи/Retouch"
+"/Volumes/Shares/Google Drive/Loshkarev/Book"
+"/Users/evlosh/Downloads/AutopanoGiga3.5.dmg"
+"marketing\Photo\2022\05 - май\Миллениум_предметка\R01-MLN119-070-_-2022-05-17 22-09-08"
+"\sbc01\shares\marketing\General\4. MONTHLY TO START\МАРТ\ADV& PR\ФОТО"
+"/Marketing/Photo/2022/05 - май/Срочные браслеты Шмаи/Retouch"
