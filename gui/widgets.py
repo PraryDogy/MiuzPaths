@@ -79,16 +79,22 @@ class CButton(customtkinter.CTkButton, BaseCWid):
 
 class MacMenu(tkinter.Menu, SysUtils):
     def __init__(self):
-        menubar = tkinter.Menu(cnf.root)
-        tkinter.Menu.__init__(self, master=menubar)
+        main_menu = tkinter.Menu(cnf.root)
+        cnf.root.configure(menu=main_menu)
 
         if sys.version_info.minor < 10:
             cnf.root.createcommand("tkAboutDialog", self.about_dialog)
 
-        cnf.root.configure(menu=menubar)
+        sett_menu = tkinter.Menu(master=main_menu, tearoff=0)
+        sett_menu.add_command(label="Настройки", command=self.settings_cmd)
+        main_menu.add_cascade(label="Настройки", menu=sett_menu)
 
     def about_dialog(self):
         try:
             cnf.root.tk.call("tk::mac::standardAboutPanel")
         except Exception:
             self.print_err()
+
+    def settings_cmd(self):
+        from .settings import Settings
+        Settings()
