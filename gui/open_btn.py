@@ -46,7 +46,8 @@ class OpenBtn(CButton, OpenUtils):
 
         if self.path_check(path=input_path):
             self.press()
-            new_path = str(PathFinder(path=input_path))
+            new_path = PathFinder(path=input_path)
+            new_path = str(new_path)
 
             if os.path.isfile(new_path) or new_path.endswith((".APP", ".app")):
                 subprocess.Popen(["open", "-R", new_path])

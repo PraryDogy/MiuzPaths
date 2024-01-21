@@ -1,12 +1,25 @@
 import os
 import string
+import threading
 from difflib import SequenceMatcher
 from typing import Literal
 
+from cfg import cnf
+
 from .pre_paths import PrePaths
 
+__all__ = ("PathFinder", )
 
-class PathFinderBase(object):
+
+class Task:
+    t: threading.Thread = None
+
+
+class PathFinderResult:
+    r = None
+
+
+class PathFinderBasePath(object):
     def __init__(self, src_path: str) -> Literal["converted path for mac"]:
         pre_paths = [self.normalize_path(path=i)
                     for i in PrePaths().pre_paths]
@@ -25,15 +38,16 @@ class PathFinderBase(object):
                 self.path = path_ver
                 break
 
+
     def normalize_path(self, path: Literal["path"]) -> Literal["path without trash"]:
         path = path.replace("\\", os.sep).strip().strip(os.sep)
         path = path.split(os.sep)
         return os.path.join(os.sep, *path)
 
 
-class NearlyPath(PathFinderBase):
+class NearlyPath(PathFinderBasePath):
     def __init__(self, src_path: str):
-        PathFinderBase.__init__(self, src_path=src_path)
+        PathFinderBasePath.__init__(self, src_path=src_path)
 
         if hasattr(self, "path"):
             return
@@ -54,7 +68,7 @@ class NearlyPath(PathFinderBase):
             if os.path.exists(i):
                 self.path = self.nearly_path = i
                 break
-   
+
 
 class MistakeFinder(NearlyPath):
     def __init__(self, src_path: str):
@@ -101,12 +115,30 @@ class MistakeFinder(NearlyPath):
         return f"{name}{ext}"
 
 
-class PathFinder(MistakeFinder):
+class PathFinderBase(MistakeFinder):
     def __init__(self, path: str):
         MistakeFinder.__init__(self, src_path=path)
+        PathFinderResult.r = self.path
+
+
+class PathFinder:
+    def __init__(self, path: str):
+        try:
+            while Task.t.is_alive():
+                cnf.root.update()
+        except AttributeError:
+            pass
+
+        Task.t = threading.Thread(target=PathFinderBase, args=[path], daemon=True)
+        Task.t.start()
+
+        while Task.t.is_alive():
+            cnf.root.update()
 
     def __str__(self) -> str:
-        return self.path
+        return PathFinderResult.r
+
+
 
 path = "\\192.168.10.105\\shares\\Marketing\\General\\9. ТЕКСТЫ\\2023\\7. PR-рассылка\\10. Октябрь\\Royal"
 path = "/Users/Morkowik/Downloads/Геохимия видео"
