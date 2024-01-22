@@ -25,7 +25,7 @@ class PathFinderBasePath(object):
                     for i in PrePaths().pre_paths]
 
         src_path = self.normalize_path(path=src_path)
-        src_path_split = src_path.split(os.sep)
+        src_path_split = [i for i in src_path.split(os.sep) if i]
 
         self.src_path_versions = [
             os.path.join(pre_path, *src_path_split[i:])
@@ -38,10 +38,9 @@ class PathFinderBasePath(object):
                 self.path = path_ver
                 break
 
-
     def normalize_path(self, path: Literal["path"]) -> Literal["path without trash"]:
         path = path.replace("\\", os.sep).strip().strip(os.sep)
-        path = path.split(os.sep)
+        path = [i for i in path.split(os.sep) if i]
         return os.path.join(os.sep, *path)
 
 
@@ -54,7 +53,7 @@ class NearlyPath(PathFinderBasePath):
 
         new_paths_versions = []
         for path_ver in self.src_path_versions:
-            path_ver_split = path_ver.split(os.sep)
+            path_ver_split = [i for i in path_ver.split(os.sep) if i]
 
             for i in reversed(range(len(path_ver_split))):
                 try:
@@ -62,8 +61,10 @@ class NearlyPath(PathFinderBasePath):
                         os.path.join(os.sep, *path_ver_split[:i]))
                 except TypeError:
                     pass
-        
+
+        new_paths_versions = [i for i in new_paths_versions if len(i) > 1]
         new_paths_versions.sort(key=len, reverse=True)
+
         for i in new_paths_versions:
             if os.path.exists(i):
                 self.path = self.nearly_path = i
@@ -79,6 +80,7 @@ class MistakeFinder(NearlyPath):
         
         mistaked_tail = self.find_tail(
             src_path=src_path, nearly_path=self.nearly_path)
+        
 
         for i in mistaked_tail:
             true_name = self.find_true_name(

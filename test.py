@@ -11,4 +11,5 @@
 "/Marketing/Photo/2022/05 - май/Срочные браслеты Шмаи/Retouch"
 
 
-
+import os
+a = os.path.exists("smb://SB06/shares/Studio/Video/Digital/Ready")
