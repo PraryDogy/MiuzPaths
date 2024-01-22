@@ -9,3 +9,6 @@
 "marketing\Photo\2022\05 - май\Миллениум_предметка\R01-MLN119-070-_-2022-05-17 22-09-08"
 "\sbc01\shares\marketing\General\4. MONTHLY TO START\МАРТ\ADV& PR\ФОТО"
 "/Marketing/Photo/2022/05 - май/Срочные браслеты Шмаи/Retouch"
+
+
+

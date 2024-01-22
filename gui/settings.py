@@ -46,8 +46,8 @@ class SettingsBtns(CTkFrame):
         self.ok_btn = CButton(master=self, text="Ок")
         self.ok_btn.pack(side="left")
 
-        can_btn = CButton(master=self, text="Отмена")
-        can_btn.pack(side="left", padx=(10, 0))
+        self.can_btn = CButton(master=self, text="Отмена")
+        self.can_btn.pack(side="left", padx=(10, 0))
 
 
 class SettingsWin(tkinter.Toplevel):
@@ -72,6 +72,7 @@ class SettingsWin(tkinter.Toplevel):
         btns = SettingsBtns(master=self)
         btns.pack(pady=(10, 0))
         btns.ok_btn.cmd(self.save_sett)
+        btns.can_btn.cmd(self.close_sett)
 
         self.place_center()
 

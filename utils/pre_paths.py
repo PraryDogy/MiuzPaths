@@ -15,6 +15,7 @@ class PrePathsDefault:
     default_prepaths = [
         "/",
         "/Volumes/Shares/Marketing",
+        "Volumes/shares/Studio",
         ]
 
 
