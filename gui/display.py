@@ -7,7 +7,7 @@ from customtkinter import CTkFrame, CTkLabel
 from cfg import cnf
 
 from .widgets import CScroll
-
+from utils import PrePaths
 
 class RowsPath:
     p = []
@@ -24,12 +24,20 @@ class RowsVar:
 class Rows(tkinter.Frame):
     def __init__(self, master=tkinter):
         tkinter.Frame.__init__(self, master=master, bg=cnf.dgray_color)
-        max_len = -150
-
         RowsDict.d.clear()
+        max_len = 110
+        pre_paths = PrePaths().pre_paths
+
         for x, input_path in enumerate(RowsPath.p):
-            short_txt = f"...{input_path[max_len:]}"
-            RowsDict.d[short_txt] = input_path
+
+            src_input_path = input_path
+
+            for prepath in pre_paths[:-1]:
+                if prepath in input_path:
+                    input_path = input_path.replace(prepath, "")
+
+            short_txt = f"...{input_path[-max_len:]}"
+            RowsDict.d[short_txt] = src_input_path
 
             btn = CTkLabel(master=self, text=short_txt, corner_radius=cnf.corner,
                            anchor="w", justify="left", pady=5,
