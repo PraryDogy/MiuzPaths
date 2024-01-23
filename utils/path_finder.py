@@ -19,6 +19,16 @@ class PathFinderResult:
     r = None
 
 
+class SimilarityPercentage(float):
+    def __new__(cls, str1: str, str2: str) -> 'SimilarityPercentage':
+        return float.__new__(cls, cls.calculate(str1, str2))
+
+    @staticmethod
+    def calculate(str1: str, str2: str) -> float:
+        matcher = SequenceMatcher(None, str1, str2).ratio()
+        return round(matcher * 100, 2)
+    
+
 class PathFinderBasePath(object):
     def __init__(self, src_path: str) -> Literal["converted path for mac"]:
         pre_paths = [self.normalize_path(path=i)
@@ -101,12 +111,9 @@ class MistakeFinder(NearlyPath):
                 return [i for i in mistaked_tail.split(os.sep) if i]
 
     def find_true_name(self, path_chunk: str, nearly_path: str):
-        mistake = self.normalize_name(path_chunk)
-        dirs = {self.normalize_name(i): i
-                for i in os.listdir(nearly_path)}
-
-        if mistake in dirs:
-            return dirs[mistake]
+        for i in os.listdir(nearly_path):
+            if SimilarityPercentage(i, path_chunk) > 90:
+                return i
 
     def similar(self, a: str, b: str):
         return SequenceMatcher(None, a, b).ratio()
