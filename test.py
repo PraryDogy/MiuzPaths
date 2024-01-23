@@ -15,21 +15,12 @@ from difflib import SequenceMatcher
 
 class SimilarityPercentage(float):
     def __new__(cls, str1: str, str2: str) -> 'SimilarityPercentage':
-        instance = super().__new__(cls, cls.calculate(str1, str2))
-        return instance
+        return float.__new__(cls, cls.calculate(str1, str2))
 
     @staticmethod
     def calculate(str1: str, str2: str) -> float:
-        # Используем SequenceMatcher для сравнения строк
-        matcher = SequenceMatcher(None, str1, str2)
-        
-        # Получаем отношение сходства
-        similarity_ratio = matcher.ratio()
-        
-        # Преобразуем отношение в проценты
-        similarity_percentage = round(similarity_ratio * 100, 2)
-        
-        return similarity_percentage
+        matcher = SequenceMatcher(None, str1, str2).ratio()
+        return round(matcher * 100, 2)
 
 # Пример использования
 string1 = "6. PR-рассылка"
