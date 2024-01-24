@@ -11,8 +11,7 @@ class ContextMenu(Menu):
 
     def clear(self, e: Event = None):
         "clear current path"
+        e.widget.cget("text")
 
     def clear_all(self, e: Event = None):
         "clear all paths"
-
-

@@ -5,9 +5,11 @@ import tkinter
 from customtkinter import CTkFrame, CTkLabel
 
 from cfg import cnf
-
-from .widgets import CScroll
 from utils import PrePaths
+
+from .display_context import ContextMenu
+from .widgets import CScroll
+
 
 class RowsPath:
     p = []
@@ -54,6 +56,10 @@ class Rows(tkinter.Frame):
                      command=lambda e, btn=btn: self.row_cmd_wrap(e=e, btn=btn)
                      )
 
+            btn.bind(sequence="<ButtonRelease-2>",
+                     command=self.pop_context_menu
+                     )
+
             if x % 2 == 0:
                 btn.configure(fg_color=cnf.bg_color,
                               text_color=cnf.text_color_dark)
@@ -74,6 +80,9 @@ class Rows(tkinter.Frame):
             subprocess.Popen(["open", "-R", new_path])
         else:
             subprocess.Popen(["open", new_path])
+
+    def pop_context_menu(self, event):
+        ContextMenu(e=event).post(event.x_root, event.y_root)
 
 
 class Display(CScroll):
