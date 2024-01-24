@@ -7,30 +7,49 @@ from customtkinter import CTkFrame, CTkLabel
 from cfg import cnf
 from utils import PrePaths
 
-from .display_context import ContextMenu
 from .widgets import CScroll
 
 
-class RowsPath:
-    p = []
+class HistoryPaths:
+    lst = []
 
 
-class RowsDict:
-    d = {}
+class ShortFullPaths:
+    dct = {}
 
 
-class RowsVar:
+class DisplayVar:
     v = tkinter.Variable(value=0)
+
+
+class ContextMenu(tkinter.Menu):
+    def __init__(self, e: tkinter.Event):
+        tkinter.Menu.__init__(self, master=cnf.root)
+
+        self.add_command(label="Очистить",
+                         command=lambda: self.clear(e=e))
+        self.add_separator()
+        self.add_command(label="Очистить все",
+                         command=lambda: self.clear_all(e=e))
+
+    def clear(self, e: tkinter.Event = None):
+        HistoryPaths.lst.remove(ShortFullPaths.dct[e.widget.cget("text")])
+        DisplayVar.v.set(value=DisplayVar.v.get() + 1)
+
+    def clear_all(self, e: tkinter.Event = None):
+        HistoryPaths.lst.clear()
+        DisplayVar.v.set(value=DisplayVar.v.get() + 1)
+
 
 
 class Rows(tkinter.Frame):
     def __init__(self, master=tkinter):
         tkinter.Frame.__init__(self, master=master, bg=cnf.dgray_color)
-        RowsDict.d.clear()
+        ShortFullPaths.dct.clear()
         max_len = 110
         pre_paths = PrePaths().pre_paths
 
-        for x, input_path in enumerate(RowsPath.p):
+        for x, input_path in enumerate(HistoryPaths.lst):
 
             src_input_path = input_path
 
@@ -39,7 +58,7 @@ class Rows(tkinter.Frame):
                     input_path = input_path.replace(prepath, "")
 
             short_txt = f"...{input_path[-max_len:]}"
-            RowsDict.d[short_txt] = src_input_path
+            ShortFullPaths.dct[short_txt] = src_input_path
 
             btn = CTkLabel(master=self, text=short_txt, corner_radius=cnf.corner,
                            anchor="w", justify="left", pady=5,
@@ -75,7 +94,7 @@ class Rows(tkinter.Frame):
         btn.configure(fg_color=cnf.blue_color)
         btn.after(100, lambda: btn.configure(fg_color=old_bg))
 
-        new_path = RowsDict.d[btn.cget("text")]
+        new_path = ShortFullPaths.dct[btn.cget("text")]
         if os.path.isfile(new_path) or new_path.endswith((".APP", ".app")):
             subprocess.Popen(["open", "-R", new_path])
         else:
@@ -94,7 +113,7 @@ class Display(CScroll):
         self.load_scroll()
         self.load_rows()
 
-        RowsVar.v.trace_add(mode="read", callback=self.rows_var_callback)
+        DisplayVar.v.trace_add(mode="read", callback=self.rows_var_callback)
 
     def rows_var_callback(self, *args):
         self.reload_display()

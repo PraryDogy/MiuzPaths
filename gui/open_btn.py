@@ -7,7 +7,7 @@ from cfg import cnf
 from utils import PathFinder
 
 from .widgets import CButton
-from .display import RowsPath, RowsVar
+from .display import HistoryPaths, DisplayVar
 
 __all__ = ("OpenBtn", )
 
@@ -53,14 +53,14 @@ class OpenBtn(CButton, OpenUtils):
             else:
                 subprocess.Popen(["open", new_path])
 
-            if new_path in RowsPath.p:
-                RowsPath.p.remove(new_path)
-            RowsPath.p.insert(0, new_path)
+            if new_path in HistoryPaths.lst:
+                HistoryPaths.lst.remove(new_path)
+            HistoryPaths.lst.insert(0, new_path)
 
-            if len(RowsPath.p) > 20:
-                RowsPath.p.pop(-1)
+            if len(HistoryPaths.lst) > 20:
+                HistoryPaths.lst.pop(-1)
 
-            RowsVar.v.set(value=RowsVar.v.get() + 1)
+            DisplayVar.v.set(value=DisplayVar.v.get() + 1)
         else:
             self.configure(text="Скопируйте путь\nв буфер обмена",
                           fg_color=cnf.blue_color)
