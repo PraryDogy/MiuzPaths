@@ -45,26 +45,12 @@ class Rows(tkinter.Frame):
     def __init__(self, master=tkinter):
         tkinter.Frame.__init__(self, master=master, bg=cnf.dgray_color)
         ShortFullPaths.dct.clear()
-        max_len = 110
-
-        pre_paths = [
-            os.path.join("/Volumes", i)
-            for i in os.listdir("/Volumes")
-            if os.path.ismount(os.path.join("/Volumes", i))
-            ]
-
+  
         for x, input_path in enumerate(HistoryPaths.lst):
 
-            src_input_path = input_path
+            ShortFullPaths.dct[input_path] = input_path
 
-            for prepath in pre_paths:
-                if prepath in input_path:
-                    input_path = input_path.replace(prepath, "")
-
-            short_txt = f"...{input_path[-max_len:]}"
-            ShortFullPaths.dct[short_txt] = src_input_path
-
-            btn = CTkLabel(master=self, text=short_txt, corner_radius=cnf.corner,
+            btn = CTkLabel(master=self, text=input_path, corner_radius=cnf.corner,
                            anchor="w", justify="left", pady=5,
                            height=40,
                            font=("San Francisco Pro", 14, "normal")
@@ -91,7 +77,7 @@ class Rows(tkinter.Frame):
                               text_color=cnf.text_color_dark)
 
     def row_cmd_wrap(self, e: tkinter.Event, btn: CTkLabel):
-        btn.configure(wraplength=self.winfo_width())
+        btn.configure(wraplength=self.winfo_width() - 10)
 
     def row_cmd(self, e: tkinter.Event, btn: CTkLabel):
         old_bg = btn.cget("fg_color")
