@@ -1,11 +1,7 @@
 import abc
 import sys
 import tkinter
-
-try:
-    from typing import Callable
-except ImportError:
-    from typing import Callable
+from typing import Callable
 
 import customtkinter
 

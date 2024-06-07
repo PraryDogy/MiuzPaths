@@ -2,14 +2,7 @@ import os
 import subprocess
 import tkinter
 import traceback
-
-try:
-    from typing import Literal
-except ImportError:
-    from typing import Literal
-
-import io
-import traceback
+from typing import Literal
 
 from cfg import cnf
 
