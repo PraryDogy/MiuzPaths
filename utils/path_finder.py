@@ -1,12 +1,8 @@
 import os
-import string
 import threading
 from difflib import SequenceMatcher
-from typing import Literal
 
 from cfg import cnf
-
-from .pre_paths import PrePaths
 
 __all__ = ("PathFinder", )
 

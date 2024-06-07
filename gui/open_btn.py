@@ -49,17 +49,26 @@ class OpenBtn(CButton, OpenUtils):
             res = PathFinder(path=input_path)
             new_path = res.get_result()
 
-            if os.path.isfile(new_path) or new_path.endswith((".APP", ".app")):
-                subprocess.Popen(["open", "-R", new_path])
-            else:
-                subprocess.Popen(["open", new_path])
+            if new_path:
 
-            if new_path in HistoryPaths.lst:
-                HistoryPaths.lst.remove(new_path)
-            HistoryPaths.lst.insert(0, new_path)
+                if os.path.isfile(new_path) or new_path.endswith((".APP", ".app")):
+                    subprocess.Popen(["open", "-R", new_path])
+                else:
+                    subprocess.Popen(["open", new_path])
 
-            if len(HistoryPaths.lst) > 20:
-                HistoryPaths.lst.pop(-1)
+                if new_path in HistoryPaths.lst:
+                    HistoryPaths.lst.remove(new_path)
+
+                HistoryPaths.lst.insert(0, new_path)
+
+                if len(HistoryPaths.lst) > 20:
+                    HistoryPaths.lst.pop(-1)
+
+                if len(new_path.split(os.sep)) <= 3:
+                    ...
+
+            # print(new_path)
+            "smb://sbc031/shares/Marketing/Photo/_Collections/_____1 Solo/1 IMG/__2023-09-22 11-27-28 рабочий файл.tif/"
 
             DisplayVar.v.set(value=DisplayVar.v.get() + 1)
         else:

@@ -5,7 +5,6 @@ import tkinter
 from customtkinter import CTkFrame, CTkLabel
 
 from cfg import cnf
-from utils import PrePaths
 
 from .widgets import CScroll
 
@@ -47,13 +46,18 @@ class Rows(tkinter.Frame):
         tkinter.Frame.__init__(self, master=master, bg=cnf.dgray_color)
         ShortFullPaths.dct.clear()
         max_len = 110
-        pre_paths = PrePaths().pre_paths
+
+        pre_paths = [
+            os.path.join("/Volumes", i)
+            for i in os.listdir("/Volumes")
+            if os.path.ismount(os.path.join("/Volumes", i))
+            ]
 
         for x, input_path in enumerate(HistoryPaths.lst):
 
             src_input_path = input_path
 
-            for prepath in pre_paths[:-1]:
+            for prepath in pre_paths:
                 if prepath in input_path:
                     input_path = input_path.replace(prepath, "")
 
