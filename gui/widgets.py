@@ -3,9 +3,9 @@ import sys
 import tkinter
 
 try:
-    from typing_extensions import Callable
+    from typing import Callable
 except ImportError:
-    from typing import Literal, Callable
+    from typing import Callable
 
 import customtkinter
 
