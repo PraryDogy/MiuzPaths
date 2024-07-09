@@ -31,7 +31,7 @@ class Config(Colors, GuiDigits):
         self.root.withdraw()
 
         self.app_name = 'MiuzPaths'
-        self.app_ver = '2.0.0'
+        self.app_ver = '2.1.0'
         self.cfg_dir = os.path.join(os.path.expanduser("~"),
             f"Library", "Application Support", self.app_name)
         
