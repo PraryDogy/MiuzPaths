@@ -7,6 +7,7 @@ import customtkinter
 
 from cfg import cnf
 from utils import SysUtils
+import subprocess
 
 __all__ = (
     "CScroll",
@@ -81,8 +82,19 @@ class MacMenu(tkinter.Menu, SysUtils):
         if sys.version_info.minor < 10:
             cnf.root.createcommand("tkAboutDialog", self.about_dialog)
 
+        self.file_menu = tkinter.Menu(main_menu, tearoff=0)
+        main_menu.add_cascade(label="Настройки", menu=self.file_menu)
+        self.file_menu.add_command(label="Открыть настройки", command=self.open_settings)
+
+        if sys.version_info.minor < 10:
+            self.root.createcommand("tkAboutDialog", self.about_dialog)
+
+
     def about_dialog(self):
         try:
             cnf.root.tk.call("tk::mac::standardAboutPanel")
         except Exception:
             self.print_err()
+
+    def open_settings(self):
+        subprocess.Popen(["open", cnf.json_dir])
