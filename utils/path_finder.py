@@ -1,7 +1,6 @@
 import os
 import threading
 from difflib import SequenceMatcher
-
 from cfg import cnf
 
 __all__ = ("PathFinder", )
@@ -23,6 +22,14 @@ def path_finder(src: str):
         for i in os.listdir("/Volumes")
         if os.path.ismount(os.path.join("/Volumes", i))
         ]
+
+    shares_extra = [
+        os.path.join(volume_path, extra.replace(os.sep, "").strip())
+        for extra in cnf.extra_paths
+        for volume_path in shares
+        ]
+    
+    shares.extend(shares_extra)
 
     # обрезаем входящий путь каждый раз на 1 секцию с конца
     possible_paths = {
