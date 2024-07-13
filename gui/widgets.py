@@ -43,8 +43,8 @@ class CScroll(customtkinter.CTkScrollableFrame, BaseCWid, SysUtils):
     def moveup(self, e=None):
         try:
             self.get_parrent().yview_moveto("0.0")
-        except Exception:
-            self.print_err()
+        except Exception as e:
+            self.print_err(parent=self, error=e)
 
 
 class CButton(customtkinter.CTkButton, BaseCWid):
@@ -93,8 +93,8 @@ class MacMenu(tkinter.Menu, SysUtils):
     def about_dialog(self):
         try:
             cnf.root.tk.call("tk::mac::standardAboutPanel")
-        except Exception:
-            self.print_err()
+        except Exception as e:
+            self.print_err(parent=self, error=e)
 
     def open_settings(self):
         subprocess.Popen(["open", cnf.json_dir])
