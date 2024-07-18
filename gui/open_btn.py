@@ -69,15 +69,10 @@ class OpenBtn(CButton, OpenUtils):
                 if len(HistoryPaths.lst) > 20:
                     HistoryPaths.lst.pop(-1)
 
-
-            # print(new_path)
-            "smb://sbc031/shares/Marketing/Photo/_Collections/_____1 Solo/1 IMG/__2023-09-22 11-27-28 рабочий файл.tif/"
-
             DisplayVar.v.set(value=DisplayVar.v.get() + 1)
 
         else:
             self.btn_message(text="Скопируйте путь\nв буфер обмена")
-
 
     def btn_message(self, text: str):
         self.configure(text=text, fg_color=cnf.red_color)

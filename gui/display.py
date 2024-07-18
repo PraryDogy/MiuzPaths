@@ -25,10 +25,16 @@ class ContextMenu(tkinter.Menu):
     def __init__(self, e: tkinter.Event):
         tkinter.Menu.__init__(self, master=cnf.root)
 
-        self.add_command(label="Очистить",
+        widget: tkinter.Label = e.widget
+        widget_text = widget.cget("text")
+
+        if len(widget_text) > 100:
+            widget_text = widget_text[:100]
+
+        self.add_command(label=f"Удалить \"{widget_text}\"",
                          command=lambda: self.clear(e=e))
         self.add_separator()
-        self.add_command(label="Очистить все",
+        self.add_command(label="Удалить все",
                          command=lambda: self.clear_all(e=e))
 
     def clear(self, e: tkinter.Event = None):
