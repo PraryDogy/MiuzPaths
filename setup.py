@@ -1,40 +1,101 @@
+# -*- coding: utf-8 -*-
+
+"""
+    python setup.py py2app
+"""
+
+import os
+import shutil
+import subprocess
 import sys
-import icnsutil
-from setuptools import setup
 from datetime import datetime
 
-from setup_ext import SetupExt
+from setuptools import setup
+
 from cfg import cnf
 
-src = 'icon.png'
-img = icnsutil.IcnsFile()
-img.add_media(file=src)
-img.write(f'icon.icns')
 
-current_year = datetime.now().year
+def remove_trash():
+    trash = ("build", ".eggs", "dist")
+    for i in trash:
+        try:
+            shutil.rmtree(i)
+        except Exception as e:
+            print(e)
+            continue
 
-OPTIONS = {
-    'iconfile': 'icon.icns',
-    'plist': {
-        'CFBundleName': cnf.app_name,
-        'CFBundleShortVersionString': cnf.app_ver,
-        'CFBundleVersion': cnf.app_ver,
-        'CFBundleIdentifier': f'com.evlosh.{cnf.app_name}',
-        'NSHumanReadableCopyright': (
-            f'Created by Evgeny Loshkarev'
-            f'\nCopyright © {current_year} {cnf.app_name}. All rights reserved.')
-    }
-}
+
+def move_app_to_desktop(appname: str):
+    desktop = os.path.expanduser("~/Desktop")
+
+    dest = os.path.join(desktop, f"{appname}.app")
+    src = os.path.join("dist", f"{appname}.app")
+
+    try:
+        if os.path.exists(dest):
+            shutil.rmtree(dest)
+    except Exception as e:
+        print(e)
+
+    try:
+        shutil.move(src, dest)
+    except Exception as e:
+        print(e)
+
+    try:
+        subprocess.Popen(["open", "-R", dest])
+    except Exception as e:
+        print(e)
+
+
+YEAR = datetime.now().year # CURRENT YEAR
+AUTHOR = "Evgeny Loshkarev"  # "Evgeny Loshkarev"
+SHORT_AUTHOR_NAME = "Evlosh" # "Evlosh"
+COMPANY = "MIUZ Diamonds" # "MIUZ Diamonds" or ""
+APP_NAME = cnf.app_name
+APP_VER = cnf.app_ver # "1.0.0"
+ICON_PATH = "icon.icns" # "icon/icon.icns" or "icon.icns"
+MAIN_FILES = ["start.py"] # SINGLE OR MULTIPLE PYTHON FILES
+
+BUNDLE_ID = f"com.{SHORT_AUTHOR_NAME}.{APP_NAME}" # DON'T CHANGE IT
+PY_2APP = "py2app" # DON'T CHANGE IT
+
+# IF YOU DON'T HAVE ADVANCED FILES
+DATA_FILES = []
+
+
+
+# DON'T CHANGE IT
+
+OPTIONS = {"iconfile": ICON_PATH,
+           "plist": {"CFBundleName": APP_NAME,
+                     "CFBundleShortVersionString": APP_VER,
+                     "CFBundleVersion": APP_VER,
+                     "CFBundleIdentifier": BUNDLE_ID,
+                     "NSHumanReadableCopyright": (
+                         f"Created by {AUTHOR}"
+                         f"\nCopyright © {YEAR} {COMPANY}."
+                         f"\nAll rights reserved.")}}
+
 
 if __name__ == "__main__":
-    sys.argv.append("py2app")
 
-    setup(
-        app=['start.py'],
-        name=cnf.app_name,
-        data_files=[],
-        options={'py2app': OPTIONS},
-        setup_requires=['py2app'],
-    )
+    sys.argv.append(PY_2APP)
 
-    SetupExt(py_ver="3.12", appname=cnf.app_name)
+    try:
+        remove_trash()
+
+        setup(
+            app=MAIN_FILES,
+            name=APP_NAME,
+            data_files=DATA_FILES,
+            options={PY_2APP: OPTIONS},
+            setup_requires=[PY_2APP],
+            )
+
+        move_app_to_desktop(APP_NAME)
+        remove_trash()
+
+    except Exception as e:
+        print(e)
+        remove_trash()
