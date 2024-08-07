@@ -11,13 +11,6 @@ class Shared:
     result: str = None
     volumes: list = None
 
-# class Task:
-#     t: threading.Thread = None
-
-
-# class PathFinderResult:
-#     r: str = None
-
 
 def path_finder(src: str):
     src = os.sep + src.replace("\\", os.sep).strip().strip(os.sep)
