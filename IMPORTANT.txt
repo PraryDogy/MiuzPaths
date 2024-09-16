@@ -5,3 +5,5 @@ tk86 = "/Library/Frameworks/Python.framework/Versions/3.11/lib/tk8.6"
 add this folders to application.app/Contents/Resources/lib/
 
 tkinter
+
+https://stackoverflow.com/questions/1868714/how-do-i-copy-an-entire-directory-of-files-into-an-existing-directory-using-pyth
