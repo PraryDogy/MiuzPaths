@@ -36,7 +36,20 @@ class Config(Colors, GuiDigits):
             f"Library", "Application Support", self.app_name)
         
         self.json_dir = os.path.join(self.cfg_dir, "cfg.json")
-        self.extra_paths = ["Studio", ]
+
+
+        self.extra_paths = ["/Studio/PANACEA", "/Studio/MIUZ"]
+
+        # length 30
+        # 1: 1--DsK4{#4w}OH!(v)8_109ho{}@R0
+        # 2: ...
+        # 3: ...
+        self.product_key = "1--DsK4{#4w}OH!(v)8_109ho{}@R0"
+
+        self.data = {
+            "extra_paths": self.extra_paths,
+            "product_key": self.product_key
+        }
 
         Colors.__init__(self)
         GuiDigits.__init__(self)
@@ -46,11 +59,31 @@ class Config(Colors, GuiDigits):
             os.makedirs(name=self.cfg_dir, exist_ok=True)
 
         if not os.path.exists(path=self.json_dir):
-            with open(file=self.json_dir, mode="w", encoding="utf-8") as file:
-                json.dump(self.extra_paths, file, ensure_ascii=False, indent=4)
+            self.write_data()
 
         with open(file=self.json_dir, mode="r", encoding="utf-8") as file:
-            self.extra_paths = json.load(file)
+
+            try:
+                data = json.load(file)
+
+            except json.JSONDecodeError:
+                data = self.data
+
+            if type(data) != dict:
+                data = self.data
+
+            if data.keys() != self.data.keys():
+                data = self.data
+
+            if data["product_key"] != self.product_key:
+                data = self.data
+
+            self.data = data
+            self.write_data()
+
+    def write_data(self):
+        with open(file=self.json_dir, mode="w", encoding="utf-8") as file:
+            json.dump(obj=self.data, fp=file, ensure_ascii=False, indent=4)
 
 
 cnf = Config()

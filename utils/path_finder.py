@@ -15,6 +15,7 @@ class Shared:
 def path_finder(src: str):
     src = os.sep + src.replace("\\", os.sep).strip().strip(os.sep)
     src_splited = [i for i in src.split(os.sep) if i]
+
     Shared.volumes = [
         os.path.join("/Volumes", i)
         for i in os.listdir("/Volumes")
@@ -22,9 +23,9 @@ def path_finder(src: str):
         ]
 
     volumes_extra = [
-        os.path.join(volume_path, extra.replace(os.sep, "").strip())
-        for extra in cnf.extra_paths
-        for volume_path in Shared.volumes
+        os.path.join(vol, *extra.strip().split(os.sep))
+        for extra in cnf.data["extra_paths"]
+        for vol in Shared.volumes
         ]
     
     Shared.volumes.extend(volumes_extra)
