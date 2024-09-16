@@ -16,6 +16,3 @@ def copy_tcl_to_app(app_dest: str, py_ver: str="3.11"):
         shutil.copytree(src=src, dst=file_dest, dirs_exist_ok=True)
         
     return True
-
-
-copy_tcl_to_app("/Users/Loshkarev/Desktop/MiuzPaths.app")
