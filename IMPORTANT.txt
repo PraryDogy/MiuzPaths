@@ -6,4 +6,4 @@ add this folders to application.app/Contents/Resources/lib/
 
 tkinter
 
-https://stackoverflow.com/questions/1868714/how-do-i-copy-an-entire-directory-of-files-into-an-existing-directory-using-pyth
+https://stackoverflow.com/questions/59837456/send-py2app-application-to-mac-without-python
