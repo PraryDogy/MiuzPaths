@@ -3,7 +3,7 @@ import shutil
 
 def copy_tcl_to_app(app_dest: str, py_ver: str="3.11"):
 
-    dest = os.path.join(app_dest, "Contents/Resources/lib")
+    dest = os.path.join(app_dest, "Contents/lib")
 
     data = {
         "tcl8": f"/Library/Frameworks/Python.framework/Versions/{py_ver}/lib/tcl8",
@@ -16,3 +16,6 @@ def copy_tcl_to_app(app_dest: str, py_ver: str="3.11"):
         shutil.copytree(src=src, dst=file_dest, dirs_exist_ok=True)
         
     return True
+
+
+copy_tcl_to_app("/Users/Loshkarev/Desktop/MiuzPaths.app")
