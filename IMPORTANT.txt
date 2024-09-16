@@ -1,0 +1,7 @@
+tcl8 = "/Library/Frameworks/Python.framework/Versions/3.11/lib/tcl8"
+tcl86 = "/Library/Frameworks/Python.framework/Versions/3.11/lib/tcl8.6"
+tk86 = "/Library/Frameworks/Python.framework/Versions/3.11/lib/tk8.6"
+
+add this folders to application.app/Contents/Resources/lib/
+
+tkinter

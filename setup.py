@@ -13,7 +13,7 @@ from datetime import datetime
 from setuptools import setup
 
 from cfg import cnf
-
+from copy_tcl_to_app import copy_tcl_to_app
 
 def remove_trash():
     trash = ("build", ".eggs", "dist")
@@ -47,6 +47,7 @@ def move_app_to_desktop(appname: str):
     except Exception as e:
         print(e)
 
+    return dest
 
 YEAR = datetime.now().year # CURRENT YEAR
 AUTHOR = "Evgeny Loshkarev"  # "Evgeny Loshkarev"
@@ -93,8 +94,10 @@ if __name__ == "__main__":
             setup_requires=[PY_2APP],
             )
 
-        move_app_to_desktop(APP_NAME)
+        dest = move_app_to_desktop(APP_NAME)
         remove_trash()
+        copy_tcl_to_app(app_dest=dest)
+        
 
     except Exception as e:
         print(e)
