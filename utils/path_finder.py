@@ -1,100 +1,185 @@
 import os
 import threading
-from difflib import SequenceMatcher
 from cfg import cnf
 
-__all__ = ("PathFinder", )
+__all__ = ("PathFinder", "Shared")
 
 
 class Shared:
-    my_thread: threading.Thread = None
+    result_none = "RESULT_NONE"
+    path_finder_task: threading.Thread = None
     result: str = None
     volumes: list = None
 
 
-def path_finder(src: str):
-    src = os.sep + src.replace("\\", os.sep).strip().strip(os.sep)
-    src_splited = [i for i in src.split(os.sep) if i]
+class PathFinderTask:
+    VOLUMES = os.sep + "Volumes"
+    EXTRA_PATHS = []
 
-    Shared.volumes = [
-        os.path.join("/Volumes", i)
-        for i in os.listdir("/Volumes")
-        if os.path.ismount(os.path.join("/Volumes", i))
-        ]
+    @classmethod
+    def get_result(cls, path: str) -> str | None:
 
-    volumes_extra = [
-        os.path.join(vol, *extra.strip().split(os.sep))
-        for extra in cnf.data["extra_paths"]
-        for vol in Shared.volumes
+        # игнорируем /Volumes/Macintosh HD
+        Shared.volumes = cls.get_volumes()[1:]
+
+        # удаляем новые строки, лишние слешы
+        prepared = cls.prepare_path(path=path)
+
+        if not prepared:
+            Shared.result = Shared.result_none
+            return None
+
+        elif os.path.exists(prepared):
+            Shared.result = prepared
+            return prepared
+
+        # превращаем путь в список 
+        splited = cls.path_to_list(path=prepared)
+
+        # см. аннотацию add_to_start
+        paths = cls.add_to_start(splited_path=splited, volumes=Shared.volumes)
+
+        res = cls.check_for_exists(paths=paths)
+
+        if res in Shared.volumes:
+            Shared.result = Shared.result_none
+            return None
+
+        elif res:
+            Shared.result = res
+            return res
+        
+        else:
+            # см. аннотацию метода del_from_end
+            paths = [
+                ended_path
+                for path_ in paths
+                for ended_path in cls.del_from_end(path=path_)
+            ]
+
+            paths.sort(key=len, reverse=True)
+            
+            res = cls.check_for_exists(paths=paths)
+
+            if res in Shared.volumes:
+                Shared.result = Shared.result_none
+                return None
+            
+            elif res:
+                Shared.result = res
+                return res
+
+    @classmethod
+    def get_volumes(cls) -> list[str]:
+        return [
+            entry.path
+            for entry in os.scandir(cls.VOLUMES)
+            if entry.is_dir()
         ]
     
-    Shared.volumes.extend(volumes_extra)
+    @classmethod
+    def prepare_path(cls, path: str) -> str:
+        path = path.replace("\\", os.sep)
+        path = path.strip()
+        if path:
+            return os.sep + path.strip(os.sep)
+        else:
+            return None
 
-    # обрезаем входящий путь каждый раз на 1 секцию с конца
-    possible_paths = {
-            os.path.join(*src_splited[:i])
-            for i in range(len(src_splited) + 1)
-            if src_splited[:i]
-            }
+    @classmethod
+    def path_to_list(cls, path: str) -> list[str]:
+        return [
+            i
+            for i in path.split(os.sep)
+            if i
+        ]
 
-    # обрезаем каждый путь на 1 секцию с начала и прибавляем элементы из shares
-    all_posible_paths = []
+    @classmethod
+    def add_to_start(cls, splited_path: list, volumes: list[str]) -> list[str]:
+        """
+        Пример:
+        >>> splited_path = ["Volumes", "Shares-1", "Studio", "MIUZ", "Photo", "Art", "Raw", "2025"]
+        >>> volumes = ["/Volumes/Shares", "/Volumes/Shares-1"]
+        [
+            '/Volumes/Shares/Studio/MIUZ/Photo/Art/Raw/2025',
+            '/Volumes/Shares/MIUZ/Photo/Art/Raw/2025',
+            '/Volumes/Shares/Photo/Art/Raw/2025',
+            '/Volumes/Shares/Art/Raw/2025',
+            '/Volumes/Shares/Raw/2025',
+            '/Volumes/Shares/2025',
+            ...
+            '/Volumes/Shares-1/Studio/MIUZ/Photo/Art/Raw/2025',
+            '/Volumes/Shares-1/MIUZ/Photo/Art/Raw/2025',
+            '/Volumes/Shares-1/Photo/Art/Raw/2025',
+            ...
+        ]
+        """
+        new_paths = []
 
-    for p_path in sorted(possible_paths, key=len, reverse=True):
-        p_path_split = [i for i in p_path.split(os.sep) if i]
-        
-        for share in Shared.volumes:
-            for i in range(len(p_path_split) + 1):
+        for vol in volumes:
 
-                all_posible_paths.append(
-                    os.path.join(share, *p_path_split[i:])
-                    )
+            splited_path_copy = splited_path.copy()
+            while len(splited_path_copy) > 0:
 
-    # из всех полученных возможных путей ищем самый подходящий существующий путь
-    for i in sorted(all_posible_paths, key=len, reverse=True):
-        if os.path.exists(i):
-            Shared.result = i
-            break
+                new = vol + os.sep + os.path.join(*splited_path_copy)
+                new_paths.append(new)
+                splited_path_copy.pop(0)
 
-    # смотрим совпадает ли последняя секция входящего и полученного пути
-    tail = []
+        new_paths.sort(key=len, reverse=True)
+        return new_paths
+    
+    @classmethod
+    def check_for_exists(cls, paths: list[str]) -> str | None:
+        for i in paths:
+            if os.path.exists(i):
+                return i
+        return None
+    
+    @classmethod
+    def del_from_end(cls, path: str) -> list[str]:
+        """
+        Пример:
+        >>> path: "/sbc01/Shares/Studio/MIUZ/Photo/Art/Raw/2025"
+        [
+            "/sbc01/Shares/Studio/MIUZ/Photo/Art/Raw/2025",
+            "/sbc01/Shares/Studio/MIUZ/Photo/Art/Raw",
+            "/sbc01/Shares/Studio/MIUZ/Photo/Art",
+            "/sbc01/Shares/Studio/MIUZ/Photo",
+            "/sbc01/Shares/Studio/MIUZ",
+            "/sbc01/Shares/Studio",
+            "/sbc01/Shares",
+            "/sbc01",
+        ]
+        """
+        new_paths = []
 
-    if Shared.result:
-        result_tail = Shared.result.split(os.sep)[-1]
-        if src_splited[-1] != result_tail:
-            try:
-                tail = src_splited[src_splited.index(result_tail) + 1:]
-            except ValueError:
-                return
+        while path != os.sep:
+            new_paths.append(path)
+            path, _ = os.path.split(path)
 
-    # пытаемся найти секции пути, написанные с ошибкой
-    for a in tail:
-        dirs = [x for x in os.listdir(Shared.result)]
-
-        for b in dirs:
-            matcher = SequenceMatcher(None, a, b).ratio()
-            if matcher >= 0.85:
-                Shared.result = os.path.join(Shared.result, b)
-                break
-
+        return new_paths
+    
 
 class PathFinder:
     def __init__(self, path: str):
         try:
-            while Shared.my_thread.is_alive():
+            while Shared.path_finder_task.is_alive():
                 cnf.root.update()
         except AttributeError:
             pass
 
-        Shared.my_thread = threading.Thread(target=path_finder, args=[path], daemon=True)
-        Shared.my_thread.start()
+        Shared.path_finder_task = threading.Thread(
+            target=PathFinderTask.get_result,
+            args=[path],
+            daemon=True
+        )
 
-        while Shared.my_thread.is_alive():
+        Shared.path_finder_task.start()
+
+        while Shared.path_finder_task.is_alive():
             cnf.root.update()
 
     def get_result(self) -> str:
-        if Shared.result in Shared.volumes:
-            return "1/2/3" # open_btn.py > row53 > if len(path) <= 3: ...
         return Shared.result
 
 

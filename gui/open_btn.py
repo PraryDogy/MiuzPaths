@@ -4,7 +4,7 @@ import subprocess
 import tkinter
 
 from cfg import cnf
-from utils import PathFinder
+from utils import PathFinder, Shared
 
 from .widgets import CButton
 from .display import HistoryPaths, DisplayVar
@@ -45,18 +45,20 @@ class OpenBtn(CButton, OpenUtils):
         input_path = self.paste()
 
         if self.path_check(path=input_path):
+
             res = PathFinder(path=input_path)
             new_path = res.get_result()
 
             if new_path:
 
-                if len(new_path.split(os.sep)) <= 3:
-                    self.btn_message(text="Поключите сетевой диск")
+                if new_path == Shared.result_none:
+                    self.btn_message(text="Не могу найти путь")
                     return
 
                 if os.path.isfile(new_path) or new_path.endswith((".APP", ".app")):
                     subprocess.Popen(["open", "-R", new_path])
                     self.press()
+
                 else:
                     subprocess.Popen(["open", new_path])
                     self.press()

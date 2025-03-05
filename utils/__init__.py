@@ -1,2 +1,2 @@
 from .system import SysUtils
-from .path_finder import PathFinder
+from .path_finder import PathFinder, Shared
