@@ -52,6 +52,7 @@ class OpenBtn(CButton, OpenUtils):
             if new_path:
 
                 if new_path == Shared.result_none:
+                    self.press()
                     self.btn_message(text="Не могу найти путь")
                     return
 
@@ -74,9 +75,10 @@ class OpenBtn(CButton, OpenUtils):
             DisplayVar.v.set(value=DisplayVar.v.get() + 1)
 
         else:
+            # self.press()
             self.btn_message(text="Скопируйте путь\nв буфер обмена")
 
     def btn_message(self, text: str):
-        self.configure(text=text, fg_color=cnf.red_color)
-        self.after(ms=1500, func=lambda: self.configure(
+        self.configure(text=text, fg_color=cnf.blue_color)
+        self.after(ms=500, func=lambda: self.configure(
             text="Открыть", fg_color=cnf.btn_color))
