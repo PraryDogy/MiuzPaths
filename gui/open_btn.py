@@ -72,6 +72,11 @@ class OpenBtn(CButton, OpenUtils):
                 if len(HistoryPaths.lst) > 20:
                     HistoryPaths.lst.pop(-1)
 
+            else:
+                self.press()
+                self.btn_message(text="Не могу найти путь")
+                return
+
             DisplayVar.v.set(value=DisplayVar.v.get() + 1)
 
         else:

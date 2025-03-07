@@ -191,3 +191,5 @@ path = "smb://sbc031/shares/Marketing/Photo/_Collections/_____1 Solo/1 IMG/__202
 path = "\\192.168.10.105\\shares\\Marketing\\General\\9. ТЕКСТЫ\\)2023\\7. PR-рассылка\\10. Октябрь\\Royal"
 path = "fafdgfagrf"
 
+
+"/Volumes/Shares/Marketing/Design/PROMO_АКЦИИ/2025/03_Spring Gifts/_8 march_Video/AI pix/Rich out.psd"
