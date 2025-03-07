@@ -80,7 +80,6 @@ class OpenBtn(CButton, OpenUtils):
             DisplayVar.v.set(value=DisplayVar.v.get() + 1)
 
         else:
-            # self.press()
             self.btn_message(text="Скопируйте путь\nв буфер обмена")
 
     def btn_message(self, text: str):
