@@ -81,6 +81,7 @@ class PathFinderTask:
     def prepare_path(cls, path: str) -> str:
         path = path.replace("\\", os.sep)
         path = path.strip()
+        path = path.strip("'").strip('"') # кавычки
         if path:
             return os.sep + path.strip(os.sep)
         else:
