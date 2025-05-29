@@ -129,7 +129,9 @@ class Display(customtkinter.CTkScrollableFrame):
             self.rows = Rows(master=self.scrollable)
             self.rows.pack(fill="both", expand=1)
         else:
-            self.rows = None
+            text = "История пуста"
+            self.rows = customtkinter.CTkLabel(master=self.scrollable, text=text)
+            self.rows.place(relx=0.5, rely=0.5, anchor="center")
 
     def reload_display(self):
         self.scrollable.destroy()

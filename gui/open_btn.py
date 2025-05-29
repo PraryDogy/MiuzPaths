@@ -44,7 +44,7 @@ class OpenBtn(customtkinter.CTkButton):
             width=200,
             height=60,
             anchor="center",
-            corner_radius=15
+            corner_radius=12
         )
         self.cmd(self.open_btn_cmd)
 
