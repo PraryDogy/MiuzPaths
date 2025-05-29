@@ -45,9 +45,9 @@ class ContextMenu(tkinter.Menu):
 
 
 
-class Rows(tkinter.Frame):
+class Rows(customtkinter.CTkFrame):
     def __init__(self, master=tkinter):
-        tkinter.Frame.__init__(self, master=master, bg=None)
+        super().__init__(master=master)
         ShortFullPaths.dct.clear()
   
         for x, input_path in enumerate(HistoryPaths.lst):
@@ -60,11 +60,9 @@ class Rows(tkinter.Frame):
                 anchor="w",
                 justify="left",
                 height=40,
-                fg_color="transparent",
-                bg_color="transparent"
                 
                 )
-            btn.pack(fill="x", pady=2)
+            btn.pack(fill="x", padx=4, pady=(0, 4))
 
             btn.bind(sequence="<ButtonRelease-1>",
                      command=lambda e, btn=btn: self.row_cmd(e=e, btn=btn)

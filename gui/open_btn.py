@@ -41,12 +41,9 @@ class OpenBtn(customtkinter.CTkButton):
         super().__init__(
             master=master,
             text="Открыть",
-            corner_radius=cnf.corner,
             width=200,
             height=60,
-            border_spacing=2,
             anchor="center"
-        
         )
         self.cmd(self.open_btn_cmd)
 
