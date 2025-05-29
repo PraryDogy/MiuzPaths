@@ -2,11 +2,10 @@ import os
 import subprocess
 import tkinter
 
+import customtkinter
 from customtkinter import CTkFrame, CTkLabel
 
 from cfg import cnf
-
-from .widgets import CScroll
 
 
 class HistoryPaths:
@@ -31,7 +30,7 @@ class ContextMenu(tkinter.Menu):
         if len(widget_text) > 100:
             widget_text = widget_text[:100]
 
-        self.add_command(label=f"Удалить \"{widget_text}\"",
+        self.add_command(label=f"Удалить",
                          command=lambda: self.clear(e=e))
         self.add_separator()
         self.add_command(label="Удалить все",
@@ -88,14 +87,23 @@ class Rows(tkinter.Frame):
         ContextMenu(e=event).post(event.x_root, event.y_root)
 
 
-class Display(CScroll):
+class Display(customtkinter.CTkScrollableFrame):
     def __init__(self, master=tkinter):
-        CScroll.__init__(self, master=master)
+        super().__init__(master=master)
 
         self.load_scroll()
         self.load_rows()
 
         DisplayVar.v.trace_add(mode="read", callback=self.rows_var_callback)
+
+    def get_parrent(self):
+        return self._parent_canvas
+
+    def moveup(self, e=None):
+        try:
+            self.get_parrent().yview_moveto("0.0")
+        except Exception as e:
+            self.print_err(parent=self, error=e)
 
     def rows_var_callback(self, *args):
         self.reload_display()

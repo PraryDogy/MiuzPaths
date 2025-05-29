@@ -10,23 +10,9 @@ from utils import SysUtils
 import subprocess
 
 __all__ = (
-    "CScroll",
     "MacMenu",
     )
 
-
-class CScroll(customtkinter.CTkScrollableFrame):
-    def __init__(self, master: tkinter, corner_radius: int = 0, **kw):
-        super().__init__(master=master, corner_radius=corner_radius, **kw)
-
-    def get_parrent(self):
-        return self._parent_canvas
-
-    def moveup(self, e=None):
-        try:
-            self.get_parrent().yview_moveto("0.0")
-        except Exception as e:
-            self.print_err(parent=self, error=e)
 
 
 class MacMenu(tkinter.Menu, SysUtils):
