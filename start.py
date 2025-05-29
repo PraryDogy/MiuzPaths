@@ -10,7 +10,7 @@ try:
 
 except Exception as ee:
 
-    APP_NAME = 'MiuzPaths'
+    APP_NAME = 'Paths'
     CFG_DIR = os.path.join(
         os.path.expanduser('~'), f'Library/Application Support/{APP_NAME}')
 
