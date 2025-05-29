@@ -64,6 +64,15 @@ class Rows(customtkinter.CTkFrame):
                 )
             btn.pack(fill="x", padx=4, pady=(0, 4))
 
+            if x != len(HistoryPaths.lst) - 1:
+
+                separator = customtkinter.CTkFrame(
+                    master=self,
+                    height=1,
+                    fg_color="#444444"
+                )
+                separator.pack(fill="x", padx=10, pady=2)
+
             btn.bind(sequence="<ButtonRelease-1>",
                      command=lambda e, btn=btn: self.row_cmd(e=e, btn=btn)
                      )
