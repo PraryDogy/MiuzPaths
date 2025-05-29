@@ -13,14 +13,15 @@ class Shared:
 
 
 class PathFinderTask:
-    VOLUMES = os.sep + "Volumes"
-    EXTRA_PATHS = []
+    volumes_text = "/Volumes"
 
     @classmethod
     def get_result(cls, path: str) -> str | None:
 
-        # игнорируем /Volumes/Macintosh HD
-        Shared.volumes = cls.get_volumes()[1:]
+        Shared.volumes = cls.get_volumes()
+        sys_volume = cls.get_sys_volume(Shared.volumes)
+        if sys_volume and sys_volume in Shared.volumes:
+            Shared.volumes.remove(sys_volume)
 
         # удаляем новые строки, лишние слешы
         prepared = cls.prepare_path(path=path)
@@ -73,10 +74,22 @@ class PathFinderTask:
     def get_volumes(cls) -> list[str]:
         return [
             entry.path
-            for entry in os.scandir(cls.VOLUMES)
+            for entry in os.scandir(cls.volumes_text)
             if entry.is_dir()
         ]
     
+    @classmethod
+    def get_sys_volume(cls, volumes: list[str]):
+        user = os.path.expanduser("~")
+        app_support = os.path.join("Library", "Application Support")
+        app_support = os.path.join(user, app_support)
+
+        for i in volumes:
+            full_path = os.path.join(i, app_support)
+            if os.path.exists(full_path):
+                return i
+        return None
+
     @classmethod
     def prepare_path(cls, path: str) -> str:
         path = path.replace("\\", os.sep)
