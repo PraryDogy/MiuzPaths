@@ -16,7 +16,7 @@ class Application:
         cnf.root.createcommand("tk::mac::ReopenApplication", self.demin)
 
         cnf.root.title(cnf.app_name)
-        cnf.root.configure(bg=cnf.bg_color, padx=10, pady=10)
+        cnf.root.configure(padx=10, pady=10)
         cnf.root.minsize(360, 400)
 
         self.disp = Display(master=cnf.root)
