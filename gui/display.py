@@ -3,7 +3,6 @@ import subprocess
 import tkinter
 
 import customtkinter
-from customtkinter import CTkFrame, CTkLabel
 
 from cfg import cnf
 
@@ -48,18 +47,24 @@ class ContextMenu(tkinter.Menu):
 
 class Rows(tkinter.Frame):
     def __init__(self, master=tkinter):
-        tkinter.Frame.__init__(self, master=master)
+        tkinter.Frame.__init__(self, master=master, bg=None)
         ShortFullPaths.dct.clear()
   
         for x, input_path in enumerate(HistoryPaths.lst):
 
             ShortFullPaths.dct[input_path] = input_path
 
-            btn = CTkLabel(master=self, text=input_path,
-                           anchor="w", justify="left", pady=5,
-                           height=40
-                           )
-            btn.pack(fill="x")
+            btn = customtkinter.CTkLabel(
+                master=self,
+                text=input_path,
+                anchor="w",
+                justify="left",
+                height=40,
+                fg_color="transparent",
+                bg_color="transparent"
+                
+                )
+            btn.pack(fill="x", pady=2)
 
             btn.bind(sequence="<ButtonRelease-1>",
                      command=lambda e, btn=btn: self.row_cmd(e=e, btn=btn)
@@ -73,10 +78,10 @@ class Rows(tkinter.Frame):
                      command=self.pop_context_menu
                      )
 
-    def row_cmd_wrap(self, e: tkinter.Event, btn: CTkLabel):
+    def row_cmd_wrap(self, e: tkinter.Event, btn: customtkinter.CTkLabel):
         btn.configure(wraplength=self.winfo_width() - 10)
 
-    def row_cmd(self, e: tkinter.Event, btn: CTkLabel):
+    def row_cmd(self, e: tkinter.Event, btn: customtkinter.CTkLabel):
         new_path = ShortFullPaths.dct[btn.cget("text")]
         if os.path.isfile(new_path) or new_path.endswith((".APP", ".app")):
             subprocess.Popen(["open", "-R", new_path])
@@ -109,16 +114,21 @@ class Display(customtkinter.CTkScrollableFrame):
         self.reload_display()
 
     def load_scroll(self):
-        self.scrollable = CTkFrame(master=self)
+        self.scrollable = customtkinter.CTkFrame(master=self)
         self.scrollable.pack(expand=1, fill="both")
 
     def load_rows(self):
-        self.rows = Rows(master=self.scrollable)
-        self.rows.pack(fill="both", expand=1)
+        if HistoryPaths.lst:
+            self.rows = Rows(master=self.scrollable)
+            self.rows.pack(fill="both", expand=1)
+        else:
+            self.rows = None
 
     def reload_display(self):
         self.scrollable.destroy()
-        self.rows.destroy()
+
+        if self.rows:
+            self.rows.destroy()
 
         self.load_scroll()
         self.load_rows()
