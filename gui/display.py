@@ -33,19 +33,19 @@ class ContextMenu(tkinter.Menu):
 
     def clear(self):
         _Shared.path_list.remove(self.widget.path)
-        _Shared.string_var.set("")
+        _Shared.string_var.set(_Shared.none_type)
 
     def clear_all(self):
         _Shared.path_list.clear()
-        _Shared.string_var.set("")
+        _Shared.string_var.set(_Shared.none_type)
 
 
 class Rows(customtkinter.CTkFrame):
     def __init__(self, master=tkinter):
         super().__init__(master=master)
   
-        for x, input_path in enumerate(_Shared.path_list):
-            row = CustomRow(self, input_path)
+        for x, path in enumerate(_Shared.path_list):
+            row = CustomRow(self, path)
             row.pack(fill="x", padx=4, pady=(0, 4))
 
             if x != len(_Shared.path_list) - 1:
@@ -107,10 +107,11 @@ class Display(customtkinter.CTkScrollableFrame):
         text = _Shared.string_var.get()
         if text == _Shared.error_text:
             self.show_error_msg(text)
+        elif text == _Shared.none_type:
+            self.reload_display()
         else:
-            if text in _Shared.path_list:
-                _Shared.path_list.remove(text)
-            _Shared.path_list.insert(0, text)
+            if text not in _Shared.path_list:
+                _Shared.path_list.insert(0, text)
             if len(_Shared.path_list) > 20:
                 _Shared.path_list.pop(-1)
             self.reload_display()
