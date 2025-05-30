@@ -3,8 +3,8 @@ import tkinter
 from cfg import cnf
 
 from .display import Display
+from .mac_menu import MacMenu
 from .open_btn import OpenBtn
-from .widgets import MacMenu
 
 
 class Application:

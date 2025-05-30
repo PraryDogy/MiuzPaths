@@ -1,18 +1,9 @@
-import abc
+import subprocess
 import sys
 import tkinter
-from typing import Callable
-
-import customtkinter
 
 from cfg import cnf
 from utils import SysUtils
-import subprocess
-
-__all__ = (
-    "MacMenu",
-    )
-
 
 
 class MacMenu(tkinter.Menu, SysUtils):

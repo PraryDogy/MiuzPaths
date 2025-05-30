@@ -43,11 +43,9 @@ class OpenBtn(customtkinter.CTkButton):
                 HistoryPaths.lst.pop(-1)
 
         else:
-            self.btn_message(result)
+            DisplayVar.v.set(Shared.error_text)
 
-     
 
-        DisplayVar.v.set(value=DisplayVar.v.get() + 1)
 
     def btn_message(self, text: str):
         self.configure(text=text)

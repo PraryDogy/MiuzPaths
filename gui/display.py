@@ -16,7 +16,7 @@ class ShortFullPaths:
 
 
 class DisplayVar:
-    v = tkinter.Variable(value=0)
+    v = tkinter.StringVar(value="")
 
 
 class ContextMenu(tkinter.Menu):
@@ -106,7 +106,10 @@ class Display(customtkinter.CTkScrollableFrame):
         self.load_scroll()
         self.load_rows()
 
-        DisplayVar.v.trace_add(mode="read", callback=self.rows_var_callback)
+        DisplayVar.v.trace_add(
+            mode="write",
+            callback=self.rows_var_callback
+        )
 
     def get_parrent(self):
         return self._parent_canvas
@@ -118,7 +121,8 @@ class Display(customtkinter.CTkScrollableFrame):
             self.print_err(parent=self, error=e)
 
     def rows_var_callback(self, *args):
-        self.reload_display()
+        # self.reload_display()
+        self.show_error_msg(DisplayVar.v.get())
 
     def load_scroll(self):
         self.scrollable = customtkinter.CTkFrame(master=self)
@@ -133,12 +137,20 @@ class Display(customtkinter.CTkScrollableFrame):
             self.rows = customtkinter.CTkLabel(master=self.scrollable, text=text)
             self.rows.place(relx=0.5, rely=0.5, anchor="center")
 
-    def reload_display(self):
+    def show_error_msg(self, text: str):
         self.scrollable.destroy()
-
         if self.rows:
             self.rows.destroy()
+        self.load_scroll()
+        self.rows = customtkinter.CTkLabel(master=self.scrollable, text=text)
+        self.rows.place(relx=0.5, rely=0.5, anchor="center")
 
+        cnf.root.after(1300, self.reload_display)
+
+    def reload_display(self):
+        self.scrollable.destroy()
+        if self.rows:
+            self.rows.destroy()
         self.load_scroll()
         self.load_rows()
     
