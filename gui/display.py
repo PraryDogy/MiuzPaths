@@ -82,17 +82,80 @@ class Rows(customtkinter.CTkFrame):
         menu.post(event.x_root, event.y_root)
 
 
+# class Display(customtkinter.CTkScrollableFrame):
+#     def __init__(self, master=tkinter):
+#         super().__init__(master=master)
+
+#         self.load_scroll()
+#         self.load_rows()
+
+#         _Shared.string_var.trace_add(
+#             mode="write",
+#             callback=self.shared_string_var_cmd
+#         )
+
+#     def get_parrent(self):
+#         return self._parent_canvas
+
+#     def moveup(self, e=None):
+#         try:
+#             self.get_parrent().yview_moveto("0.0")
+#         except Exception as e:
+#             self.print_err(parent=self, error=e)
+
+#     def shared_string_var_cmd(self, *args):
+#         text = _Shared.string_var.get()
+#         if text == _Shared.error_text:
+#             self.show_error_msg(text)
+#         elif text == _Shared.none_type:
+#             self.reload_display()
+#         else:
+#             if text not in _Shared.path_list:
+#                 _Shared.path_list.insert(0, text)
+#             if len(_Shared.path_list) > 20:
+#                 _Shared.path_list.pop(-1)
+#             self.reload_display()
+
+#     def load_scroll(self):
+#         self.scrollable = customtkinter.CTkFrame(master=self)
+#         self.scrollable.pack(expand=1, fill="both")
+
+#     def load_rows(self):
+#         if _Shared.path_list:
+#             self.rows = Rows(master=self.scrollable)
+#             self.rows.pack(fill="both", expand=1)
+#         else:
+#             text = "История пуста"
+#             self.rows = customtkinter.CTkLabel(master=self.scrollable, text=text)
+#             self.rows.place(relx=0.5, rely=0.5, anchor="center")
+
+#     def show_error_msg(self, text: str):
+#         self.scrollable.destroy()
+#         if self.rows:
+#             self.rows.destroy()
+#         self.load_scroll()
+#         self.rows = customtkinter.CTkLabel(master=self.scrollable, text=text)
+#         self.rows.place(relx=0.5, rely=0.5, anchor="center")
+
+#         cnf.root.after(1300, self.reload_display)
+
+#     def reload_display(self):
+#         self.scrollable.destroy()
+#         if self.rows:
+#             self.rows.destroy()
+#         self.load_scroll()
+#         self.load_rows()
+
 class Display(customtkinter.CTkScrollableFrame):
     def __init__(self, master=tkinter):
         super().__init__(master=master)
 
-        self.load_scroll()
-        self.load_rows()
+        self.rows = None
+        self.scrollable = None
 
-        _Shared.string_var.trace_add(
-            mode="write",
-            callback=self.shared_string_var_cmd
-        )
+        self.update_display()
+
+        _Shared.string_var.trace_add("write", self.shared_string_var_cmd)
 
     def get_parrent(self):
         return self._parent_canvas
@@ -105,44 +168,44 @@ class Display(customtkinter.CTkScrollableFrame):
 
     def shared_string_var_cmd(self, *args):
         text = _Shared.string_var.get()
+
         if text == _Shared.error_text:
-            self.show_error_msg(text)
-        elif text == _Shared.none_type:
-            self.reload_display()
-        else:
+            self.show_message(text, auto_reload=True)
+        elif text != _Shared.none_type:
             if text not in _Shared.path_list:
                 _Shared.path_list.insert(0, text)
             if len(_Shared.path_list) > 20:
                 _Shared.path_list.pop(-1)
-            self.reload_display()
+            self.update_display()
+        else:
+            self.update_display()
 
-    def load_scroll(self):
+    def update_display(self):
+        if self.scrollable:
+            self.scrollable.destroy()
+        if self.rows:
+            self.rows.destroy()
+
         self.scrollable = customtkinter.CTkFrame(master=self)
         self.scrollable.pack(expand=1, fill="both")
 
-    def load_rows(self):
         if _Shared.path_list:
             self.rows = Rows(master=self.scrollable)
             self.rows.pack(fill="both", expand=1)
         else:
-            text = "История пуста"
-            self.rows = customtkinter.CTkLabel(master=self.scrollable, text=text)
-            self.rows.place(relx=0.5, rely=0.5, anchor="center")
+            self.show_message("История пуста")
 
-    def show_error_msg(self, text: str):
-        self.scrollable.destroy()
+    def show_message(self, text: str, auto_reload=False):
+        if self.scrollable:
+            self.scrollable.destroy()
         if self.rows:
             self.rows.destroy()
-        self.load_scroll()
+
+        self.scrollable = customtkinter.CTkFrame(master=self)
+        self.scrollable.pack(expand=1, fill="both")
+
         self.rows = customtkinter.CTkLabel(master=self.scrollable, text=text)
         self.rows.place(relx=0.5, rely=0.5, anchor="center")
 
-        cnf.root.after(1300, self.reload_display)
-
-    def reload_display(self):
-        self.scrollable.destroy()
-        if self.rows:
-            self.rows.destroy()
-        self.load_scroll()
-        self.load_rows()
-    
+        if auto_reload:
+            cnf.root.after(2000, self.update_display)
