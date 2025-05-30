@@ -38,4 +38,3 @@ class Main:
 
     def demin(self, e: tkinter.Event = None):
         self.root.wm_deiconify()
-        self.disp.reload_display()
