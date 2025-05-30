@@ -36,23 +36,27 @@ class ContextMenu(tkinter.Menu):
         _Shared.string_var.set("")
 
 
+class CustomRow(customtkinter.CTkLabel):
+    def __init__(self, master: customtkinter.CTkFrame, path: str):
+        super().__init__(
+            master=master,
+            text=path,
+            anchor="w",
+            justify="left",
+            height=40,
+        )
+        self.path = path
+
+    
 class Rows(customtkinter.CTkFrame):
     def __init__(self, master=tkinter):
         super().__init__(master=master)
   
         for x, input_path in enumerate(_Shared.path_list):
-            btn = customtkinter.CTkLabel(
-                master=self,
-                text=input_path,
-                anchor="w",
-                justify="left",
-                height=40,
-                
-                )
+            btn = CustomRow(self, input_path)
             btn.pack(fill="x", padx=4, pady=(0, 4))
 
             if x != len(_Shared.path_list) - 1:
-
                 separator = customtkinter.CTkFrame(
                     master=self,
                     height=1,
@@ -75,12 +79,11 @@ class Rows(customtkinter.CTkFrame):
     def row_cmd_wrap(self, e: tkinter.Event, btn: customtkinter.CTkLabel):
         btn.configure(wraplength=self.winfo_width() - 10)
 
-    def row_cmd(self, e: tkinter.Event, btn: customtkinter.CTkLabel):
-        wid_tex: str = btn.cget("text")
-        if os.path.isfile(wid_tex) or wid_tex.endswith((".APP", ".app")):
-            subprocess.Popen(["open", "-R", wid_tex])
+    def row_cmd(self, e: tkinter.Event, row: CustomRow):
+        if os.path.isfile(row.path) or row.path.endswith((".APP", ".app")):
+            subprocess.Popen(["open", "-R", row.path])
         else:
-            subprocess.Popen(["open", wid_tex])
+            subprocess.Popen(["open", row.path])
 
     def pop_context_menu(self, event):
         ContextMenu(e=event).post(event.x_root, event.y_root)
