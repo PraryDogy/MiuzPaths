@@ -1,33 +1,36 @@
 import os
+import re
 import threading
-from cfg import cnf
 
-__all__ = ("PathFinder", "Shared")
+from cfg import cnf
 
 
 class Shared:
-    result_none = "RESULT_NONE"
     path_finder_task: threading.Thread = None
-    result: str = None
+    result: str = "Скопируйте путь в буфер обмена"
     volumes: list = None
+    error_text = "\n".join([
+        "Не могу найти путь к файлу/папке",
+        "Скопируйте путь в буфер обмена",
+        "Подключите сетевой диск"
+    ])
 
 
 class PathFinderTask:
     volumes_text = "/Volumes"
 
     @classmethod
-    def get_result(cls, path: str) -> str | None:
-
+    def get_result(cls, path: str) -> str | None:        
         Shared.volumes = cls.get_volumes()
         sys_volume = cls.get_sys_volume(Shared.volumes)
         if sys_volume and sys_volume in Shared.volumes:
             Shared.volumes.remove(sys_volume)
 
         # удаляем новые строки, лишние слешы
-        prepared = cls.prepare_path(path=path)
+        prepared = cls.prepare_path(path)
 
         if not prepared:
-            Shared.result = Shared.result_none
+            Shared.result = Shared.error_text
             return None
 
         elif os.path.exists(prepared):
@@ -43,7 +46,7 @@ class PathFinderTask:
         res = cls.check_for_exists(paths=paths)
 
         if res in Shared.volumes:
-            Shared.result = Shared.result_none
+            Shared.result = Shared.error_text
             return None
 
         elif res:
@@ -63,12 +66,18 @@ class PathFinderTask:
             res = cls.check_for_exists(paths=paths)
 
             if res in Shared.volumes:
-                Shared.result = Shared.result_none
+                Shared.result = Shared.error_text
                 return None
             
             elif res:
                 Shared.result = res
                 return res
+
+    @classmethod
+    def is_path(cls, s: str) -> bool:
+        s = s.replace("\\", "/")
+        pattern = r'^(/[^/\0]+)+/?$'
+        return bool(re.match(pattern, s))
 
     @classmethod
     def get_volumes(cls) -> list[str]:
@@ -81,11 +90,10 @@ class PathFinderTask:
     @classmethod
     def get_sys_volume(cls, volumes: list[str]):
         user = os.path.expanduser("~")
-        app_support = os.path.join("Library", "Application Support")
-        app_support = os.path.join(user, app_support)
+        app_support = f"{user}/Library/Application Support"
 
         for i in volumes:
-            full_path = os.path.join(i, app_support)
+            full_path = f"{i}{app_support}"
             if os.path.exists(full_path):
                 return i
         return None
@@ -207,3 +215,6 @@ path = "fafdgfagrf"
 
 
 "/Volumes/Shares/Marketing/Design/PROMO_АКЦИИ/2025/03_Spring Gifts/_8 march_Video/AI pix/Rich out.psd"
+
+
+"/Volumes/Shares/Studio/MIUZ/Photo/Art/FOR RETOUCHERS/Retouch Comments"
