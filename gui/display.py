@@ -6,9 +6,7 @@ import customtkinter
 
 from cfg import cnf
 
-
-class HistoryPaths:
-    lst = []
+from ._shared import _Shared
 
 
 class ShortFullPaths:
@@ -36,13 +34,12 @@ class ContextMenu(tkinter.Menu):
                          command=lambda: self.clear_all(e=e))
 
     def clear(self, e: tkinter.Event = None):
-        HistoryPaths.lst.remove(ShortFullPaths.dct[e.widget.cget("text")])
-        DisplayVar.v.set(value=DisplayVar.v.get() + 1)
+        _Shared.path_list.remove(ShortFullPaths.dct[e.widget.cget("text")])
+        _Shared.string_var.set("")
 
     def clear_all(self, e: tkinter.Event = None):
-        HistoryPaths.lst.clear()
-        DisplayVar.v.set(value=DisplayVar.v.get() + 1)
-
+        _Shared.path_list.clear()
+        _Shared.string_var.set("")
 
 
 class Rows(customtkinter.CTkFrame):
@@ -50,7 +47,7 @@ class Rows(customtkinter.CTkFrame):
         super().__init__(master=master)
         ShortFullPaths.dct.clear()
   
-        for x, input_path in enumerate(HistoryPaths.lst):
+        for x, input_path in enumerate(_Shared.path_list):
 
             ShortFullPaths.dct[input_path] = input_path
 
@@ -64,7 +61,7 @@ class Rows(customtkinter.CTkFrame):
                 )
             btn.pack(fill="x", padx=4, pady=(0, 4))
 
-            if x != len(HistoryPaths.lst) - 1:
+            if x != len(_Shared.path_list) - 1:
 
                 separator = customtkinter.CTkFrame(
                     master=self,
@@ -106,9 +103,9 @@ class Display(customtkinter.CTkScrollableFrame):
         self.load_scroll()
         self.load_rows()
 
-        DisplayVar.v.trace_add(
+        _Shared.string_var.trace_add(
             mode="write",
-            callback=self.rows_var_callback
+            callback=self.shared_string_var_cmd
         )
 
     def get_parrent(self):
@@ -120,16 +117,24 @@ class Display(customtkinter.CTkScrollableFrame):
         except Exception as e:
             self.print_err(parent=self, error=e)
 
-    def rows_var_callback(self, *args):
-        # self.reload_display()
-        self.show_error_msg(DisplayVar.v.get())
+    def shared_string_var_cmd(self, *args):
+        text = _Shared.string_var.get()
+        if text == _Shared.error_text:
+            self.show_error_msg(DisplayVar.v.get())
+        else:
+            if text in _Shared.path_list:
+                _Shared.path_list.remove(text)
+            _Shared.path_list.insert(0, text)
+            if len(_Shared.path_list) > 20:
+                _Shared.path_list.pop(-1)
+            self.reload_display()
 
     def load_scroll(self):
         self.scrollable = customtkinter.CTkFrame(master=self)
         self.scrollable.pack(expand=1, fill="both")
 
     def load_rows(self):
-        if HistoryPaths.lst:
+        if _Shared.path_list:
             self.rows = Rows(master=self.scrollable)
             self.rows.pack(fill="both", expand=1)
         else:

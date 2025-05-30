@@ -6,7 +6,8 @@ import customtkinter
 
 from utils import PathFinder, Shared
 
-from .display import DisplayVar, HistoryPaths
+from ._shared import _Shared
+from .display import DisplayVar
 
 __all__ = ("OpenBtn", )
 
@@ -23,30 +24,14 @@ class OpenBtn(customtkinter.CTkButton):
 
     def open_btn_cmd(self, e: tkinter.Event):
         input_path = self.read_clipboard()
-
         path_finder = PathFinder(input_path)
         result = path_finder.get_result()
 
-        if result != Shared.error_text:
+        if result != _Shared.error_text:
             if os.path.isfile(result) or result.endswith((".APP", ".app")):
                 subprocess.Popen(["open", "-R", result])
-
             else:
                 subprocess.Popen(["open", result])
-
-            if result in HistoryPaths.lst:
-                HistoryPaths.lst.remove(result)
-
-            HistoryPaths.lst.insert(0, result)
-
-            if len(HistoryPaths.lst) > 20:
-                HistoryPaths.lst.pop(-1)
-
+            _Shared.string_var.set(result)
         else:
-            DisplayVar.v.set(Shared.error_text)
-
-
-
-    def btn_message(self, text: str):
-        self.configure(text=text)
-        self.after(ms=500, func=lambda: self.configure(text="Открыть"))
+            _Shared.string_var.set(_Shared.error_text)
