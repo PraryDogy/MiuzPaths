@@ -3,17 +3,13 @@ import re
 import threading
 
 from cfg import cnf
+from gui._shared import _Shared
 
 
 class Shared:
     path_finder_task: threading.Thread = None
     result: str = "Скопируйте путь в буфер обмена"
     volumes: list = None
-    error_text = "\n".join([
-        "Не могу найти путь к файлу/папке",
-        "Скопируйте путь в буфер обмена",
-        "Подключите сетевой диск"
-    ])
 
 
 class PathFinderTask:
@@ -30,7 +26,7 @@ class PathFinderTask:
         prepared = cls.prepare_path(path)
 
         if not prepared:
-            Shared.result = Shared.error_text
+            Shared.result = _Shared.error_text
             return None
 
         elif os.path.exists(prepared):
@@ -46,7 +42,7 @@ class PathFinderTask:
         res = cls.check_for_exists(paths=paths)
 
         if res in Shared.volumes:
-            Shared.result = Shared.error_text
+            Shared.result = _Shared.error_text
             return None
 
         elif res:
@@ -66,7 +62,7 @@ class PathFinderTask:
             res = cls.check_for_exists(paths=paths)
 
             if res in Shared.volumes:
-                Shared.result = Shared.error_text
+                Shared.result = _Shared.error_text
                 return None
             
             elif res:
@@ -212,9 +208,5 @@ path = "smb://sbc01/shares/Marketing/Photo/_Collections/1 Solo/1 IMG/2023-09-22 
 path = "smb://sbc031/shares/Marketing/Photo/_Collections/_____1 Solo/1 IMG/__2023-09-22 11-27-28 рабочий файл.tif/"
 path = "\\192.168.10.105\\shares\\Marketing\\General\\9. ТЕКСТЫ\\)2023\\7. PR-рассылка\\10. Октябрь\\Royal"
 path = "fafdgfagrf"
-
-
 "/Volumes/Shares/Marketing/Design/PROMO_АКЦИИ/2025/03_Spring Gifts/_8 march_Video/AI pix/Rich out.psd"
-
-
 "/Volumes/Shares/Studio/MIUZ/Photo/Art/FOR RETOUCHERS/Retouch Comments"
