@@ -9,10 +9,6 @@ from cfg import cnf
 from ._shared import _Shared
 
 
-class ShortFullPaths:
-    dct = {}
-
-
 class ContextMenu(tkinter.Menu):
     def __init__(self, e: tkinter.Event):
         tkinter.Menu.__init__(self, master=cnf.root)
@@ -30,7 +26,9 @@ class ContextMenu(tkinter.Menu):
                          command=lambda: self.clear_all(e=e))
 
     def clear(self, e: tkinter.Event = None):
-        _Shared.path_list.remove(ShortFullPaths.dct[e.widget.cget("text")])
+        wid: customtkinter.CTkLabel = e.widget
+        wid_text = wid.cget("text")
+        _Shared.path_list.remove(wid_text)
         _Shared.string_var.set("")
 
     def clear_all(self, e: tkinter.Event = None):
@@ -41,12 +39,8 @@ class ContextMenu(tkinter.Menu):
 class Rows(customtkinter.CTkFrame):
     def __init__(self, master=tkinter):
         super().__init__(master=master)
-        ShortFullPaths.dct.clear()
   
         for x, input_path in enumerate(_Shared.path_list):
-
-            ShortFullPaths.dct[input_path] = input_path
-
             btn = customtkinter.CTkLabel(
                 master=self,
                 text=input_path,
@@ -82,11 +76,11 @@ class Rows(customtkinter.CTkFrame):
         btn.configure(wraplength=self.winfo_width() - 10)
 
     def row_cmd(self, e: tkinter.Event, btn: customtkinter.CTkLabel):
-        new_path = ShortFullPaths.dct[btn.cget("text")]
-        if os.path.isfile(new_path) or new_path.endswith((".APP", ".app")):
-            subprocess.Popen(["open", "-R", new_path])
+        wid_tex: str = btn.cget("text")
+        if os.path.isfile(wid_tex) or wid_tex.endswith((".APP", ".app")):
+            subprocess.Popen(["open", "-R", wid_tex])
         else:
-            subprocess.Popen(["open", new_path])
+            subprocess.Popen(["open", wid_tex])
 
     def pop_context_menu(self, event):
         ContextMenu(e=event).post(event.x_root, event.y_root)
