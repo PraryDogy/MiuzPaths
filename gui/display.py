@@ -5,7 +5,7 @@ import tkinter
 import customtkinter
 
 from cfg import cnf
-from shared import Shared
+from utils import Shared
 
 
 class CustomRow(customtkinter.CTkLabel):

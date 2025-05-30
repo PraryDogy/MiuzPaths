@@ -1,10 +1,51 @@
 import os
 import re
 import threading
+import tkinter
+import traceback
 
 from cfg import cnf
-from shared import Shared
 
+
+class Shared:
+    string_var = tkinter.StringVar()
+    path_list: list[str] = []
+    none_type: str = "None"
+    error_text: str = "\n".join([
+        "Не могу найти путь к файлу/папке",
+        "Скопируйте путь в буфер обмена",
+        "Подключите сетевой диск"
+    ])
+
+
+class Err:
+    @classmethod
+    def print_error(cls, error: Exception):
+        tb = traceback.extract_tb(error.__traceback__)
+
+        # Попробуем найти первую строчку стека, которая относится к вашему коду.
+        for trace in tb:
+            filepath = trace.filename
+            filename = os.path.basename(filepath)
+            
+            # Если файл - не стандартный модуль, считаем его основным
+            if not filepath.startswith("<") and filename != "site-packages":
+                line_number = trace.lineno
+                break
+        else:
+            # Если не нашли, то берем последний вызов
+            trace = tb[-1]
+            filepath = trace.filename
+            filename = os.path.basename(filepath)
+            line_number = trace.lineno
+
+        msg = str(error)
+        if msg.startswith("[Errno"):
+            msg = msg.split("]", 1)[-1].strip()
+
+        print(f"\n{type(error).__name__}: {msg}\n{filepath}:{line_number}\n")
+        return msg
+    
 
 class Task:
     current_task: threading.Thread = None

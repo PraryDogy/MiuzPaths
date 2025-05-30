@@ -3,7 +3,7 @@ import sys
 import tkinter
 
 from cfg import cnf
-from utils import SysUtils
+from utils.utils import Err
 
 
 class MacMenu(tkinter.Menu, SysUtils):
@@ -26,7 +26,7 @@ class MacMenu(tkinter.Menu, SysUtils):
         try:
             cnf.root.tk.call("tk::mac::standardAboutPanel")
         except Exception as e:
-            self.print_err(parent=self, error=e)
+            Err.print_error(e)
 
     def open_settings(self):
         subprocess.Popen(["open", cnf.json_dir])

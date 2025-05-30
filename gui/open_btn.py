@@ -4,8 +4,7 @@ import tkinter
 
 import customtkinter
 
-from shared import Shared
-from utils import PathFinder
+from utils import PathFinder, Shared
 
 
 class OpenBtn(customtkinter.CTkButton):
