@@ -77,74 +77,10 @@ class Rows(customtkinter.CTkFrame):
         else:
             subprocess.Popen(["open", row.path])
 
-    def pop_context_menu(self, event, row: CustomRow):
+    def pop_context_menu(self, e: tkinter.Event, row: CustomRow):
         menu = ContextMenu(row)
-        menu.post(event.x_root, event.y_root)
+        menu.post(e.x_root, e.y_root)
 
-
-# class Display(customtkinter.CTkScrollableFrame):
-#     def __init__(self, master=tkinter):
-#         super().__init__(master=master)
-
-#         self.load_scroll()
-#         self.load_rows()
-
-#         _Shared.string_var.trace_add(
-#             mode="write",
-#             callback=self.shared_string_var_cmd
-#         )
-
-#     def get_parrent(self):
-#         return self._parent_canvas
-
-#     def moveup(self, e=None):
-#         try:
-#             self.get_parrent().yview_moveto("0.0")
-#         except Exception as e:
-#             self.print_err(parent=self, error=e)
-
-#     def shared_string_var_cmd(self, *args):
-#         text = _Shared.string_var.get()
-#         if text == _Shared.error_text:
-#             self.show_error_msg(text)
-#         elif text == _Shared.none_type:
-#             self.reload_display()
-#         else:
-#             if text not in _Shared.path_list:
-#                 _Shared.path_list.insert(0, text)
-#             if len(_Shared.path_list) > 20:
-#                 _Shared.path_list.pop(-1)
-#             self.reload_display()
-
-#     def load_scroll(self):
-#         self.scrollable = customtkinter.CTkFrame(master=self)
-#         self.scrollable.pack(expand=1, fill="both")
-
-#     def load_rows(self):
-#         if _Shared.path_list:
-#             self.rows = Rows(master=self.scrollable)
-#             self.rows.pack(fill="both", expand=1)
-#         else:
-#             text = "История пуста"
-#             self.rows = customtkinter.CTkLabel(master=self.scrollable, text=text)
-#             self.rows.place(relx=0.5, rely=0.5, anchor="center")
-
-#     def show_error_msg(self, text: str):
-#         self.scrollable.destroy()
-#         if self.rows:
-#             self.rows.destroy()
-#         self.load_scroll()
-#         self.rows = customtkinter.CTkLabel(master=self.scrollable, text=text)
-#         self.rows.place(relx=0.5, rely=0.5, anchor="center")
-
-#         cnf.root.after(1300, self.reload_display)
-
-#     def reload_display(self):
-#         self.scrollable.destroy()
-#         if self.rows:
-#             self.rows.destroy()
-#         self.load_scroll()
-#         self.load_rows()
 
 class Display(customtkinter.CTkScrollableFrame):
     def __init__(self, master=tkinter):
