@@ -4,9 +4,8 @@ import tkinter
 
 import customtkinter
 
+from shared import Shared
 from utils import PathFinder
-
-from ._shared import _Shared
 
 
 class OpenBtn(customtkinter.CTkButton):
@@ -24,11 +23,11 @@ class OpenBtn(customtkinter.CTkButton):
         path_finder = PathFinder(input_path)
         result = path_finder.get_result()
 
-        if result != _Shared.error_text:
+        if result != Shared.error_text:
             if os.path.isfile(result) or result.endswith((".APP", ".app")):
                 subprocess.Popen(["open", "-R", result])
             else:
                 subprocess.Popen(["open", result])
-            _Shared.string_var.set(result)
+            Shared.string_var.set(result)
         else:
-            _Shared.string_var.set(_Shared.error_text)
+            Shared.string_var.set(Shared.error_text)

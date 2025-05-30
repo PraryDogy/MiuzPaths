@@ -1,7 +1,7 @@
 import tkinter
 
 
-class _Shared:
+class Shared:
     string_var = tkinter.StringVar()
     path_list: list[str] = []
     none_type: str = "None"
