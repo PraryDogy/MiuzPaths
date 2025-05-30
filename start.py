@@ -3,8 +3,8 @@ import os
 
 try:
     from cfg import cnf
-    from gui import app
-
+    from widgets.main import Main
+    app = Main()
     cnf.root.mainloop()
 
 

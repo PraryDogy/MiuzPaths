@@ -7,7 +7,7 @@ from .mac_menu import MacMenu
 from .open_btn import OpenBtn
 
 
-class Application:
+class Main:
     def __init__(self):
         cnf.root.createcommand("tk::mac::Quit" , exit)
 
@@ -37,6 +37,3 @@ class Application:
     def demin(self, e: tkinter.Event = None):
         cnf.root.wm_deiconify()
         self.disp.reload_display()
-
-
-app = Application()
