@@ -7,7 +7,6 @@ import customtkinter
 from utils import PathFinder, Shared
 
 from ._shared import _Shared
-from .display import DisplayVar
 
 __all__ = ("OpenBtn", )
 

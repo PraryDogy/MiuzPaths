@@ -13,10 +13,6 @@ class ShortFullPaths:
     dct = {}
 
 
-class DisplayVar:
-    v = tkinter.StringVar(value="")
-
-
 class ContextMenu(tkinter.Menu):
     def __init__(self, e: tkinter.Event):
         tkinter.Menu.__init__(self, master=cnf.root)
@@ -120,7 +116,7 @@ class Display(customtkinter.CTkScrollableFrame):
     def shared_string_var_cmd(self, *args):
         text = _Shared.string_var.get()
         if text == _Shared.error_text:
-            self.show_error_msg(DisplayVar.v.get())
+            self.show_error_msg(text)
         else:
             if text in _Shared.path_list:
                 _Shared.path_list.remove(text)
