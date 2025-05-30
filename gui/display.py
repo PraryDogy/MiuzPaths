@@ -9,33 +9,6 @@ from cfg import cnf
 from ._shared import _Shared
 
 
-class ContextMenu(tkinter.Menu):
-    def __init__(self, e: tkinter.Event):
-        tkinter.Menu.__init__(self, master=cnf.root)
-
-        widget: tkinter.Label = e.widget
-        widget_text = widget.cget("text")
-
-        if len(widget_text) > 100:
-            widget_text = widget_text[:100]
-
-        self.add_command(label=f"Удалить",
-                         command=lambda: self.clear(e=e))
-        self.add_separator()
-        self.add_command(label="Удалить все",
-                         command=lambda: self.clear_all(e=e))
-
-    def clear(self, e: tkinter.Event = None):
-        wid: customtkinter.CTkLabel = e.widget
-        wid_text = wid.cget("text")
-        _Shared.path_list.remove(wid_text)
-        _Shared.string_var.set("")
-
-    def clear_all(self, e: tkinter.Event = None):
-        _Shared.path_list.clear()
-        _Shared.string_var.set("")
-
-
 class CustomRow(customtkinter.CTkLabel):
     def __init__(self, master: customtkinter.CTkFrame, path: str):
         super().__init__(
@@ -47,14 +20,33 @@ class CustomRow(customtkinter.CTkLabel):
         )
         self.path = path
 
-    
+
+class ContextMenu(tkinter.Menu):
+    def __init__(self, wid: CustomRow):
+        tkinter.Menu.__init__(self, master=cnf.root)
+
+        self.widget = wid
+
+        self.add_command(label=f"Удалить", command=lambda: self.clear())
+        self.add_separator()
+        self.add_command(label="Удалить все", command=lambda: self.clear_all())
+
+    def clear(self):
+        _Shared.path_list.remove(self.widget.path)
+        _Shared.string_var.set("")
+
+    def clear_all(self):
+        _Shared.path_list.clear()
+        _Shared.string_var.set("")
+
+
 class Rows(customtkinter.CTkFrame):
     def __init__(self, master=tkinter):
         super().__init__(master=master)
   
         for x, input_path in enumerate(_Shared.path_list):
-            btn = CustomRow(self, input_path)
-            btn.pack(fill="x", padx=4, pady=(0, 4))
+            row = CustomRow(self, input_path)
+            row.pack(fill="x", padx=4, pady=(0, 4))
 
             if x != len(_Shared.path_list) - 1:
                 separator = customtkinter.CTkFrame(
@@ -64,20 +56,20 @@ class Rows(customtkinter.CTkFrame):
                 )
                 separator.pack(fill="x", padx=10, pady=2)
 
-            btn.bind(sequence="<ButtonRelease-1>",
-                     command=lambda e, btn=btn: self.row_cmd(e=e, btn=btn)
+            row.bind(sequence="<ButtonRelease-1>",
+                     command=lambda e, row=row: self.row_cmd(e, row)
                      )
 
-            btn.bind(sequence='<Configure>',
-                     command=lambda e, btn=btn: self.row_cmd_wrap(e=e, btn=btn)
+            row.bind(sequence='<Configure>',
+                     command=lambda e, row=row: self.row_cmd_wrap(e, row)
                      )
 
-            btn.bind(sequence="<ButtonRelease-2>",
-                     command=self.pop_context_menu
+            row.bind(sequence="<ButtonRelease-2>",
+                     command=lambda e, row=row: self.pop_context_menu(e, row)
                      )
 
-    def row_cmd_wrap(self, e: tkinter.Event, btn: customtkinter.CTkLabel):
-        btn.configure(wraplength=self.winfo_width() - 10)
+    def row_cmd_wrap(self, e: tkinter.Event, row: CustomRow):
+        row.configure(wraplength=self.winfo_width() - 10)
 
     def row_cmd(self, e: tkinter.Event, row: CustomRow):
         if os.path.isfile(row.path) or row.path.endswith((".APP", ".app")):
@@ -85,8 +77,9 @@ class Rows(customtkinter.CTkFrame):
         else:
             subprocess.Popen(["open", row.path])
 
-    def pop_context_menu(self, event):
-        ContextMenu(e=event).post(event.x_root, event.y_root)
+    def pop_context_menu(self, event, row: CustomRow):
+        menu = ContextMenu(row)
+        menu.post(event.x_root, event.y_root)
 
 
 class Display(customtkinter.CTkScrollableFrame):
