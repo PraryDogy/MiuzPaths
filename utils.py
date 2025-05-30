@@ -8,7 +8,7 @@ from cfg import cnf
 
 
 class Shared:
-    string_var = tkinter.StringVar()
+    string_var: tkinter.StringVar = None
     path_list: list[str] = []
     none_type: str = "None"
     error_text: str = "\n".join([
@@ -16,6 +16,10 @@ class Shared:
         "Скопируйте путь в буфер обмена",
         "Подключите сетевой диск"
     ])
+
+    @classmethod
+    def setup_string_var(cls):
+        cls.string_var = tkinter.StringVar()
 
 
 class Err:
