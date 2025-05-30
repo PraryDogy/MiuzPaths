@@ -11,4 +11,3 @@ class Config:
 
 
 cnf = Config()
-cnf.check_dir()

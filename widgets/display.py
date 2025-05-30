@@ -4,7 +4,6 @@ import tkinter
 
 import customtkinter
 
-from cfg import cnf
 from utils import Shared
 
 
@@ -21,17 +20,15 @@ class CustomRow(customtkinter.CTkLabel):
 
 
 class ContextMenu(tkinter.Menu):
-    def __init__(self, wid: CustomRow):
-        tkinter.Menu.__init__(self, master=cnf.root)
-
-        self.widget = wid
-
+    def __init__(self, root: CustomRow):
+        tkinter.Menu.__init__(self, master=root)
+        self.root = root
         self.add_command(label=f"Удалить", command=lambda: self.clear())
         self.add_separator()
         self.add_command(label="Удалить все", command=lambda: self.clear_all())
 
     def clear(self):
-        Shared.path_list.remove(self.widget.path)
+        Shared.path_list.remove(self.root.path)
         Shared.string_var.set(Shared.none_type)
 
     def clear_all(self):
@@ -40,7 +37,7 @@ class ContextMenu(tkinter.Menu):
 
 
 class Rows(customtkinter.CTkFrame):
-    def __init__(self, master=tkinter):
+    def __init__(self, master: customtkinter.CTkFrame):
         super().__init__(master=master)
   
         for x, path in enumerate(Shared.path_list):
@@ -82,14 +79,12 @@ class Rows(customtkinter.CTkFrame):
 
 
 class Display(customtkinter.CTkScrollableFrame):
-    def __init__(self, master=tkinter):
-        super().__init__(master=master)
-
+    def __init__(self, root: tkinter.Tk):
+        super().__init__(master=root)
+        self.root = root
         self.rows = None
         self.scrollable = None
-
         self.update_display()
-
         Shared.string_var.trace_add("write", self.shared_string_var_cmd)
 
     def get_parrent(self):
@@ -125,7 +120,7 @@ class Display(customtkinter.CTkScrollableFrame):
         self.scrollable.pack(expand=1, fill="both")
 
         if Shared.path_list:
-            self.rows = Rows(master=self.scrollable)
+            self.rows = Rows(self.scrollable)
             self.rows.pack(fill="both", expand=1)
         else:
             self.show_message("История пуста")
@@ -143,4 +138,4 @@ class Display(customtkinter.CTkScrollableFrame):
         self.rows.place(relx=0.5, rely=0.5, anchor="center")
 
         if auto_reload:
-            cnf.root.after(2000, self.update_display)
+            self.root.after(2000, self.update_display)

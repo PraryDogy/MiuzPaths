@@ -1,7 +1,10 @@
 try:
-    from cfg import cnf
     from widgets.main import Main
-    app = Main()
-    cnf.root.mainloop()
+    import tkinter
+    root = tkinter.Tk()
+    root.withdraw()
+    app = Main(root)
+    root.mainloop()
 except Exception as e:
-    ...
+    from utils import Err
+    Err.print_error(e)

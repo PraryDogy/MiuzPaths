@@ -217,10 +217,10 @@ class Task:
     
 
 class PathFinder:
-    def __init__(self, path: str):
+    def __init__(self, path: str, root: tkinter.Tk):
         try:
             while Task.current_task.is_alive():
-                cnf.root.update()
+                root.update()
         except AttributeError:
             pass
 
@@ -233,7 +233,7 @@ class PathFinder:
         Task.current_task.start()
 
         while Task.current_task.is_alive():
-            cnf.root.update()
+            root.update()
 
     def get_result(self) -> str:
         return Task.result

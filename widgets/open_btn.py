@@ -8,10 +8,11 @@ from utils import PathFinder, Shared
 
 
 class OpenBtn(customtkinter.CTkButton):
-    def __init__(self, master: tkinter):
-        super().__init__(master=master, text="Открыть", width=200, height=60,
+    def __init__(self, root: tkinter.Tk):
+        super().__init__(master=root, text="Открыть", width=200, height=60,
                          anchor="center", corner_radius=12)
         self.bind(sequence="<ButtonRelease-1>", command=self.open_btn_cmd)
+        self.root = root
 
     def read_clipboard(self):
         return subprocess.check_output(
@@ -19,7 +20,7 @@ class OpenBtn(customtkinter.CTkButton):
 
     def open_btn_cmd(self, e: tkinter.Event):
         input_path = self.read_clipboard()
-        path_finder = PathFinder(input_path)
+        path_finder = PathFinder(input_path, self.root)
         result = path_finder.get_result()
 
         if result != Shared.error_text:
