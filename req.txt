@@ -1,6 +1,3 @@
 customtkinter==5.2.2
 darkdetect==0.8.0
-icnsutil==1.1.0
-packaging==23.2
-toml==0.10.2
-wheel
+packaging==25.0
