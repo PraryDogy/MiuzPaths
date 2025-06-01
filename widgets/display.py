@@ -4,7 +4,7 @@ import tkinter
 
 import customtkinter
 
-from utils import Shared
+from utils import MainItem
 
 
 class CustomRow(customtkinter.CTkLabel):
@@ -28,23 +28,23 @@ class ContextMenu(tkinter.Menu):
         self.add_command(label="Удалить все", command=lambda: self.clear_all())
 
     def clear(self):
-        Shared.path_list.remove(self.root.path)
-        Shared.string_var.set(Shared.none_type)
+        MainItem.path_list.remove(self.root.path)
+        MainItem.string_var.set(MainItem.none_type)
 
     def clear_all(self):
-        Shared.path_list.clear()
-        Shared.string_var.set(Shared.none_type)
+        MainItem.path_list.clear()
+        MainItem.string_var.set(MainItem.none_type)
 
 
 class Rows(customtkinter.CTkFrame):
     def __init__(self, master: customtkinter.CTkFrame):
         super().__init__(master=master)
   
-        for x, path in enumerate(Shared.path_list):
+        for x, path in enumerate(MainItem.path_list):
             row = CustomRow(self, path)
             row.pack(fill="x", padx=4, pady=(0, 4))
 
-            if x != len(Shared.path_list) - 1:
+            if x != len(MainItem.path_list) - 1:
                 separator = customtkinter.CTkFrame(
                     master=self,
                     height=1,
@@ -85,7 +85,7 @@ class Display(customtkinter.CTkScrollableFrame):
         self.rows = None
         self.scrollable = None
         self.update_display()
-        Shared.string_var.trace_add("write", self.shared_string_var_cmd)
+        MainItem.string_var.trace_add("write", self.shared_string_var_cmd)
 
     def get_parrent(self):
         return self._parent_canvas
@@ -97,15 +97,15 @@ class Display(customtkinter.CTkScrollableFrame):
             self.print_err(parent=self, error=e)
 
     def shared_string_var_cmd(self, *args):
-        text = Shared.string_var.get()
+        text = MainItem.string_var.get()
 
-        if text == Shared.error_text:
+        if text == MainItem.error_text:
             self.show_message(text, auto_reload=True)
-        elif text != Shared.none_type:
-            if text not in Shared.path_list:
-                Shared.path_list.insert(0, text)
-            if len(Shared.path_list) > 20:
-                Shared.path_list.pop(-1)
+        elif text != MainItem.none_type:
+            if text not in MainItem.path_list:
+                MainItem.path_list.insert(0, text)
+            if len(MainItem.path_list) > 20:
+                MainItem.path_list.pop(-1)
             self.update_display()
         else:
             self.update_display()
@@ -119,7 +119,7 @@ class Display(customtkinter.CTkScrollableFrame):
         self.scrollable = customtkinter.CTkFrame(master=self)
         self.scrollable.pack(expand=1, fill="both")
 
-        if Shared.path_list:
+        if MainItem.path_list:
             self.rows = Rows(self.scrollable)
             self.rows.pack(fill="both", expand=1)
         else:

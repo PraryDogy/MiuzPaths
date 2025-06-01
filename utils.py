@@ -4,22 +4,18 @@ import threading
 import tkinter
 import traceback
 
-from cfg import cnf
 
-
-class Shared:
-    string_var: tkinter.StringVar = None
-    path_list: list[str] = []
-    none_type: str = "None"
-    error_text: str = "\n".join([
-        "Не могу найти путь к файлу/папке",
-        "Скопируйте путь в буфер обмена",
-        "Подключите сетевой диск"
-    ])
-
-    @classmethod
-    def setup_string_var(cls):
-        cls.string_var = tkinter.StringVar()
+class MainItem:
+    
+    def __init__(self):
+        self.string_var: tkinter.StringVar = tkinter.StringVar()
+        self.path_list: list[str] = []
+        self.none_type: str = "None"
+        self.error_text: str = "\n".join([
+            "Не могу найти путь к файлу/папке",
+            "Скопируйте путь в буфер обмена",
+            "Подключите сетевой диск"
+        ])
 
 
 class Err:
@@ -68,7 +64,7 @@ class PathFinderTask:
         prepared = cls.prepare_path(path)
 
         if not prepared:
-            PathFinderTask.result = Shared.error_text
+            PathFinderTask.result = MainItem.error_text
             return None
 
         elif os.path.exists(prepared):
@@ -84,7 +80,7 @@ class PathFinderTask:
         res = cls.check_for_exists(paths=paths)
 
         if res in PathFinderTask.volumes:
-            PathFinderTask.result = Shared.error_text
+            PathFinderTask.result = MainItem.error_text
             return None
 
         elif res:
@@ -104,7 +100,7 @@ class PathFinderTask:
             res = cls.check_for_exists(paths=paths)
 
             if res in PathFinderTask.volumes:
-                PathFinderTask.result = Shared.error_text
+                PathFinderTask.result = MainItem.error_text
                 return None
             
             elif res:
