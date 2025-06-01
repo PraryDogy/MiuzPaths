@@ -51,44 +51,44 @@ class Err:
         return msg
     
 
-class Task:
+class PathFinderTask:
     current_task: threading.Thread = None
     result: str = "Скопируйте путь в буфер обмена"
-    volumes: list = None
-    volumes_text = "/Volumes"
+    volumes: list[str] = None
+    volumes_text: str = "/Volumes"
 
     @classmethod
     def get_result(cls, path: str) -> str | None:        
-        Task.volumes = cls.get_volumes()
-        sys_volume = cls.get_sys_volume(Task.volumes)
-        if sys_volume and sys_volume in Task.volumes:
-            Task.volumes.remove(sys_volume)
+        PathFinderTask.volumes = cls.get_volumes()
+        sys_volume = cls.get_sys_volume(PathFinderTask.volumes)
+        if sys_volume and sys_volume in PathFinderTask.volumes:
+            PathFinderTask.volumes.remove(sys_volume)
 
         # удаляем новые строки, лишние слешы
         prepared = cls.prepare_path(path)
 
         if not prepared:
-            Task.result = Shared.error_text
+            PathFinderTask.result = Shared.error_text
             return None
 
         elif os.path.exists(prepared):
-            Task.result = prepared
+            PathFinderTask.result = prepared
             return prepared
 
         # превращаем путь в список 
         splited = cls.path_to_list(path=prepared)
 
         # см. аннотацию add_to_start
-        paths = cls.add_to_start(splited_path=splited, volumes=Task.volumes)
+        paths = cls.add_to_start(splited_path=splited, volumes=PathFinderTask.volumes)
 
         res = cls.check_for_exists(paths=paths)
 
-        if res in Task.volumes:
-            Task.result = Shared.error_text
+        if res in PathFinderTask.volumes:
+            PathFinderTask.result = Shared.error_text
             return None
 
         elif res:
-            Task.result = res
+            PathFinderTask.result = res
             return res
         
         else:
@@ -103,12 +103,12 @@ class Task:
             
             res = cls.check_for_exists(paths=paths)
 
-            if res in Task.volumes:
-                Task.result = Shared.error_text
+            if res in PathFinderTask.volumes:
+                PathFinderTask.result = Shared.error_text
                 return None
             
             elif res:
-                Task.result = res
+                PathFinderTask.result = res
                 return res
 
     @classmethod
@@ -223,24 +223,24 @@ class Task:
 class PathFinder:
     def __init__(self, path: str, root: tkinter.Tk):
         try:
-            while Task.current_task.is_alive():
+            while PathFinderTask.current_task.is_alive():
                 root.update()
         except AttributeError:
             pass
 
-        Task.current_task = threading.Thread(
-            target=Task.get_result,
+        PathFinderTask.current_task = threading.Thread(
+            target=PathFinderTask.get_result,
             args=[path],
             daemon=True
         )
 
-        Task.current_task.start()
+        PathFinderTask.current_task.start()
 
-        while Task.current_task.is_alive():
+        while PathFinderTask.current_task.is_alive():
             root.update()
 
     def get_result(self) -> str:
-        return Task.result
+        return PathFinderTask.result
 
 
 
