@@ -124,7 +124,7 @@ class Display(customtkinter.CTkScrollableFrame):
         self.scrollable.pack(expand=1, fill="both")
 
         if self.main_item.path_list:
-            self.rows = RowsFrame(self.scrollable)
+            self.rows = RowsFrame(self.scrollable, self.main_item)
             self.rows.pack(fill="both", expand=1)
         else:
             self.show_message(Display.empty_history)

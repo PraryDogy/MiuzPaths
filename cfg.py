@@ -1,11 +1,5 @@
-import tkinter
+class Cfg:
+    app_name = 'Paths'
+    app_ver = '2.1.0'
 
-
-class Config:
-    def __init__(self):
-        super().__init__()
-        self.app_name = 'Paths'
-        self.app_ver = '2.1.0'
-
-
-cnf = Config()
+    app_exts = (".app", ".APP")

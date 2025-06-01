@@ -4,6 +4,7 @@ import tkinter
 
 import customtkinter
 
+from cfg import Cfg
 from utils import MainItem, PathFinder
 
 
@@ -12,7 +13,6 @@ class OpenBtn(customtkinter.CTkButton):
     w, h = 200, 60
     anchor = "center"
     radius = 12
-    app_exts = (".app", ".APP")
 
     def __init__(self, root: tkinter.Tk, main_item: MainItem):
         super().__init__(

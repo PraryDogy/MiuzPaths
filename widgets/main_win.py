@@ -1,6 +1,6 @@
 import tkinter
 
-from cfg import cnf
+from cfg import Cfg
 from utils import MainItem
 
 from .display import Display
@@ -9,9 +9,10 @@ from .open_btn import OpenBtn
 
 
 class MainWin:
-    def __init__(self, root: tkinter.Tk, main_item: MainItem):
+    def __init__(self, root: tkinter.Tk, main_item: MainItem, cfg: Cfg):
         self.root = root
         self.main_item = main_item
+        self.cfg = cfg
 
         self.root.createcommand("tk::mac::Quit" , exit)
 
@@ -19,7 +20,7 @@ class MainWin:
         self.root.protocol(name="WM_DELETE_WINDOW", func=self.root.wm_withdraw)
         self.root.createcommand("tk::mac::ReopenApplication", self.demin)
 
-        self.root.title(cnf.app_name)
+        self.root.title(cfg.app_name)
         self.root.configure(padx=10, pady=10)
         self.root.minsize(360, 400)
 
