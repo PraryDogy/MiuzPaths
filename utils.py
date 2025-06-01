@@ -47,40 +47,40 @@ class Err:
     
 
 class PathFinderTask:
-    current_task: threading.Thread = None
-    result: str = None
-    volumes: list[str] = None
-    volumes_text: str = "/Volumes"
+    current: threading.Thread = None
+    res: str = None
+    vlms_text: str = "/Volumes"
     users: str = "/Users"
-    inner_volumes: str = None
 
     def __init__(self, main_item: MainItem):
         super().__init__()
         self.main_item = main_item
+        
+        self.vlm_list: list[str] = self.get_volumes()
+        self.sys_vlm = self.get_sys_volume()
+
+        # /Volumes/Macintosh HD/Volumes
+        self.inner_vlm: str = self.sys_vlm + PathFinderTask.vlms_text
 
     def get_result(self, path: str) -> str | None:
-        PathFinderTask.volumes = self.get_volumes()
-        sys_volume = self.get_sys_volume(PathFinderTask.volumes)
-        PathFinderTask.inner_volumes = sys_volume + PathFinderTask.volumes_text
-
         # удаляем новые строки, лишние слешы
         _prepared = self.prepare_path(path)
 
         if _prepared.startswith(PathFinderTask.users):
-            _prepared = sys_volume + _prepared
+            _prepared = self.sys_vlm + _prepared
 
         # превращаем путь в список 
         splited = self.path_to_list(_prepared)
 
         # см. аннотацию add_to_start
-        paths = self.add_to_start(splited, PathFinderTask.volumes)
+        paths = self.add_to_start(splited)
         res = self.check_for_exists(paths)
 
-        if res in (*PathFinderTask.volumes, PathFinderTask.inner_volumes):
-            PathFinderTask.result = self.main_item.error_text
+        if res in (*self.vlm_list, self.inner_vlm):
+            PathFinderTask.res = self.main_item.error_text
 
         elif res:
-            PathFinderTask.result = res
+            PathFinderTask.res = res
         
         elif res is None:
             # см. аннотацию метода del_from_end
@@ -93,24 +93,23 @@ class PathFinderTask:
             paths.sort(key=len, reverse=True)
             res = self.check_for_exists(paths)
 
-            if res in (*PathFinderTask.volumes, PathFinderTask.inner_volumes) or res is None:
-                PathFinderTask.result = self.main_item.error_text
+            if res in (self.vlm_list, self.inner_vlm) or res is None:
+                PathFinderTask.res = self.main_item.error_text
             else:
-                PathFinderTask.result = res
+                PathFinderTask.res = res
             
-
     def get_volumes(self) -> list[str]:
         return [
             entry.path
-            for entry in os.scandir(PathFinderTask.volumes_text)
+            for entry in os.scandir(PathFinderTask.vlms_text)
             if entry.is_dir()
         ]
     
-    def get_sys_volume(self, volumes: list[str]):
+    def get_sys_volume(self):
         user = os.path.expanduser("~")
         app_support = f"{user}/Library/Application Support"
 
-        for i in volumes:
+        for i in self.vlm_list:
             full_path = f"{i}{app_support}"
             if os.path.exists(full_path):
                 return i
@@ -132,7 +131,7 @@ class PathFinderTask:
             if i
         ]
 
-    def add_to_start(self, splited_path: list, volumes: list[str]) -> list[str]:
+    def add_to_start(self, splited_path: list) -> list[str]:
         """
         Пример:
         >>> splited_path = ["Volumes", "Shares-1", "Studio", "MIUZ", "Photo", "Art", "Raw", "2025"]
@@ -153,7 +152,7 @@ class PathFinderTask:
         """
         new_paths = []
 
-        for vol in volumes:
+        for vol in self.vlm_list:
 
             splited_path_copy = splited_path.copy()
             while len(splited_path_copy) > 0:
@@ -198,26 +197,26 @@ class PathFinderTask:
 class PathFinder:
     def __init__(self, path: str, root: tkinter.Tk, main_item: MainItem):
         try:
-            while PathFinderTask.current_task.is_alive():
+            while PathFinderTask.current.is_alive():
                 root.update()
         except AttributeError:
             pass
         
         self.main_item = main_item
         self.task_ = PathFinderTask(self.main_item)
-        PathFinderTask.current_task = threading.Thread(
+        PathFinderTask.current = threading.Thread(
             target=self.task_.get_result,
             args=[path],
             daemon=True
         )
 
-        PathFinderTask.current_task.start()
+        PathFinderTask.current.start()
 
-        while PathFinderTask.current_task.is_alive():
+        while PathFinderTask.current.is_alive():
             root.update()
 
     def get_result(self) -> str:
-        return PathFinderTask.result
+        return PathFinderTask.res
 
 
 
