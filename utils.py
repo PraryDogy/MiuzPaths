@@ -51,51 +51,50 @@ class PathFinderTask:
     result: str = None
     volumes: list[str] = None
     volumes_text: str = "/Volumes"
+    users: str = "/Users"
+    inner_volumes: str = None
 
     def __init__(self, main_item: MainItem):
         super().__init__()
         self.main_item = main_item
 
-    def get_result(self, path: str) -> str | None:        
+    def get_result(self, path: str) -> str | None:
         PathFinderTask.volumes = self.get_volumes()
         sys_volume = self.get_sys_volume(PathFinderTask.volumes)
-        if sys_volume and sys_volume in PathFinderTask.volumes:
-            PathFinderTask.volumes.remove(sys_volume)
+        PathFinderTask.inner_volumes = sys_volume + PathFinderTask.volumes_text
 
         # удаляем новые строки, лишние слешы
-        prepared = self.prepare_path(path)
+        _prepared = self.prepare_path(path)
 
-        if prepared is None:
-            PathFinderTask.result = self.main_item.error_text
-            return
-        
-        elif prepared.count(os.sep) == 1:
-            PathFinderTask.result = self.main_item.error_text
+        if _prepared.startswith(PathFinderTask.users):
+            _prepared = sys_volume + _prepared
 
-        elif os.path.exists(prepared):
-            PathFinderTask.result = prepared
-            return
+
+        # if prepared is None or prepared.count(os.sep) == 1:
+        #     PathFinderTask.result = self.main_item.error_text
+        #     return
+
+        # elif os.path.exists(prepared):
+        #     PathFinderTask.result = prepared
+        #     return
         
-        else:
-            PathFinderTask.result = prepared
+        # else:
+        #     PathFinderTask.result = prepared
 
         # превращаем путь в список 
-        splited = self.path_to_list(path=prepared)
+        splited = self.path_to_list(_prepared)
 
         # см. аннотацию add_to_start
-        paths = self.add_to_start(splited_path=splited, volumes=PathFinderTask.volumes)
+        paths = self.add_to_start(splited, PathFinderTask.volumes)
+        res = self.check_for_exists(paths)
 
-        res = self.check_for_exists(paths=paths)
-
-        if res in PathFinderTask.volumes:
+        if res in (*PathFinderTask.volumes, PathFinderTask.inner_volumes):
             PathFinderTask.result = self.main_item.error_text
-            return None
 
         elif res:
             PathFinderTask.result = res
-            return res
         
-        else:
+        elif res is None:
             # см. аннотацию метода del_from_end
             paths = [
                 ended_path
@@ -104,16 +103,13 @@ class PathFinderTask:
             ]
 
             paths.sort(key=len, reverse=True)
-            
             res = self.check_for_exists(paths)
 
-            if res in PathFinderTask.volumes:
+            if res in (*PathFinderTask.volumes, PathFinderTask.inner_volumes) or res is None:
                 PathFinderTask.result = self.main_item.error_text
-                return None
-            
-            elif res:
+            else:
                 PathFinderTask.result = res
-                return res
+            
 
     def get_volumes(self) -> list[str]:
         return [
