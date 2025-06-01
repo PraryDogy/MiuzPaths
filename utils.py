@@ -49,22 +49,26 @@ class Err:
 
 class PathFinderTask:
     current_task: threading.Thread = None
-    result: str = "Скопируйте путь в буфер обмена"
+    result: str = None
     volumes: list[str] = None
     volumes_text: str = "/Volumes"
 
-    @classmethod
-    def get_result(cls, path: str) -> str | None:        
-        PathFinderTask.volumes = cls.get_volumes()
-        sys_volume = cls.get_sys_volume(PathFinderTask.volumes)
+    def __init__(self, main_item: MainItem):
+        super().__init__()
+        self.main_item = main_item
+        self.result = self.main_item.none_type
+
+    def get_result(self, path: str) -> str | None:        
+        PathFinderTask.volumes = self.get_volumes()
+        sys_volume = self.get_sys_volume(PathFinderTask.volumes)
         if sys_volume and sys_volume in PathFinderTask.volumes:
             PathFinderTask.volumes.remove(sys_volume)
 
         # удаляем новые строки, лишние слешы
-        prepared = cls.prepare_path(path)
+        prepared = self.prepare_path(path)
 
         if not prepared:
-            PathFinderTask.result = MainItem.error_text
+            PathFinderTask.result = self.main_item.error_text
             return None
 
         elif os.path.exists(prepared):
@@ -72,15 +76,15 @@ class PathFinderTask:
             return prepared
 
         # превращаем путь в список 
-        splited = cls.path_to_list(path=prepared)
+        splited = self.path_to_list(path=prepared)
 
         # см. аннотацию add_to_start
-        paths = cls.add_to_start(splited_path=splited, volumes=PathFinderTask.volumes)
+        paths = self.add_to_start(splited_path=splited, volumes=PathFinderTask.volumes)
 
-        res = cls.check_for_exists(paths=paths)
+        res = self.check_for_exists(paths=paths)
 
         if res in PathFinderTask.volumes:
-            PathFinderTask.result = MainItem.error_text
+            PathFinderTask.result = self.main_item.error_text
             return None
 
         elif res:
@@ -92,37 +96,29 @@ class PathFinderTask:
             paths = [
                 ended_path
                 for path_ in paths
-                for ended_path in cls.del_from_end(path=path_)
+                for ended_path in self.del_from_end(path_)
             ]
 
             paths.sort(key=len, reverse=True)
             
-            res = cls.check_for_exists(paths=paths)
+            res = self.check_for_exists(paths)
 
             if res in PathFinderTask.volumes:
-                PathFinderTask.result = MainItem.error_text
+                PathFinderTask.result = self.main_item.error_text
                 return None
             
             elif res:
                 PathFinderTask.result = res
                 return res
 
-    @classmethod
-    def is_path(cls, s: str) -> bool:
-        s = s.replace("\\", "/")
-        pattern = r'^(/[^/\0]+)+/?$'
-        return bool(re.match(pattern, s))
-
-    @classmethod
-    def get_volumes(cls) -> list[str]:
+    def get_volumes(self) -> list[str]:
         return [
             entry.path
-            for entry in os.scandir(cls.volumes_text)
+            for entry in os.scandir(PathFinderTask.volumes_text)
             if entry.is_dir()
         ]
     
-    @classmethod
-    def get_sys_volume(cls, volumes: list[str]):
+    def get_sys_volume(self, volumes: list[str]):
         user = os.path.expanduser("~")
         app_support = f"{user}/Library/Application Support"
 
@@ -132,8 +128,7 @@ class PathFinderTask:
                 return i
         return None
 
-    @classmethod
-    def prepare_path(cls, path: str) -> str:
+    def prepare_path(self, path: str) -> str:
         path = path.replace("\\", os.sep)
         path = path.strip()
         path = path.strip("'").strip('"') # кавычки
@@ -142,16 +137,14 @@ class PathFinderTask:
         else:
             return None
 
-    @classmethod
-    def path_to_list(cls, path: str) -> list[str]:
+    def path_to_list(self, path: str) -> list[str]:
         return [
             i
             for i in path.split(os.sep)
             if i
         ]
 
-    @classmethod
-    def add_to_start(cls, splited_path: list, volumes: list[str]) -> list[str]:
+    def add_to_start(self, splited_path: list, volumes: list[str]) -> list[str]:
         """
         Пример:
         >>> splited_path = ["Volumes", "Shares-1", "Studio", "MIUZ", "Photo", "Art", "Raw", "2025"]
@@ -184,15 +177,13 @@ class PathFinderTask:
         new_paths.sort(key=len, reverse=True)
         return new_paths
     
-    @classmethod
-    def check_for_exists(cls, paths: list[str]) -> str | None:
+    def check_for_exists(self, paths: list[str]) -> str | None:
         for i in paths:
             if os.path.exists(i):
                 return i
         return None
     
-    @classmethod
-    def del_from_end(cls, path: str) -> list[str]:
+    def del_from_end(self, path: str) -> list[str]:
         """
         Пример:
         >>> path: "/sbc01/Shares/Studio/MIUZ/Photo/Art/Raw/2025"
@@ -217,15 +208,17 @@ class PathFinderTask:
     
 
 class PathFinder:
-    def __init__(self, path: str, root: tkinter.Tk):
+    def __init__(self, path: str, root: tkinter.Tk, main_item: MainItem):
         try:
             while PathFinderTask.current_task.is_alive():
                 root.update()
         except AttributeError:
             pass
-
+        
+        self.main_item = main_item
+        self.task_ = PathFinderTask(self.main_item)
         PathFinderTask.current_task = threading.Thread(
-            target=PathFinderTask.get_result,
+            target=self.task_.get_result,
             args=[path],
             daemon=True
         )
