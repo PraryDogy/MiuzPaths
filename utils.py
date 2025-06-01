@@ -69,18 +69,6 @@ class PathFinderTask:
         if _prepared.startswith(PathFinderTask.users):
             _prepared = sys_volume + _prepared
 
-
-        # if prepared is None or prepared.count(os.sep) == 1:
-        #     PathFinderTask.result = self.main_item.error_text
-        #     return
-
-        # elif os.path.exists(prepared):
-        #     PathFinderTask.result = prepared
-        #     return
-        
-        # else:
-        #     PathFinderTask.result = prepared
-
         # превращаем путь в список 
         splited = self.path_to_list(_prepared)
 
