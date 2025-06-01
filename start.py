@@ -6,7 +6,8 @@ try:
 
     root = tkinter.Tk()
     root.withdraw()
-    app = MainWin(root)
+    main_item = MainItem()
+    app = MainWin(root, main_item)
 
     root.mainloop()
 

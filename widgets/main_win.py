@@ -1,6 +1,7 @@
 import tkinter
 
 from cfg import cnf
+from utils import MainItem
 
 from .display import Display
 from .mac_menu import MacMenu
@@ -8,8 +9,9 @@ from .open_btn import OpenBtn
 
 
 class MainWin:
-    def __init__(self, root: tkinter.Tk):
+    def __init__(self, root: tkinter.Tk, main_item: MainItem):
         self.root = root
+        self.main_item = main_item
 
         self.root.createcommand("tk::mac::Quit" , exit)
 
@@ -21,10 +23,10 @@ class MainWin:
         self.root.configure(padx=10, pady=10)
         self.root.minsize(360, 400)
 
-        self.disp = Display(self.root)
+        self.disp = Display(self.root, self.main_item)
         self.disp.pack(expand=1, fill="both")
 
-        self.open_btn = OpenBtn(self.root)
+        self.open_btn = OpenBtn(self.root, self.main_item)
         self.open_btn.pack(pady=(10, 0))
 
         MacMenu(master=self.root)
