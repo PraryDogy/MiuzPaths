@@ -4,30 +4,44 @@ import tkinter
 
 import customtkinter
 
-from utils import PathFinder, MainItem
+from utils import MainItem, PathFinder
 
 
 class OpenBtn(customtkinter.CTkButton):
-    def __init__(self, root: tkinter.Tk):
-        super().__init__(master=root, text="Открыть", width=200, height=60,
-                         anchor="center", corner_radius=12)
+    text_ = "Открыть"
+    w, h = 200, 60
+    anchor = "center"
+    radius = 12
+    app_exts = (".app", ".APP")
+
+    def __init__(self, root: tkinter.Tk, main_item: MainItem):
+        super().__init__(
+            master=root,
+            text=OpenBtn.text_,
+            width=OpenBtn.w,
+            height=OpenBtn.h,
+            anchor=OpenBtn.anchor,
+            corner_radius=OpenBtn.radius
+        )
         self.bind(sequence="<ButtonRelease-1>", command=self.open_btn_cmd)
         self.root = root
+        self.main_item = main_item
 
     def read_clipboard(self):
         return subprocess.check_output(
-            'pbpaste', env={'LANG': 'en_US.UTF-8'}).decode('utf-8')
+            'pbpaste', env={'LANG': 'en_US.UTF-8'}
+        ).decode('utf-8')
 
     def open_btn_cmd(self, e: tkinter.Event):
         input_path = self.read_clipboard()
         path_finder = PathFinder(input_path, self.root)
         result = path_finder.get_result()
 
-        if result != MainItem.error_text:
-            if os.path.isfile(result) or result.endswith((".APP", ".app")):
+        if result != self.main_item.error_text:
+            if os.path.isfile(result) or result.endswith(OpenBtn.app_exts):
                 subprocess.Popen(["open", "-R", result])
             else:
                 subprocess.Popen(["open", result])
-            MainItem.string_var.set(result)
+            self.main_item.string_var.set(result)
         else:
-            MainItem.string_var.set(MainItem.error_text)
+            self.main_item.string_var.set(self.main_item.error_text)
