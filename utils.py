@@ -77,7 +77,7 @@ class _Task:
         paths = self.add_to_start(splited)
         res = self.check_for_exists(paths)
 
-        if res in (*self.vlm_list, self.inner_vlm):
+        if res in self.vlm_list or res == self.inner_vlm:
             _Task.res = self.main_item.error_text
 
         elif res:
@@ -94,7 +94,7 @@ class _Task:
             paths.sort(key=len, reverse=True)
             res = self.check_for_exists(paths)
 
-            if res in (self.vlm_list, self.inner_vlm) or res is None:
+            if res in self.vlm_list or res == self.inner_vlm or res is None:
                 _Task.res = self.main_item.error_text
             else:
                 _Task.res = res
