@@ -49,6 +49,7 @@ class Err:
 class PathFinderTask:
     current: threading.Thread = None
     res: str = None
+r
     vlms_text: str = "/Volumes"
     users: str = "/Users"
 
