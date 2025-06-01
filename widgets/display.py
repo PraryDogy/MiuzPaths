@@ -65,8 +65,8 @@ class RowsFrame(CTkFrame):
         else:
             subprocess.Popen(["open", row.path])
 
-    def remove_row(self):
-        self.main_item.path_list.remove(self.root.path)
+    def remove_row(self, row: CustomRow):
+        self.main_item.path_list.remove(row.path)
         self.main_item.string_var.set(self.main_item.none_type)
 
     def remove_all(self):
@@ -75,9 +75,15 @@ class RowsFrame(CTkFrame):
 
     def pop_context_menu(self, e: tkinter.Event, row: CustomRow):
         menu = tkinter.Menu(master=row)
-        menu.add_command(label=RowsFrame.remove_text, command=self.remove_row)
+        menu.add_command(
+            label=RowsFrame.remove_text,
+            command=lambda: self.remove_row(row)
+        )
         menu.add_separator()
-        menu.add_command(label=RowsFrame.remove_all_text, command=self.remove_all)
+        menu.add_command(
+            label=RowsFrame.remove_all_text,
+            command=self.remove_all
+        )
         menu.post(e.x_root, e.y_root)
 
 
@@ -115,10 +121,11 @@ class Display(CTkScrollableFrame):
             self.update_display()
 
     def remove_widgets(self):
-        if self.scrollable:
+        try:
             self.scrollable.destroy()
-        if self.rows:
             self.rows.destroy()
+        except AttributeError as e:
+            print("display> no widgets on first load, ok", e)
 
     def update_display(self):
         self.remove_widgets()
