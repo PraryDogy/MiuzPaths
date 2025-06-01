@@ -84,7 +84,9 @@ class RowsFrame(CTkFrame):
             label=RowsFrame.remove_all_text,
             command=self.remove_all
         )
+        row.configure(fg_color="red")
         menu.post(e.x_root, e.y_root)
+        row.configure(fg_color="transparent")
 
 
 class Display(CTkScrollableFrame):
