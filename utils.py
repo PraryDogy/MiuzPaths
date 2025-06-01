@@ -6,7 +6,6 @@ import traceback
 
 
 class MainItem:
-    
     def __init__(self):
         self.string_var: tkinter.StringVar = tkinter.StringVar()
         self.path_list: list[str] = []
@@ -56,7 +55,6 @@ class PathFinderTask:
     def __init__(self, main_item: MainItem):
         super().__init__()
         self.main_item = main_item
-        self.result = self.main_item.none_type
 
     def get_result(self, path: str) -> str | None:        
         PathFinderTask.volumes = self.get_volumes()

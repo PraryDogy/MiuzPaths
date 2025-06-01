@@ -38,6 +38,8 @@ class OpenBtn(customtkinter.CTkButton):
         path_finder = PathFinder(input_path, self.root, self.main_item)
         result = path_finder.get_result()
 
+        print(result)
+
         if result != self.main_item.error_text:
             if os.path.isfile(result) or result.endswith(self.cfg.app_exts):
                 subprocess.Popen(["open", "-R", result])
