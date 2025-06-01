@@ -4,7 +4,7 @@ import tkinter
 
 import customtkinter
 
-from utils import MainItem
+from utils import Err, MainItem
 
 
 class CustomRow(customtkinter.CTkLabel):
@@ -79,57 +79,57 @@ class Rows(customtkinter.CTkFrame):
 
 
 class Display(customtkinter.CTkScrollableFrame):
-    def __init__(self, root: tkinter.Tk):
+    empty_history = "История пуста"
+
+    def __init__(self, root: tkinter.Tk, main_item: MainItem):
         super().__init__(master=root)
         self.root = root
-        self.rows = None
-        self.scrollable = None
-        self.update_display()
-        MainItem.string_var.trace_add("write", self.shared_string_var_cmd)
 
-    def get_parrent(self):
-        return self._parent_canvas
+        self.main_item = main_item
+        self.main_item.string_var.trace_add("write", self.shared_string_var_cmd)
+
+        self.update_display()
 
     def moveup(self, e=None):
         try:
-            self.get_parrent().yview_moveto("0.0")
+            self._parent_canvas.yview_moveto("0.0")
         except Exception as e:
-            self.print_err(parent=self, error=e)
+            Err.print_error(e)
 
     def shared_string_var_cmd(self, *args):
-        text = MainItem.string_var.get()
+        text = self.main_item.string_var.get()
 
-        if text == MainItem.error_text:
+        if text == self.main_item.error_text:
             self.show_message(text, auto_reload=True)
-        elif text != MainItem.none_type:
-            if text not in MainItem.path_list:
-                MainItem.path_list.insert(0, text)
-            if len(MainItem.path_list) > 20:
-                MainItem.path_list.pop(-1)
+        elif text != self.main_item.none_type:
+            if text not in self.main_item.path_list:
+                self.main_item.path_list.insert(0, text)
+            if len(self.main_item.path_list) > 20:
+                self.main_item.path_list.pop(-1)
             self.update_display()
         else:
             self.update_display()
 
-    def update_display(self):
+    def remove_widgets(self):
         if self.scrollable:
             self.scrollable.destroy()
         if self.rows:
             self.rows.destroy()
+
+    def update_display(self):
+        self.remove_widgets()
 
         self.scrollable = customtkinter.CTkFrame(master=self)
         self.scrollable.pack(expand=1, fill="both")
 
-        if MainItem.path_list:
+        if self.main_item.path_list:
             self.rows = Rows(self.scrollable)
             self.rows.pack(fill="both", expand=1)
         else:
-            self.show_message("История пуста")
+            self.show_message(Display.empty_history)
 
     def show_message(self, text: str, auto_reload=False):
-        if self.scrollable:
-            self.scrollable.destroy()
-        if self.rows:
-            self.rows.destroy()
+        self.remove_widgets()
 
         self.scrollable = customtkinter.CTkFrame(master=self)
         self.scrollable.pack(expand=1, fill="both")
