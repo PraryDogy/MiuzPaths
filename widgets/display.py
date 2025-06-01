@@ -36,15 +36,16 @@ class ContextMenu(tkinter.Menu):
         MainItem.string_var.set(MainItem.none_type)
 
 
-class Rows(customtkinter.CTkFrame):
-    def __init__(self, master: customtkinter.CTkFrame):
+class RowsFrame(customtkinter.CTkFrame):
+    def __init__(self, master: customtkinter.CTkFrame, main_item: MainItem):
         super().__init__(master=master)
+        self.main_item = main_item
   
-        for x, path in enumerate(MainItem.path_list):
+        for x, path in enumerate(self.main_item.path_list):
             row = CustomRow(self, path)
             row.pack(fill="x", padx=4, pady=(0, 4))
 
-            if x != len(MainItem.path_list) - 1:
+            if x != len(self.main_item.path_list) - 1:
                 separator = customtkinter.CTkFrame(
                     master=self,
                     height=1,
@@ -123,7 +124,7 @@ class Display(customtkinter.CTkScrollableFrame):
         self.scrollable.pack(expand=1, fill="both")
 
         if self.main_item.path_list:
-            self.rows = Rows(self.scrollable)
+            self.rows = RowsFrame(self.scrollable)
             self.rows.pack(fill="both", expand=1)
         else:
             self.show_message(Display.empty_history)
