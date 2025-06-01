@@ -2,13 +2,11 @@ try:
     import tkinter
 
     from utils import MainItem
-    from widgets.main import Main
+    from widgets.main_win import MainWin
 
     root = tkinter.Tk()
-    MainItem.setup_string_var()
-
     root.withdraw()
-    app = Main(root)
+    app = MainWin(root)
 
     root.mainloop()
 

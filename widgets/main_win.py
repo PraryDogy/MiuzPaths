@@ -7,7 +7,7 @@ from .mac_menu import MacMenu
 from .open_btn import OpenBtn
 
 
-class Main:
+class MainWin:
     def __init__(self, root: tkinter.Tk):
         self.root = root
 
