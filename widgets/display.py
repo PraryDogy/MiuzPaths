@@ -4,6 +4,7 @@ import tkinter
 
 import customtkinter
 
+from cfg import Cfg
 from utils import Err, MainItem
 
 
@@ -37,9 +38,10 @@ class ContextMenu(tkinter.Menu):
 
 
 class RowsFrame(customtkinter.CTkFrame):
-    def __init__(self, master: customtkinter.CTkFrame, main_item: MainItem):
+    def __init__(self, master: customtkinter.CTkFrame, main_item: MainItem, cfg: Cfg):
         super().__init__(master=master)
         self.main_item = main_item
+        self.cfg = cfg
   
         for x, path in enumerate(self.main_item.path_list):
             row = CustomRow(self, path)
@@ -69,7 +71,7 @@ class RowsFrame(customtkinter.CTkFrame):
         row.configure(wraplength=self.winfo_width() - 10)
 
     def row_cmd(self, e: tkinter.Event, row: CustomRow):
-        if os.path.isfile(row.path) or row.path.endswith((".APP", ".app")):
+        if os.path.isfile(row.path) or row.path.endswith(self.cfg.app_exts):
             subprocess.Popen(["open", "-R", row.path])
         else:
             subprocess.Popen(["open", row.path])
@@ -82,9 +84,10 @@ class RowsFrame(customtkinter.CTkFrame):
 class Display(customtkinter.CTkScrollableFrame):
     empty_history = "История пуста"
 
-    def __init__(self, root: tkinter.Tk, main_item: MainItem):
+    def __init__(self, root: tkinter.Tk, main_item: MainItem, cfg: Cfg):
         super().__init__(master=root)
         self.root = root
+        self.cfg = cfg
 
         self.main_item = main_item
         self.main_item.string_var.trace_add("write", self.shared_string_var_cmd)
@@ -124,7 +127,7 @@ class Display(customtkinter.CTkScrollableFrame):
         self.scrollable.pack(expand=1, fill="both")
 
         if self.main_item.path_list:
-            self.rows = RowsFrame(self.scrollable, self.main_item)
+            self.rows = RowsFrame(self.scrollable, self.main_item, self.cfg)
             self.rows.pack(fill="both", expand=1)
         else:
             self.show_message(Display.empty_history)

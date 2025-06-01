@@ -24,7 +24,7 @@ class MainWin:
         self.root.configure(padx=10, pady=10)
         self.root.minsize(360, 400)
 
-        self.disp = Display(self.root, self.main_item)
+        self.disp = Display(self.root, self.main_item, self.cfg)
         self.disp.pack(expand=1, fill="both")
 
         self.open_btn = OpenBtn(self.root, self.main_item, self.cfg)
