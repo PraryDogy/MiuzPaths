@@ -14,7 +14,7 @@ class OpenBtn(customtkinter.CTkButton):
     anchor = "center"
     radius = 12
 
-    def __init__(self, root: tkinter.Tk, main_item: MainItem):
+    def __init__(self, root: tkinter.Tk, main_item: MainItem, cfg: Cfg):
         super().__init__(
             master=root,
             text=OpenBtn.text_,
@@ -26,6 +26,7 @@ class OpenBtn(customtkinter.CTkButton):
         self.bind(sequence="<ButtonRelease-1>", command=self.open_btn_cmd)
         self.root = root
         self.main_item = main_item
+        self.cfg = cfg
 
     def read_clipboard(self):
         return subprocess.check_output(
@@ -38,7 +39,7 @@ class OpenBtn(customtkinter.CTkButton):
         result = path_finder.get_result()
 
         if result != self.main_item.error_text:
-            if os.path.isfile(result) or result.endswith(OpenBtn.app_exts):
+            if os.path.isfile(result) or result.endswith(self.cfg.app_exts):
                 subprocess.Popen(["open", "-R", result])
             else:
                 subprocess.Popen(["open", result])

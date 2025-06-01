@@ -27,7 +27,7 @@ class MainWin:
         self.disp = Display(self.root, self.main_item)
         self.disp.pack(expand=1, fill="both")
 
-        self.open_btn = OpenBtn(self.root, self.main_item)
+        self.open_btn = OpenBtn(self.root, self.main_item, self.cfg)
         self.open_btn.pack(pady=(10, 0))
 
         MacMenu(master=self.root)
