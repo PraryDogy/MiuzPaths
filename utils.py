@@ -65,13 +65,19 @@ class PathFinderTask:
         # удаляем новые строки, лишние слешы
         prepared = self.prepare_path(path)
 
-        if not prepared:
+        if prepared is None:
             PathFinderTask.result = self.main_item.error_text
-            return None
+            return
+        
+        elif prepared.count(os.sep) == 1:
+            PathFinderTask.result = self.main_item.error_text
 
         elif os.path.exists(prepared):
             PathFinderTask.result = prepared
-            return prepared
+            return
+        
+        else:
+            PathFinderTask.result = prepared
 
         # превращаем путь в список 
         splited = self.path_to_list(path=prepared)

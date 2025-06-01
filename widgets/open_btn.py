@@ -38,8 +38,6 @@ class OpenBtn(customtkinter.CTkButton):
         path_finder = PathFinder(input_path, self.root, self.main_item)
         result = path_finder.get_result()
 
-        print(result)
-
         if result != self.main_item.error_text:
             if os.path.isfile(result) or result.endswith(self.cfg.app_exts):
                 subprocess.Popen(["open", "-R", result])
@@ -48,3 +46,5 @@ class OpenBtn(customtkinter.CTkButton):
             self.main_item.string_var.set(result)
         else:
             self.main_item.string_var.set(self.main_item.error_text)
+
+"/Volumes/Shares/test/1.jpg"
