@@ -2,43 +2,32 @@ import os
 import subprocess
 import tkinter
 
-import customtkinter
+from customtkinter import CTkFrame, CTkLabel, CTkScrollableFrame
 
 from cfg import Cfg
 from utils import Err, MainItem
 
 
-class CustomRow(customtkinter.CTkLabel):
-    def __init__(self, master: customtkinter.CTkFrame, path: str):
+class CustomRow(CTkLabel):
+    anchor = "w"
+    justify = "left"
+    h = 40
+    def __init__(self, master: CTkFrame, path: str):
         super().__init__(
             master=master,
             text=path,
-            anchor="w",
-            justify="left",
-            height=40,
+            anchor=CustomRow.anchor,
+            justify=CustomRow.justify,
+            height=CustomRow.h,
         )
         self.path = path
 
 
-class ContextMenu(tkinter.Menu):
-    def __init__(self, root: CustomRow):
-        tkinter.Menu.__init__(self, master=root)
-        self.root = root
-        self.add_command(label=f"Удалить", command=lambda: self.clear())
-        self.add_separator()
-        self.add_command(label="Удалить все", command=lambda: self.clear_all())
+class RowsFrame(CTkFrame):
+    remove_text = "Удалить"
+    remove_all_text = "Удалить все"
 
-    def clear(self):
-        MainItem.path_list.remove(self.root.path)
-        MainItem.string_var.set(MainItem.none_type)
-
-    def clear_all(self):
-        MainItem.path_list.clear()
-        MainItem.string_var.set(MainItem.none_type)
-
-
-class RowsFrame(customtkinter.CTkFrame):
-    def __init__(self, master: customtkinter.CTkFrame, main_item: MainItem, cfg: Cfg):
+    def __init__(self, master: CTkFrame, main_item: MainItem, cfg: Cfg):
         super().__init__(master=master)
         self.main_item = main_item
         self.cfg = cfg
@@ -48,7 +37,7 @@ class RowsFrame(customtkinter.CTkFrame):
             row.pack(fill="x", padx=4, pady=(0, 4))
 
             if x != len(self.main_item.path_list) - 1:
-                separator = customtkinter.CTkFrame(
+                separator = CTkFrame(
                     master=self,
                     height=1,
                     fg_color="#444444"
@@ -76,12 +65,23 @@ class RowsFrame(customtkinter.CTkFrame):
         else:
             subprocess.Popen(["open", row.path])
 
+    def remove_row(self):
+        self.main_item.path_list.remove(self.root.path)
+        self.main_item.string_var.set(self.main_item.none_type)
+
+    def remove_all(self):
+        self.main_item.path_list.clear()
+        self.main_item.string_var.set(self.main_item.none_type)
+
     def pop_context_menu(self, e: tkinter.Event, row: CustomRow):
-        menu = ContextMenu(row)
+        menu = tkinter.Menu(master=row)
+        menu.add_command(label=RowsFrame.remove_text, command=self.remove_row)
+        menu.add_separator()
+        menu.add_command(label=RowsFrame.remove_all_text, command=self.remove_all)
         menu.post(e.x_root, e.y_root)
 
 
-class Display(customtkinter.CTkScrollableFrame):
+class Display(CTkScrollableFrame):
     empty_history = "История пуста"
 
     def __init__(self, root: tkinter.Tk, main_item: MainItem, cfg: Cfg):
@@ -123,7 +123,7 @@ class Display(customtkinter.CTkScrollableFrame):
     def update_display(self):
         self.remove_widgets()
 
-        self.scrollable = customtkinter.CTkFrame(master=self)
+        self.scrollable = CTkFrame(master=self)
         self.scrollable.pack(expand=1, fill="both")
 
         if self.main_item.path_list:
@@ -135,10 +135,10 @@ class Display(customtkinter.CTkScrollableFrame):
     def show_message(self, text: str, auto_reload=False):
         self.remove_widgets()
 
-        self.scrollable = customtkinter.CTkFrame(master=self)
+        self.scrollable = CTkFrame(master=self)
         self.scrollable.pack(expand=1, fill="both")
 
-        self.rows = customtkinter.CTkLabel(master=self.scrollable, text=text)
+        self.rows = CTkLabel(master=self.scrollable, text=text)
         self.rows.place(relx=0.5, rely=0.5, anchor="center")
 
         if auto_reload:
