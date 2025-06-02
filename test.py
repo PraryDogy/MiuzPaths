@@ -1,5 +1,8 @@
 src = "asdgfsdfasdfsd"
 
+# существующий путь
+src = "/Volumes/Shares/Studio/MIUZ/Photo/Art/Ready/000 Лукас/2 Model IMG/LU6057.psd"
+
 
 from utils import _Task, MainItem
 

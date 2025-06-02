@@ -48,7 +48,6 @@ class Err:
 
 class _Task:
     current: threading.Thread = None
-    res: str = None
 
     vlms_text: str = "/Volumes"
     users: str = "/Users"
@@ -208,19 +207,20 @@ class PathFinder:
             pass
         
         self.main_item = main_item
-        self.task_ = _Task(self.main_item, path)
-        _Task.current = threading.Thread(
-            target=self.task_.get_result,
-            daemon=True
-        )
+        self.root = root
+        self.input_path = path
 
+        self.task_ = _Task(self.main_item, path)
+
+        target = self.task_.get_result
+        _Task.current = threading.Thread(target=target)
         _Task.current.start()
 
         while _Task.current.is_alive():
             root.update()
 
     def get_result(self) -> str:
-        return _Task.res
+        return self.task_.result
 
 
 
