@@ -77,12 +77,14 @@ class _Task:
         result = self.check_for_exists(paths)
 
         if not result:
-            paths = [
+            paths = {
                 p
                 for base in paths
                 for p in self.del_from_end(base)
-            ]
-            paths.sort(key=len, reverse=True)
+            }
+            paths = sorted(paths, key=len, reverse=True)
+            if self.volumes_dir in paths:
+                paths.remove(self.volumes_dir)
             result = self.check_for_exists(paths)
 
         self.result = result or self.main_item.error_text

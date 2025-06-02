@@ -1,7 +1,7 @@
 src = "asdgfsdfasdfsd"
 
 # существующий путь
-src = "/Volumes/Shares/Studio/MIUZ/Photo/Art/Ready/000 Лукас/2 Model IMG/LU6057.psd"
+src = "/Volumes/Shares-1/Stud2io/MIUZ/Photo/Art/Ready/000 Лукас/2 Model IMG/LU6057.psd"
 # src = '/Users/Loshkarev/Desktop/2024-01-26 10-47-24.tif'
 # src = '/Volumes/Macintosh HD/Users/Loshkarev/Desktop/2024-01-26 10-47-24.tif'
 
@@ -22,5 +22,4 @@ class MainItem:
 main_item = MainItem()
 a = _Task(main_item, src)
 a.get_result()
-
-print(a.result)
+# print(a.result)
