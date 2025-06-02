@@ -63,12 +63,12 @@ class _Task:
         self.volumes_list.remove(self.macintosh_hd)
 
         # /Volumes/Macintosh HD/Volumes
-        self.invalid_volume_path: str = self.macintosh_hd + _Task.volumes_dir
+        self.invalid_volume_path: str = self.macintosh_hd + self.volumes_dir
 
     def get_result(self) -> str | None:
         self.prepare_path()
 
-        if self.is_local_path():
+        if self.input_path.startswith((self.users_dir, self.macintosh_hd)):
             if self.input_path.startswith(self.users_dir):
                 path = self.macintosh_hd + self.input_path
             path = self.replace_username(path)
@@ -105,11 +105,6 @@ class _Task:
             return os.sep.join(parts)
         except (ValueError, IndexError):
             return path
-
-    def is_local_path(self):
-        if self.input_path.startswith((_Task.users_dir, self.macintosh_hd)):
-            return True
-        return False
 
     def check_for_exists(self, paths: list[str]) -> str | None:
         for path in paths:
