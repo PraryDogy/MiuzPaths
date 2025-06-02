@@ -53,7 +53,7 @@ class _Task:
     vlms_text: str = "/Volumes"
     users: str = "/Users"
 
-    def __init__(self, main_item: MainItem):
+    def __init__(self, main_item: MainItem, input_path: str):
         super().__init__()
         self.main_item = main_item
         
@@ -63,9 +63,11 @@ class _Task:
         # /Volumes/Macintosh HD/Volumes
         self.inner_vlm: str = self.sys_vlm + _Task.vlms_text
 
-    def get_result(self, path: str) -> str | None:
+        self.input_path = input_path
+
+    def get_result(self) -> str | None:
         # удаляем новые строки, лишние слешы
-        _prepared = self.prepare_path(path)
+        _prepared = self.prepare_path(self.input_path)
 
         if _prepared.startswith(_Task.users):
             _prepared = self.sys_vlm + _prepared
@@ -204,10 +206,9 @@ class PathFinder:
             pass
         
         self.main_item = main_item
-        self.task_ = _Task(self.main_item)
+        self.task_ = _Task(self.main_item, path)
         _Task.current = threading.Thread(
             target=self.task_.get_result,
-            args=[path],
             daemon=True
         )
 
