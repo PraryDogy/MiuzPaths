@@ -17,9 +17,10 @@ class CustomRow(CTkLabel):
         super().__init__(
             master=master,
             text=path,
-            anchor=CustomRow.anchor,
-            justify=CustomRow.justify,
-            height=CustomRow.h,
+            anchor=self.anchor,
+            justify=self.justify,
+            height=self.h,
+            corner_radius=self.corner_radius
         )
         self.path = path
 
@@ -35,7 +36,7 @@ class RowsFrame(CTkFrame):
   
         for x, path in enumerate(self.main_item.path_list):
             row = CustomRow(self, path)
-            row.pack(fill="x", padx=4, pady=(0, 4))
+            row.pack()
 
             if x != len(self.main_item.path_list) - 1:
                 separator = CTkFrame(
@@ -85,7 +86,10 @@ class RowsFrame(CTkFrame):
             label=RowsFrame.remove_all_text,
             command=self.remove_all
         )
+
+        row.configure(fg_color="red")
         menu.post(e.x_root, e.y_root)
+        row.configure(fg_color="transparent")
 
 
 class Display(CTkScrollableFrame):
