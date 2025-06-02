@@ -12,7 +12,7 @@ from datetime import datetime
 
 from setuptools import setup
 
-from cfg import cnf
+from cfg import Cfg
 from copy_tcl_to_app import copy_tcl_to_app
 
 def remove_trash():
@@ -60,9 +60,9 @@ YEAR = datetime.now().year # CURRENT YEAR
 AUTHOR = "Evgeny Loshkarev"  # "Evgeny Loshkarev"
 SHORT_AUTHOR_NAME = "Evlosh" # "Evlosh"
 COMPANY = "MIUZ Diamonds" # "MIUZ Diamonds" or ""
-APP_NAME = cnf.app_name
-APP_VER = cnf.app_ver # "1.0.0"
-ICON_PATH = "icon.icns" # "icon/icon.icns" or "icon.icns"
+APP_NAME = Cfg.app_name
+APP_VER = str(Cfg.app_ver) # "1.0.0"
+ICON_PATH = "icons/icon.icns" # "icon/icon.icns" or "icon.icns"
 MAIN_FILES = ["start.py"] # SINGLE OR MULTIPLE PYTHON FILES
 
 BUNDLE_ID = f"com.{SHORT_AUTHOR_NAME}.{APP_NAME}" # DON'T CHANGE IT
