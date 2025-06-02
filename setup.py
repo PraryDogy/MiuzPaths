@@ -71,6 +71,7 @@ PY_2APP = "py2app" # DON'T CHANGE IT
 # IF YOU DON'T HAVE ADVANCED FILES
 DATA_FILES = [
     include_files("themes"),
+    include_files("icons")
 ]
 
 
