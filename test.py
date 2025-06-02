@@ -1,4 +1,4 @@
-src = "/Users/Morkowik/Desktop/photo_2024-07-30 22.00.11 2.jpg"
+src = "asdgfsdfasdfsd"
 
 
 from utils import _Task, MainItem
@@ -16,4 +16,5 @@ class MainItem:
 
 
 main_item = MainItem()
-a = _Task(main_item)
+a = _Task(main_item, src)
+res = a.get_result()

@@ -79,6 +79,7 @@ class _Task:
         paths = self.add_to_start(splited)
         res = self.check_for_exists(paths)
 
+
         if res in self.vlm_list or res == self.inner_vlm:
             _Task.res = self.main_item.error_text
 
