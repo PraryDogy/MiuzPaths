@@ -49,6 +49,13 @@ def move_app_to_desktop(appname: str):
 
     return dest
 
+def include_files(folder_name: str) -> list[str, list]:
+    return (
+        folder_name,
+        [os.path.join(folder_name, i) for i in os.listdir(folder_name)]
+        )
+
+
 YEAR = datetime.now().year # CURRENT YEAR
 AUTHOR = "Evgeny Loshkarev"  # "Evgeny Loshkarev"
 SHORT_AUTHOR_NAME = "Evlosh" # "Evlosh"
@@ -62,7 +69,9 @@ BUNDLE_ID = f"com.{SHORT_AUTHOR_NAME}.{APP_NAME}" # DON'T CHANGE IT
 PY_2APP = "py2app" # DON'T CHANGE IT
 
 # IF YOU DON'T HAVE ADVANCED FILES
-DATA_FILES = []
+DATA_FILES = [
+    include_files("themes"),
+]
 
 
 
