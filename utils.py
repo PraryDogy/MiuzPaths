@@ -64,43 +64,32 @@ class _Task:
         # /Volumes/Macintosh HD/Volumes
         self.inner_vlm: str = self.sys_vlm + _Task.vlms_text
 
-
     def get_result(self) -> str | None:
-        # удаляем новые строки, лишние слешы
-        _prepared = self.prepare_path(self.input_path)
+        path = self.prepare_path(self.input_path)
+        if path.startswith(self.users):
+            path = self.sys_vlm + path
 
-        if _prepared.startswith(_Task.users):
-            _prepared = self.sys_vlm + _prepared
-
-        # превращаем путь в список 
-        splited = self.path_to_list(_prepared)
-
-        # см. аннотацию add_to_start
-        paths = self.add_to_start(splited)
+        paths = self.add_to_start(self.path_to_list(path))
         res = self.check_for_exists(paths)
 
-
-        if res in self.vlm_list or res == self.inner_vlm:
-            self.result = self.main_item.error_text
-
-        elif res:
-            self.result = res
-        
-        elif res is None:
-            # см. аннотацию метода del_from_end
-            paths = [
-                ended_path
-                for path_ in paths
-                for ended_path in self.del_from_end(path_)
+        if not res:
+            extended_paths = [
+                p for base in paths for p in self.del_from_end(base)
             ]
+            extended_paths.sort(key=len, reverse=True)
+            res = self.check_for_exists(extended_paths)
 
-            paths.sort(key=len, reverse=True)
-            res = self.check_for_exists(paths)
+        self.result = res or self.main_item.error_text
+        return self.result
 
-            if res in self.vlm_list or res == self.inner_vlm or res is None:
-                self.result = self.main_item.error_text
-            else:
-                self.result = res
+    def check_for_exists(self, paths: list[str]) -> str | None:
+        for path in paths:
+            if not os.path.exists(path):
+                continue
+            if path in self.vlm_list or path == self.inner_vlm:
+                continue
+            return path
+        return None
             
     def get_volumes(self) -> list[str]:
         return [
@@ -167,13 +156,7 @@ class _Task:
 
         new_paths.sort(key=len, reverse=True)
         return new_paths
-    
-    def check_for_exists(self, paths: list[str]) -> str | None:
-        for i in paths:
-            if os.path.exists(i):
-                return i
-        return None
-    
+        
     def del_from_end(self, path: str) -> list[str]:
         """
         Пример:

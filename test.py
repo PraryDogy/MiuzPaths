@@ -22,4 +22,4 @@ main_item = MainItem()
 a = _Task(main_item, src)
 a.get_result()
 
-print(a.inner_vlm)
+# print(a.inner_vlm)
