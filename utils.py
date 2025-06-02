@@ -49,8 +49,8 @@ class Err:
 class _Task:
     current: threading.Thread = None
 
-    vlms_text: str = "/Volumes"
-    users: str = "/Users"
+    volumes_dir: str = "/Volumes"
+    users_dir: str = "/Users"
 
     def __init__(self, main_item: MainItem, input_path: str):
         super().__init__()
@@ -58,35 +58,47 @@ class _Task:
         self.input_path = input_path
         self.result: str | None = None
 
-        self.vlm_list: list[str] = self.get_volumes()
-        self.sys_vlm = self.get_sys_volume()
+        self.volumes_list: list[str] = self.get_volumes()
+        self.macintosh_hd = self.get_sys_volume()
+        self.volumes_list.remove(self.macintosh_hd)
 
         # /Volumes/Macintosh HD/Volumes
-        self.inner_vlm: str = self.sys_vlm + _Task.vlms_text
+        self.invalid_volume_path: str = self.macintosh_hd + _Task.volumes_dir
 
     def get_result(self) -> str | None:
-        path = self.prepare_path(self.input_path)
-        if path.startswith(self.users):
-            path = self.sys_vlm + path
+        self.prepare_path()
 
-        paths = self.add_to_start(self.path_to_list(path))
-        res = self.check_for_exists(paths)
+        if self.is_local_path():
+            self.result = self.input_path
+            return self.result
 
-        if not res:
-            extended_paths = [
-                p for base in paths for p in self.del_from_end(base)
+        paths = self.add_to_start(self.path_to_list(self.input_path))
+        paths.sort(key=len, reverse=True)
+        result = self.check_for_exists(paths)
+
+        if not result:
+            paths = [
+                p
+                for base in paths
+                for p in self.del_from_end(base)
             ]
-            extended_paths.sort(key=len, reverse=True)
-            res = self.check_for_exists(extended_paths)
+            paths.sort(key=len, reverse=True)
+            result = self.check_for_exists(paths)
 
-        self.result = res or self.main_item.error_text
+        self.result = result or self.main_item.error_text
+
         return self.result
+    
+    def is_local_path(self):
+        if self.input_path.startswith((_Task.users_dir, self.macintosh_hd)):
+            return True
+        return False
 
     def check_for_exists(self, paths: list[str]) -> str | None:
         for path in paths:
             if not os.path.exists(path):
                 continue
-            if path in self.vlm_list or path == self.inner_vlm:
+            if path in self.volumes_list or path == self.invalid_volume_path:
                 continue
             return path
         return None
@@ -94,7 +106,7 @@ class _Task:
     def get_volumes(self) -> list[str]:
         return [
             entry.path
-            for entry in os.scandir(_Task.vlms_text)
+            for entry in os.scandir(_Task.volumes_dir)
             if entry.is_dir()
         ]
     
@@ -102,20 +114,17 @@ class _Task:
         user = os.path.expanduser("~")
         app_support = f"{user}/Library/Application Support"
 
-        for i in self.vlm_list:
+        for i in self.volumes_list:
             full_path = f"{i}{app_support}"
             if os.path.exists(full_path):
                 return i
         return None
 
-    def prepare_path(self, path: str) -> str:
-        path = path.replace("\\", os.sep)
-        path = path.strip()
-        path = path.strip("'").strip('"') # кавычки
-        if path:
-            return os.sep + path.strip(os.sep)
-        else:
-            return None
+    def prepare_path(self):
+        path = self.input_path.strip().strip("'\"")
+        path = path.replace("\\", "/")
+        path = path.strip("/")
+        self.input_path = "/" + path
 
     def path_to_list(self, path: str) -> list[str]:
         return [
@@ -128,7 +137,6 @@ class _Task:
         """
         Пример:
         >>> splited_path = ["Volumes", "Shares-1", "Studio", "MIUZ", "Photo", "Art", "Raw", "2025"]
-        >>> volumes = ["/Volumes/Shares", "/Volumes/Shares-1"]
         [
             '/Volumes/Shares/Studio/MIUZ/Photo/Art/Raw/2025',
             '/Volumes/Shares/MIUZ/Photo/Art/Raw/2025',
@@ -145,7 +153,7 @@ class _Task:
         """
         new_paths = []
 
-        for vol in self.vlm_list:
+        for vol in self.volumes_list:
 
             splited_path_copy = splited_path.copy()
             while len(splited_path_copy) > 0:
@@ -154,7 +162,6 @@ class _Task:
                 new_paths.append(new)
                 splited_path_copy.pop(0)
 
-        new_paths.sort(key=len, reverse=True)
         return new_paths
         
     def del_from_end(self, path: str) -> list[str]:
