@@ -69,7 +69,10 @@ class _Task:
         self.prepare_path()
 
         if self.is_local_path():
-            self.result = self.input_path
+            if self.input_path.startswith(self.users_dir):
+                path = self.macintosh_hd + self.input_path
+            path = self.replace_username(path)
+            self.result = path
             return self.result
 
         paths = self.add_to_start(self.path_to_list(self.input_path))
@@ -90,7 +93,19 @@ class _Task:
         self.result = result or self.main_item.error_text
 
         return self.result
-    
+
+    def replace_username(self, path: str) -> str:
+        home = os.path.expanduser("~")  # например: /Users/actual_user
+        user = home.split(os.sep)[-1]   # извлекаем имя пользователя
+
+        parts = path.split(os.sep)
+        try:
+            users_index = parts.index("Users")
+            parts[users_index + 1] = user
+            return os.sep.join(parts)
+        except (ValueError, IndexError):
+            return path
+
     def is_local_path(self):
         if self.input_path.startswith((_Task.users_dir, self.macintosh_hd)):
             return True
