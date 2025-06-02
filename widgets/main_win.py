@@ -40,4 +40,5 @@ class MainWin:
             self.root.wm_withdraw()
 
     def demin(self, e: tkinter.Event = None):
+        self.disp.update_display()
         self.root.wm_deiconify()
