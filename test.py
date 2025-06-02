@@ -22,4 +22,4 @@ class MainItem:
 main_item = MainItem()
 a = _Task(main_item, src)
 a.get_result()
-# print(a.result)
+print(a.result)
