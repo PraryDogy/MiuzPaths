@@ -56,14 +56,15 @@ class _Task:
     def __init__(self, main_item: MainItem, input_path: str):
         super().__init__()
         self.main_item = main_item
-        
+        self.input_path = input_path
+        self.result: str | None = None
+
         self.vlm_list: list[str] = self.get_volumes()
         self.sys_vlm = self.get_sys_volume()
 
         # /Volumes/Macintosh HD/Volumes
         self.inner_vlm: str = self.sys_vlm + _Task.vlms_text
 
-        self.input_path = input_path
 
     def get_result(self) -> str | None:
         # удаляем новые строки, лишние слешы
@@ -81,10 +82,10 @@ class _Task:
 
 
         if res in self.vlm_list or res == self.inner_vlm:
-            _Task.res = self.main_item.error_text
+            self.result = self.main_item.error_text
 
         elif res:
-            _Task.res = res
+            self.result = res
         
         elif res is None:
             # см. аннотацию метода del_from_end
@@ -98,9 +99,9 @@ class _Task:
             res = self.check_for_exists(paths)
 
             if res in self.vlm_list or res == self.inner_vlm or res is None:
-                _Task.res = self.main_item.error_text
+                self.result = self.main_item.error_text
             else:
-                _Task.res = res
+                self.result = res
             
     def get_volumes(self) -> list[str]:
         return [

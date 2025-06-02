@@ -17,4 +17,6 @@ class MainItem:
 
 main_item = MainItem()
 a = _Task(main_item, src)
-res = a.get_result()
+a.get_result()
+
+print(a.result)
