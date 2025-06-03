@@ -33,7 +33,7 @@ class RowsFrame(CTkFrame):
         self.main_item = main_item
         self.cfg = cfg
         self.underline_font = CTkFont(underline=True)
-  
+    
         for x, path in enumerate(self.main_item.path_list):
             row = CustomRow(self, path)
             row.pack(fill="x", padx=4, pady=(0, 4))
@@ -55,7 +55,7 @@ class RowsFrame(CTkFrame):
                      )
 
             row.bind(sequence="<ButtonRelease-2>",
-                     command=lambda e, row=row: self.pop_context_menu(e, row)
+                     command=lambda e, row=row: self.row_context(e, row)
                      )
 
     def row_cmd_wrap(self, e: tkinter.Event, row: CustomRow):
@@ -75,7 +75,7 @@ class RowsFrame(CTkFrame):
         self.main_item.path_list.clear()
         self.main_item.string_var.set(self.main_item.none_type)
 
-    def pop_context_menu(self, e: tkinter.Event, row: CustomRow):
+    def row_context(self, e: tkinter.Event, row: CustomRow):
         menu = tkinter.Menu(master=row)
         menu.add_command(
             label=RowsFrame.remove_text,
