@@ -2,7 +2,7 @@ import os
 import subprocess
 import tkinter
 
-from customtkinter import CTkFrame, CTkLabel, CTkScrollableFrame
+from customtkinter import CTkFrame, CTkLabel, CTkScrollableFrame, CTkFont
 
 from cfg import Cfg
 from utils import Err, MainItem
@@ -32,6 +32,7 @@ class RowsFrame(CTkFrame):
         super().__init__(master=master)
         self.main_item = main_item
         self.cfg = cfg
+        self.underline_font = CTkFont(underline=True)
   
         for x, path in enumerate(self.main_item.path_list):
             row = CustomRow(self, path)
@@ -85,11 +86,22 @@ class RowsFrame(CTkFrame):
             label=RowsFrame.remove_all_text,
             command=self.remove_all
         )
+        old_font = row.cget("font")
+        row.configure(
+            font=self.underline_font,
+            fg_color=row.cget("fg_color")
+            
+        )
         menu.post(e.x_root, e.y_root)
+        row.configure(
+            font=old_font,
+            fg_color="transparent"
+        )
 
 
 class Display(CTkScrollableFrame):
     empty_history = "История пуста"
+    ms = 2500
 
     def __init__(self, root: tkinter.Tk, main_item: MainItem, cfg: Cfg):
         super().__init__(master=root)
@@ -150,4 +162,4 @@ class Display(CTkScrollableFrame):
         self.rows.place(relx=0.5, rely=0.5, anchor="center")
 
         if auto_reload:
-            self.root.after(2000, self.update_display)
+            self.root.after(self.ms, self.update_display)
