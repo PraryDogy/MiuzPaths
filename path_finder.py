@@ -37,6 +37,7 @@ class PathFinder:
                 for p in self.del_from_end(base)
             }
             paths = sorted(paths, key=len, reverse=True)
+
             if self.volumes_dir in paths:
                 paths.remove(self.volumes_dir)
             result = self.check_for_exists(paths)
@@ -111,10 +112,11 @@ class PathFinder:
             if i
         ]
         for vol in self.volumes_list:
-            while len(chunk_list) > 0:
-                new = vol + os.sep + os.path.join(*chunk_list)
+            chunk_list_copy = chunk_list.copy()
+            while len(chunk_list_copy) > 0:
+                new = vol + os.sep + os.path.join(*chunk_list_copy)
                 new_paths.append(new)
-                chunk_list.pop(0)
+                chunk_list_copy.pop(0)
         return new_paths
         
     def del_from_end(self, path: str) -> list[str]:
@@ -134,16 +136,3 @@ class PathFinder:
             new_paths.append(path)
             path, _ = os.path.split(path)
         return new_paths
-    
-
-# CHECK
-src = '/Users/Loshkare11v/Desktop/heart 1.tif'
-src = '/sb01/Studio/MIUZ/Photo/Art/Raw/2025/06 - июнь/2025-06-02 16-48-15.tif'
-src = "/Users/Morkowik/Downloads/Геохимия видео"
-src = "smb://sbc01/shares/Marketing/Photo/_Collections/1 Solo/1 IMG/2023-09-22 11-27-28 рабочий файл.tif/"
-src = "smb://sbc031/shares/Marketing/Photo/_Collections/_____1 Solo/1 IMG/__2023-09-22 11-27-28 рабочий файл.tif/"
-src = "\\192.168.10.105\\shares\\Marketing\\Design\\Design_Folders.xlsx"
-# src = "fafdgfagrf"
-a = PathFinder(src)
-res = a.get_result()
-print("Result:", res)
