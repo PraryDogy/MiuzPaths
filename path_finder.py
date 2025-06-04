@@ -104,14 +104,13 @@ class PathFinder:
             '/Volumes/Shares/Studio/MIUZ/Photo/Art/Raw/2025',
             '/Volumes/Shares/MIUZ/Photo/Art/Raw/2025',
             '/Volumes/Shares/Photo/Art/Raw/2025',
-            '/Volumes/Shares/Art/Raw/2025',
-            '/Volumes/Shares/Raw/2025',
-            '/Volumes/Shares/2025',
             ...
+            '/Volumes'
             '/Volumes/Shares-1/Studio/MIUZ/Photo/Art/Raw/2025',
             '/Volumes/Shares-1/MIUZ/Photo/Art/Raw/2025',
             '/Volumes/Shares-1/Photo/Art/Raw/2025',
             ...
+            '/Volumes'
         ]
         """
         new_paths = []
