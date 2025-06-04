@@ -56,19 +56,21 @@ class PathFinder:
         self.input_path = path
 
     def run(self):
-        try:
-            while self.current.is_alive():
-                self.root.update()
-        except AttributeError:
-            pass
+        self.wait_for_thread()
 
         self.path_finder_ = PathFinder_(self.input_path)
         target = self.path_finder_.get_result
         self.current = threading.Thread(target=target)
         self.current.start()
 
-        while self.current.is_alive():
-            self.root.update()
+        self.wait_for_thread()
+
+    def wait_for_thread(self):
+        try:
+            while self.current.is_alive():
+                self.root.update()
+        except AttributeError:
+            pass
 
     def get_result(self) -> str:
         return self.path_finder_.result
