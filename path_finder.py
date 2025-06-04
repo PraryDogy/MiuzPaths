@@ -23,6 +23,9 @@ class PathFinder:
             if input_path.startswith(self.users_dir):
                 input_path = self.macintosh_hd + input_path
             input_path = self.replace_username(input_path)
+
+            # для threading
+            self.result = input_path
             return input_path
 
         paths = self.add_to_start(input_path)
@@ -42,6 +45,8 @@ class PathFinder:
                 paths.remove(self.volumes_dir)
             result = self.check_for_exists(paths)
 
+        # для threading
+        self.result = result or None
         return result or None
 
     def replace_username(self, path: str) -> str:

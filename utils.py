@@ -62,13 +62,14 @@ class PathFinder:
         self.root = root
         self.input_path = path
 
-        self.task_ = PathFinder_(path)
-        target = self.task_.get_result
+    def run(self):
+        self.path_finder_ = PathFinder_(self.input_path)
+        target = self.path_finder_.get_result
         self.current = threading.Thread(target=target)
         self.current.start()
 
         while self.current.is_alive():
-            root.update()
+            self.root.update()
 
     def get_result(self) -> str:
-        return self.task_.result
+        return self.path_finder_.result
