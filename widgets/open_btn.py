@@ -35,11 +35,11 @@ class OpenBtn(customtkinter.CTkButton):
 
     def open_btn_cmd(self, e: tkinter.Event):
         input_path = self.read_clipboard()
-        path_finder = PathFinder(input_path, self.root, self.main_item)
-        return
+        path_finder = PathFinder(input_path, self.root)
+        path_finder.run()
         result = path_finder.get_result()
 
-        if result != self.main_item.error_text:
+        if result:
             if os.path.isfile(result) or result.endswith(self.cfg.app_exts):
                 subprocess.Popen(["open", "-R", result])
             else:

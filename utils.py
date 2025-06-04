@@ -51,18 +51,17 @@ class Err:
 class PathFinder:
     current: threading.Thread
 
-    def __init__(self, path: str, root: tkinter.Tk, main_item: MainItem):
-        try:
-            while self.current.is_alive():
-                root.update()
-        except AttributeError:
-            pass
-        
-        self.main_item = main_item
+    def __init__(self, path: str, root: tkinter.Tk):
         self.root = root
         self.input_path = path
 
     def run(self):
+        try:
+            while self.current.is_alive():
+                self.root.update()
+        except AttributeError:
+            pass
+
         self.path_finder_ = PathFinder_(self.input_path)
         target = self.path_finder_.get_result
         self.current = threading.Thread(target=target)
