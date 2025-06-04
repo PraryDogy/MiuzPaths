@@ -46,5 +46,3 @@ class OpenBtn(customtkinter.CTkButton):
             self.main_item.string_var.set(result)
         else:
             self.main_item.string_var.set(self.main_item.error_text)
-
-"/Volumes/Shares/test/not exists path/1.jpg"

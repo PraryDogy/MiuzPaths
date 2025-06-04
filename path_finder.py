@@ -17,15 +17,15 @@ class PathFinder:
         self.invalid_volume_path: str = self.macintosh_hd + self.volumes_dir
 
     def get_result(self) -> str | None:
-        self.input_path = self.prepare_path(self.input_path)
+        input_path = self.prepare_path(self.input_path)
 
-        if self.input_path.startswith((self.users_dir, self.macintosh_hd)):
-            if self.input_path.startswith(self.users_dir):
-                path = self.macintosh_hd + self.input_path
-            path = self.replace_username(path)
-            return self.result
+        if input_path.startswith((self.users_dir, self.macintosh_hd)):
+            if input_path.startswith(self.users_dir):
+                input_path = self.macintosh_hd + input_path
+            input_path = self.replace_username(input_path)
+            return input_path
 
-        paths = self.add_to_start(self.input_path)
+        paths = self.add_to_start(input_path)
 
         paths.sort(key=len, reverse=True)
         result = self.check_for_exists(paths)
@@ -41,8 +41,7 @@ class PathFinder:
                 paths.remove(self.volumes_dir)
             result = self.check_for_exists(paths)
 
-        self.result = result or self.main_item.error_text
-        return self.result
+        return result or None
 
     def replace_username(self, path: str) -> str:
         home = os.path.expanduser("~")  # например: /Users/actual_user
@@ -135,3 +134,16 @@ class PathFinder:
             new_paths.append(path)
             path, _ = os.path.split(path)
         return new_paths
+    
+
+# CHECK
+src = '/Users/Loshkare11v/Desktop/heart 1.tif'
+src = '/sb01/Studio/MIUZ/Photo/Art/Raw/2025/06 - июнь/2025-06-02 16-48-15.tif'
+src = "/Users/Morkowik/Downloads/Геохимия видео"
+src = "smb://sbc01/shares/Marketing/Photo/_Collections/1 Solo/1 IMG/2023-09-22 11-27-28 рабочий файл.tif/"
+src = "smb://sbc031/shares/Marketing/Photo/_Collections/_____1 Solo/1 IMG/__2023-09-22 11-27-28 рабочий файл.tif/"
+src = "\\192.168.10.105\\shares\\Marketing\\Design\\Design_Folders.xlsx"
+# src = "fafdgfagrf"
+a = PathFinder(src)
+res = a.get_result()
+print("Result:", res)
