@@ -130,10 +130,7 @@ class PathFinder:
             "/sbc01/Shares/Studio/MIUZ/Photo/Art/Raw/2025",
             "/sbc01/Shares/Studio/MIUZ/Photo/Art/Raw",
             "/sbc01/Shares/Studio/MIUZ/Photo/Art",
-            "/sbc01/Shares/Studio/MIUZ/Photo",
-            "/sbc01/Shares/Studio/MIUZ",
-            "/sbc01/Shares/Studio",
-            "/sbc01/Shares",
+            ...
             "/sbc01",
         ]
         """
