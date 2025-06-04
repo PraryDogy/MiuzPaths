@@ -6,18 +6,18 @@ class PathFinder:
 
     def __init__(self, input_path: str):
         super().__init__()
-        self.input_path = input_path
+        self.input_path: str = input_path
         self.result: str | None = None
 
         self.volumes_list: list[str] = self.get_volumes()
-        self.macintosh_hd = self.get_sys_volume()
+        self.macintosh_hd: str = self.get_sys_volume()
         self.volumes_list.remove(self.macintosh_hd)
 
         # /Volumes/Macintosh HD/Volumes
         self.invalid_volume_path: str = self.macintosh_hd + self.volumes_dir
 
     def get_result(self) -> str | None:
-        self.input_path = self.prepare_path()
+        self.input_path = self.prepare_path(self.input_path)
 
         if self.input_path.startswith((self.users_dir, self.macintosh_hd)):
             if self.input_path.startswith(self.users_dir):
@@ -25,7 +25,8 @@ class PathFinder:
             path = self.replace_username(path)
             return self.result
 
-        paths = self.add_to_start(self.path_to_list(self.input_path))
+        paths = self.add_to_start(self.input_path)
+
         paths.sort(key=len, reverse=True)
         result = self.check_for_exists(paths)
 
@@ -81,20 +82,13 @@ class PathFinder:
                 return i
         return None
 
-    def prepare_path(self):
-        path = self.input_path.strip().strip("'\"")
+    def prepare_path(self, path: str):
+        path = path.strip().strip("'\"")
         path = path.replace("\\", "/")
         path = path.strip("/")
         return "/" + path
 
-    def path_to_list(self, path: str) -> list[str]:
-        return [
-            i
-            for i in path.split(os.sep)
-            if i
-        ]
-
-    def add_to_start(self, splited_path: list) -> list[str]:
+    def add_to_start(self, path: str) -> list[str]:
         """
         Пример:
         >>> splited_path = ["Volumes", "Shares-1", "Studio", "MIUZ", "Photo", "Art", "Raw", "2025"]
@@ -112,12 +106,16 @@ class PathFinder:
         ]
         """
         new_paths = []
+        chunk_list = [
+            i
+            for i in path.split(os.sep)
+            if i
+        ]
         for vol in self.volumes_list:
-            splited_path_copy = splited_path.copy()
-            while len(splited_path_copy) > 0:
-                new = vol + os.sep + os.path.join(*splited_path_copy)
+            while len(chunk_list) > 0:
+                new = vol + os.sep + os.path.join(*chunk_list)
                 new_paths.append(new)
-                splited_path_copy.pop(0)
+                chunk_list.pop(0)
         return new_paths
         
     def del_from_end(self, path: str) -> list[str]:
