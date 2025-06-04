@@ -4,6 +4,8 @@ import threading
 import tkinter
 import traceback
 
+from path_finder import PathFinder as PathFinder_
+
 
 class MainItem:
     def __init__(self):
@@ -46,164 +48,12 @@ class Err:
         return msg
     
 
-class _Task:
-    current: threading.Thread = None
-
-    volumes_dir: str = "/Volumes"
-    users_dir: str = "/Users"
-
-    def __init__(self, main_item: MainItem, input_path: str):
-        super().__init__()
-        self.main_item = main_item
-        self.input_path = input_path
-        self.result: str | None = None
-
-        self.volumes_list: list[str] = self.get_volumes()
-        self.macintosh_hd = self.get_sys_volume()
-        self.volumes_list.remove(self.macintosh_hd)
-
-        # /Volumes/Macintosh HD/Volumes
-        self.invalid_volume_path: str = self.macintosh_hd + self.volumes_dir
-
-    def get_result(self) -> str | None:
-        self.prepare_path()
-
-        if self.input_path.startswith((self.users_dir, self.macintosh_hd)):
-            if self.input_path.startswith(self.users_dir):
-                path = self.macintosh_hd + self.input_path
-            path = self.replace_username(path)
-            self.result = path
-            return self.result
-
-        paths = self.add_to_start(self.path_to_list(self.input_path))
-        paths.sort(key=len, reverse=True)
-        result = self.check_for_exists(paths)
-
-        if not result:
-            paths = {
-                p
-                for base in paths
-                for p in self.del_from_end(base)
-            }
-            paths = sorted(paths, key=len, reverse=True)
-            if self.volumes_dir in paths:
-                paths.remove(self.volumes_dir)
-            result = self.check_for_exists(paths)
-
-        self.result = result or self.main_item.error_text
-
-        return self.result
-
-    def replace_username(self, path: str) -> str:
-        home = os.path.expanduser("~")  # например: /Users/actual_user
-        user = home.split(os.sep)[-1]   # извлекаем имя пользователя
-
-        parts = path.split(os.sep)
-        try:
-            users_index = parts.index("Users")
-            parts[users_index + 1] = user
-            return os.sep.join(parts)
-        except (ValueError, IndexError):
-            return path
-
-    def check_for_exists(self, paths: list[str]) -> str | None:
-        for path in paths:
-            if not os.path.exists(path):
-                continue
-            if path in self.volumes_list or path == self.invalid_volume_path:
-                continue
-            return path
-        return None
-            
-    def get_volumes(self) -> list[str]:
-        return [
-            entry.path
-            for entry in os.scandir(_Task.volumes_dir)
-            if entry.is_dir()
-        ]
-    
-    def get_sys_volume(self):
-        user = os.path.expanduser("~")
-        app_support = f"{user}/Library/Application Support"
-
-        for i in self.volumes_list:
-            full_path = f"{i}{app_support}"
-            if os.path.exists(full_path):
-                return i
-        return None
-
-    def prepare_path(self):
-        path = self.input_path.strip().strip("'\"")
-        path = path.replace("\\", "/")
-        path = path.strip("/")
-        self.input_path = "/" + path
-
-    def path_to_list(self, path: str) -> list[str]:
-        return [
-            i
-            for i in path.split(os.sep)
-            if i
-        ]
-
-    def add_to_start(self, splited_path: list) -> list[str]:
-        """
-        Пример:
-        >>> splited_path = ["Volumes", "Shares-1", "Studio", "MIUZ", "Photo", "Art", "Raw", "2025"]
-        [
-            '/Volumes/Shares/Studio/MIUZ/Photo/Art/Raw/2025',
-            '/Volumes/Shares/MIUZ/Photo/Art/Raw/2025',
-            '/Volumes/Shares/Photo/Art/Raw/2025',
-            '/Volumes/Shares/Art/Raw/2025',
-            '/Volumes/Shares/Raw/2025',
-            '/Volumes/Shares/2025',
-            ...
-            '/Volumes/Shares-1/Studio/MIUZ/Photo/Art/Raw/2025',
-            '/Volumes/Shares-1/MIUZ/Photo/Art/Raw/2025',
-            '/Volumes/Shares-1/Photo/Art/Raw/2025',
-            ...
-        ]
-        """
-        new_paths = []
-
-        for vol in self.volumes_list:
-
-            splited_path_copy = splited_path.copy()
-            while len(splited_path_copy) > 0:
-
-                new = vol + os.sep + os.path.join(*splited_path_copy)
-                new_paths.append(new)
-                splited_path_copy.pop(0)
-
-        return new_paths
-        
-    def del_from_end(self, path: str) -> list[str]:
-        """
-        Пример:
-        >>> path: "/sbc01/Shares/Studio/MIUZ/Photo/Art/Raw/2025"
-        [
-            "/sbc01/Shares/Studio/MIUZ/Photo/Art/Raw/2025",
-            "/sbc01/Shares/Studio/MIUZ/Photo/Art/Raw",
-            "/sbc01/Shares/Studio/MIUZ/Photo/Art",
-            "/sbc01/Shares/Studio/MIUZ/Photo",
-            "/sbc01/Shares/Studio/MIUZ",
-            "/sbc01/Shares/Studio",
-            "/sbc01/Shares",
-            "/sbc01",
-        ]
-        """
-        new_paths = []
-
-        while path != os.sep:
-            new_paths.append(path)
-            path, _ = os.path.split(path)
-
-        return new_paths
-    
-
 class PathFinder:
+    current: threading.Thread
+
     def __init__(self, path: str, root: tkinter.Tk, main_item: MainItem):
         try:
-            while _Task.current.is_alive():
+            while self.current.is_alive():
                 root.update()
         except AttributeError:
             pass
@@ -212,23 +62,13 @@ class PathFinder:
         self.root = root
         self.input_path = path
 
-        self.task_ = _Task(self.main_item, path)
-
+        self.task_ = PathFinder_(path)
         target = self.task_.get_result
-        _Task.current = threading.Thread(target=target)
-        _Task.current.start()
+        self.current = threading.Thread(target=target)
+        self.current.start()
 
-        while _Task.current.is_alive():
+        while self.current.is_alive():
             root.update()
 
     def get_result(self) -> str:
         return self.task_.result
-
-
-
-path = "\\192.168.10.105\\shares\\Marketing\\General\\9. ТЕКСТЫ\\2023\\7. PR-рассылка\\10. Октябрь\\Royal"
-path = "/Users/Morkowik/Downloads/Геохимия видео"
-path = "smb://sbc01/shares/Marketing/Photo/_Collections/1 Solo/1 IMG/2023-09-22 11-27-28 рабочий файл.tif/"
-path = "smb://sbc031/shares/Marketing/Photo/_Collections/_____1 Solo/1 IMG/__2023-09-22 11-27-28 рабочий файл.tif/"
-path = "\\192.168.10.105\\shares\\Marketing\\General\\9. ТЕКСТЫ\\)2023\\7. PR-рассылка\\10. Октябрь\\Royal"
-path = "fafdgfagrf"
