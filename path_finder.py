@@ -17,13 +17,12 @@ class PathFinder:
         self.invalid_volume_path: str = self.macintosh_hd + self.volumes_dir
 
     def get_result(self) -> str | None:
-        self.prepare_path()
+        self.input_path = self.prepare_path()
 
         if self.input_path.startswith((self.users_dir, self.macintosh_hd)):
             if self.input_path.startswith(self.users_dir):
                 path = self.macintosh_hd + self.input_path
             path = self.replace_username(path)
-            self.result = path
             return self.result
 
         paths = self.add_to_start(self.path_to_list(self.input_path))
@@ -42,7 +41,6 @@ class PathFinder:
             result = self.check_for_exists(paths)
 
         self.result = result or self.main_item.error_text
-
         return self.result
 
     def replace_username(self, path: str) -> str:
@@ -57,8 +55,8 @@ class PathFinder:
         except (ValueError, IndexError):
             return path
 
-    def check_for_exists(self, paths: list[str]) -> str | None:
-        for path in paths:
+    def check_for_exists(self, path_list: list[str]) -> str | None:
+        for path in path_list:
             if not os.path.exists(path):
                 continue
             if path in self.volumes_list or path == self.invalid_volume_path:
@@ -87,7 +85,7 @@ class PathFinder:
         path = self.input_path.strip().strip("'\"")
         path = path.replace("\\", "/")
         path = path.strip("/")
-        self.input_path = "/" + path
+        return "/" + path
 
     def path_to_list(self, path: str) -> list[str]:
         return [
