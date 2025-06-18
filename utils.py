@@ -73,4 +73,4 @@ class PathFinder:
             pass
 
     def get_result(self) -> str:
-        return self.path_finder_.result
+        return self.path_finder_._result
