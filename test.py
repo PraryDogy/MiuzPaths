@@ -8,8 +8,6 @@ src = "\MIUZ\Video\Digital\Ready\2025\6. Июнь"
 
 from path_finder import PathFinder
 
-a = PathFinder(src)
-a._get_volumes()
-b = a._get_deep_level()
-
-print(a._volumes_list)
+# a = PathFinder(src)
+# a._get_volumes()
+# b = a._get_deep_level()

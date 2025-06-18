@@ -10,6 +10,8 @@ class PathFinder:
         self._result: str | None = None
 
         self._volumes_list: list[str] = self._get_volumes()
+        self._volumes_list.extend(self._get_deep_level())
+
         self._macintosh_hd: str = self._get_sys_volume()
         self._volumes_list.remove(self._macintosh_hd)
 
@@ -102,7 +104,7 @@ class PathFinder:
             for first_level in os.scandir(vol):
                 if first_level.is_dir():
                     paths.append(first_level.path)
-        self._volumes_list.extend(paths)
+        return paths
 
     def _get_sys_volume(self):
         user = os.path.expanduser("~")
