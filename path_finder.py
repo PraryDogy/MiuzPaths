@@ -81,22 +81,24 @@ class PathFinder:
     
     def _get_deep_level(self):
         """
-            Расширяет список корневых путей для поиска, добавляя промежуточные
-            уровни вложенности, чтобы учесть случаи, когда сетевой диск 
-            подключён не с самого верхнего уровня.
-            Ожидаемый путь:
-            '\Studio\MIUZ\Video\Digital\Ready\2025\6. Июнь'.
-            Входящий путь:
-            '\MIUZ\Video\Digital\Ready\2025\6. Июнь'
-            Было:
+            Расширяет список корневых путей для поиска, добавляя промежуточные  
+            уровни вложенности, чтобы учесть случаи, когда сетевой диск     
+            подключён не с самого верхнего уровня.  
+            Ожидаемый путь:     
+            '\Studio\MIUZ\Video\Digital\Ready\2025\6. Июнь'.    
+            Входящий путь:      
+            '\MIUZ\Video\Digital\Ready\2025\6. Июнь'    
+            Было:   
                 [
                     /Volumes/Shares,
                     /Volumes/Shares-1
-                ]
-            Стало:
+                ]   
+            Стало:  
                 [
+                    /Volumes/Shares,
                     /Volumes/Shares/Studio,
-                    /Volumes/Shares-1/Studio,
+                    /Volumes/Shares-1,
+                    /Volumes/Shares-1/Studio
                 ]
         """
         paths: list[str] = []
